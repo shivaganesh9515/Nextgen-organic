@@ -1,261 +1,198 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Search, Calendar, User, Tag } from 'lucide-react';
+import { Calendar, User, Tag, ChevronRight, Leaf, Heart, Sprout } from 'lucide-react';
 import { SectionHeader } from '../../components/ui/SectionHeader';
-import { SearchBar } from '../../components/common/SearchBar';
 
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  date: string;
-  category: string;
-  tags: string[];
-  image: string;
-  readTime: string;
-}
-
-const mockBlogPosts: BlogPost[] = [
+// Mock blog data
+const blogPosts = [
   {
-    id: '1',
-    title: '10 Healthy Eating Habits to Adopt This Year',
-    excerpt: 'Discover simple yet effective habits that can transform your relationship with food and boost your overall health.',
-    content: '',
-    author: 'Dr. Priya Sharma',
-    date: '2025-10-15',
-    category: 'Health',
-    tags: ['nutrition', 'wellness', 'habits'],
-    image: '/images/blog/healthy-eating.jpg',
-    readTime: '5 min read'
+    id: 1,
+    title: "10 Health Benefits of Going Organic",
+    excerpt: "Discover why switching to organic foods can transform your health and well-being.",
+    content: "Going organic isn't just a trend - it's a lifestyle choice that can significantly impact your health...",
+    author: "Dr. Priya Sharma",
+    date: "2024-05-15",
+    category: "Health",
+    image: "/images/blog/organic-benefits.jpg",
+    readTime: "5 min read"
   },
   {
-    id: '2',
-    title: 'Seasonal Produce Guide: What to Buy in October',
-    excerpt: 'Learn which fruits and vegetables are at their peak in October and how to incorporate them into your meals.',
-    content: '',
-    author: 'Rajesh Kumar',
-    date: '2025-10-10',
-    category: 'Seasonal',
-    tags: ['seasonal', 'produce', 'fruits', 'vegetables'],
-    image: '/images/blog/seasonal-produce.jpg',
-    readTime: '4 min read'
+    id: 2,
+    title: "Seasonal Eating: Why It Matters",
+    excerpt: "Learn how eating seasonally can improve your nutrition and support local farmers.",
+    content: "Seasonal eating connects us with nature's rhythm and offers numerous health benefits...",
+    author: "Rajesh Kumar",
+    date: "2024-05-10",
+    category: "Nutrition",
+    image: "/images/blog/seasonal-eating.jpg",
+    readTime: "4 min read"
   },
   {
-    id: '3',
-    title: 'Sustainable Packaging: Our Commitment to the Environment',
-    excerpt: 'Explore our initiatives to reduce packaging waste and promote eco-friendly alternatives in grocery delivery.',
-    content: '',
-    author: 'Amit Patel',
-    date: '2025-10-05',
-    category: 'Sustainability',
-    tags: ['environment', 'packaging', 'sustainability'],
-    image: '/images/blog/sustainable-packaging.jpg',
-    readTime: '6 min read'
+    id: 3,
+    title: "Understanding Organic Labels",
+    excerpt: "Navigate the confusing world of organic certifications and labels with our guide.",
+    content: "With so many labels on organic products, it's easy to get confused about what they really mean...",
+    author: "Neha Patel",
+    date: "2024-05-05",
+    category: "Education",
+    image: "/images/blog/organic-labels.jpg",
+    readTime: "6 min read"
   },
   {
-    id: '4',
-    title: 'How to Store Fresh Produce for Maximum Freshness',
-    excerpt: 'Master the art of food storage with our comprehensive guide to keeping your fruits and vegetables fresh longer.',
-    content: '',
-    author: 'Neha Gupta',
-    date: '2025-09-28',
-    category: 'Tips',
-    tags: ['storage', 'freshness', 'tips'],
-    image: '/images/blog/food-storage.jpg',
-    readTime: '3 min read'
+    id: 4,
+    title: "The Environmental Impact of Organic Farming",
+    excerpt: "How organic farming practices contribute to a healthier planet.",
+    content: "Organic farming goes beyond just avoiding chemicals - it's a holistic approach to agriculture...",
+    author: "Dr. Anil Verma",
+    date: "2024-04-28",
+    category: "Environment",
+    image: "/images/blog/organic-environment.jpg",
+    readTime: "7 min read"
   },
   {
-    id: '5',
-    title: 'Supporting Local Farmers: The Impact of Your Purchases',
-    excerpt: 'Understand how shopping with us directly supports local agriculture and strengthens your community.',
-    content: '',
-    author: 'Dr. Vikram Singh',
-    date: '2025-09-20',
-    category: 'Community',
-    tags: ['local', 'farmers', 'community'],
-    image: '/images/blog/local-farmers.jpg',
-    readTime: '7 min read'
+    id: 5,
+    title: "Organic Superfoods You Should Know About",
+    excerpt: "Discover powerful organic superfoods that can boost your health naturally.",
+    content: "Superfoods are nutritional powerhouses that offer exceptional health benefits...",
+    author: "Priya Menon",
+    date: "2024-04-22",
+    category: "Superfoods",
+    image: "/images/blog/organic-superfoods.jpg",
+    readTime: "5 min read"
   },
   {
-    id: '6',
-    title: 'Organic vs. Conventional: What You Need to Know',
-    excerpt: 'Navigate the organic food landscape with our expert guide on when to choose organic and when conventional is fine.',
-    content: '',
-    author: 'Dr. Priya Sharma',
-    date: '2025-09-15',
-    category: 'Nutrition',
-    tags: ['organic', 'conventional', 'health'],
-    image: '/images/blog/organic-vs-conventional.jpg',
-    readTime: '8 min read'
+    id: 6,
+    title: "Cooking with Organic Herbs and Spices",
+    excerpt: "Enhance your dishes with the incredible flavors and health benefits of organic herbs.",
+    content: "Organic herbs and spices not only add incredible flavors to your meals but also offer numerous health benefits...",
+    author: "Chef Arjun Reddy",
+    date: "2024-04-15",
+    category: "Cooking",
+    image: "/images/blog/organic-herbs.jpg",
+    readTime: "4 min read"
   }
 ];
 
+const categories = [
+  { name: "All", icon: <Leaf className="h-4 w-4" /> },
+  { name: "Health", icon: <Heart className="h-4 w-4" /> },
+  { name: "Nutrition", icon: <Sprout className="h-4 w-4" /> },
+  { name: "Environment", icon: <Leaf className="h-4 w-4" /> },
+  { name: "Cooking", icon: <Leaf className="h-4 w-4" /> },
+  { name: "Superfoods", icon: <Leaf className="h-4 w-4" /> }
+];
+
 export default function BlogPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedTag, setSelectedTag] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Get unique categories and tags
-  const categories = ['all', ...new Set(mockBlogPosts.map(post => post.category))];
-  const allTags = [...new Set(mockBlogPosts.flatMap(post => post.tags))];
-  const tags = ['all', ...allTags];
-
-  // Filter blog posts
-  const filteredPosts = mockBlogPosts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
-    const matchesTag = selectedTag === 'all' || post.tags.includes(selectedTag);
-    
-    return matchesSearch && matchesCategory && matchesTag;
-  });
+  const filteredPosts = selectedCategory === "All" 
+    ? blogPosts 
+    : blogPosts.filter(post => post.category === selectedCategory);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <SectionHeader 
-        title="Blog"
-        subtitle="Insights, tips, and stories from our team"
+        title="Health & Wellness Blog" 
+        subtitle="Discover tips, insights, and expert advice on organic living"
       />
-      
-      {/* Search and Filters */}
-      <div className="mb-12">
-        <div className="max-w-2xl mx-auto mb-8">
-          <SearchBar 
-            onSearch={setSearchQuery} 
-            placeholder="Search articles..." 
-          />
-        </div>
-        
-        <div className="flex flex-wrap justify-center gap-4">
-          <div className="flex flex-wrap gap-2">
-            {categories.map(category => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </button>
-            ))}
-          </div>
-          
-          <div className="flex flex-wrap gap-2">
-            {tags.map(tag => (
-              <button
-                key={tag}
-                onClick={() => setSelectedTag(tag)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  selectedTag === tag
-                    ? 'bg-secondary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {tag.charAt(0).toUpperCase() + tag.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {categories.map((category) => (
+          <button
+            key={category.name}
+            onClick={() => setSelectedCategory(category.name)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === category.name
+                ? "bg-primary-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            {category.icon}
+            {category.name}
+          </button>
+        ))}
       </div>
-      
+
       {/* Blog Posts Grid */}
-      {filteredPosts.length > 0 ? (
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          layout
-        >
-          {filteredPosts.map((post, index) => (
-            <motion.article
-              key={post.id}
-              className="bg-white/80 backdrop-blur-lg rounded-xl overflow-hidden shadow-lg border border-white/20 hover:shadow-xl transition-shadow"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-              layout
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={post.image || '/images/placeholder-blog.jpg'} 
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-primary-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-                    {post.category}
-                  </span>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filteredPosts.map((post, index) => (
+          <motion.div
+            key={post.id}
+            className="card overflow-hidden hover:shadow-lg transition-shadow"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <div className="relative h-48 overflow-hidden">
+              <img 
+                src={post.image} 
+                alt={post.title} 
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              />
+              <div className="absolute top-4 left-4">
+                <span className="bg-primary-600 text-white text-xs font-medium px-2 py-1 rounded-full">
+                  {post.category}
+                </span>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{post.title}</h3>
+              <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
+              
+              <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>{new Date(post.date).toLocaleDateString()}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <User className="h-4 w-4" />
+                  <span>{post.author}</span>
                 </div>
               </div>
               
-              <div className="p-6">
-                <div className="flex items-center text-sm text-gray-500 mb-3">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  <span>{new Date(post.date).toLocaleDateString()}</span>
-                  <span className="mx-2">•</span>
-                  <span>{post.readTime}</span>
-                </div>
-                
-                <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                  {post.title}
-                </h2>
-                
-                <p className="text-gray-600 mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 text-gray-400 mr-1" />
-                    <span className="text-sm text-gray-600">{post.author}</span>
-                  </div>
-                  
-                  <button className="text-primary-600 hover:text-primary-700 font-medium text-sm">
-                    Read More
-                  </button>
-                </div>
-                
-                <div className="flex flex-wrap gap-1 mt-4">
-                  {post.tags.map(tag => (
-                    <span 
-                      key={tag}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                    >
-                      <Tag className="h-3 w-3 mr-1" />
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">{post.readTime}</span>
+                <Link 
+                  href={`/blog/${post.id}`} 
+                  className="flex items-center gap-1 text-primary-600 hover:text-primary-700 font-medium text-sm"
+                >
+                  Read More
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
               </div>
-            </motion.article>
-          ))}
-        </motion.div>
-      ) : (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900">No articles found</h3>
-          <p className="mt-1 text-gray-500">
-            Try adjusting your search or filter criteria
-          </p>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-              setSelectedTag('all');
-            }}
-            className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
-          >
-            Clear all filters
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Newsletter Signup */}
+      <motion.div 
+        className="mt-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 text-white text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <h3 className="text-2xl font-bold mb-2">Stay Informed</h3>
+        <p className="mb-6 max-w-2xl mx-auto">
+          Subscribe to our newsletter for the latest articles on organic living, health tips, 
+          and exclusive offers from our vendors.
+        </p>
+        <div className="max-w-md mx-auto flex gap-2">
+          <input
+            type="email"
+            placeholder="Your email address"
+            className="flex-grow px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          <button className="bg-white text-green-600 font-medium px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors">
+            Subscribe
           </button>
         </div>
-      )}
+      </motion.div>
     </div>
   );
 }

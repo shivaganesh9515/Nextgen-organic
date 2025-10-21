@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Leaf } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -8,9 +8,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-primary-400">GroceryNext</h3>
+            <div className="flex items-center mb-4">
+              <Leaf className="h-8 w-8 text-green-400 mr-2" />
+              <h3 className="text-2xl font-bold text-green-400">OrganicNext</h3>
+            </div>
             <p className="text-gray-300 mb-4">
-              Your one-stop destination for fresh groceries delivered to your doorstep.
+              Empowering healthy living through authentic organic products while supporting sustainable farming practices.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-gray-300 hover:text-white transition">
@@ -38,12 +41,22 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-gray-300 hover:text-white transition">
-                  About Us
+                  Why Organic?
+                </Link>
+              </li>
+              <li>
+                <Link href="/vendors" className="text-gray-300 hover:text-white transition">
+                  Our Vendors
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-gray-300 hover:text-white transition">
+                  Health Blog
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-gray-300 hover:text-white transition">
-                  Contact
+                  Contact Us
                 </Link>
               </li>
               <li>
@@ -52,50 +65,40 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-gray-300 hover:text-white transition">
-                  Careers
-                </Link>
-              </li>
-              <li>
                 <Link href="/terms" className="text-gray-300 hover:text-white transition">
                   Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="text-gray-300 hover:text-white transition">
-                  Privacy Policy
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Organic Categories */}
           <div>
             <h4 className="text-lg font-semibold mb-4">Shop Categories</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/shop?category=fruits" className="text-gray-300 hover:text-white transition">
-                  Fruits & Vegetables
+                <Link href="/shop?category=fruits-vegetables" className="text-gray-300 hover:text-white transition">
+                  Organic Fruits & Vegetables
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?category=grains-pulses" className="text-gray-300 hover:text-white transition">
+                  Organic Grains & Pulses
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=dairy" className="text-gray-300 hover:text-white transition">
-                  Dairy & Eggs
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=bakery" className="text-gray-300 hover:text-white transition">
-                  Bakery & Biscuits
+                  Organic Dairy & Alternatives
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=beverages" className="text-gray-300 hover:text-white transition">
-                  Beverages
+                  Organic Beverages
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=snacks" className="text-gray-300 hover:text-white transition">
-                  Snacks & Munchies
+                <Link href="/shop?category=spices" className="text-gray-300 hover:text-white transition">
+                  Organic Spices & Condiments
                 </Link>
               </li>
               <li>
@@ -111,25 +114,26 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3">
               <li className="flex items-start">
-                <MapPin className="h-5 w-5 mr-3 text-primary-400 flex-shrink-0 mt-1" />
+                <MapPin className="h-5 w-5 mr-3 text-green-400 flex-shrink-0 mt-1" />
                 <span className="text-gray-300">
-                  123 Market Street, Mumbai, Maharashtra 400001
+                  123 Organic Market Street, Mumbai, Maharashtra 400001
                 </span>
               </li>
               <li className="flex items-center">
-                <Phone className="h-5 w-5 mr-3 text-primary-400" />
+                <Phone className="h-5 w-5 mr-3 text-green-400" />
                 <span className="text-gray-300">+91 98765 43210</span>
               </li>
               <li className="flex items-center">
-                <Mail className="h-5 w-5 mr-3 text-primary-400" />
-                <span className="text-gray-300">support@grocerynext.com</span>
+                <Mail className="h-5 w-5 mr-3 text-green-400" />
+                <span className="text-gray-300">support@organicnext.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} GroceryNext. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} OrganicNext. All rights reserved.</p>
+          <p className="mt-2 text-sm">Empowering healthy living through authentic organic products</p>
         </div>
       </div>
     </footer>

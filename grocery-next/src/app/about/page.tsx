@@ -1,124 +1,200 @@
 'use client';
 
-import { Users, Award, Leaf, Truck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Leaf, Heart, Shield, Award, Users, Sprout } from 'lucide-react';
+import { SectionHeader } from '../../components/ui/SectionHeader';
 
-export default function AboutPage() {
-  const features = [
-    {
-      icon: <Users className="h-8 w-8" />,
-      title: "Customer First",
-      description: "We prioritize our customers' needs and strive to exceed expectations with every interaction."
-    },
+export default function AboutOrganicPage() {
+  const benefits = [
     {
       icon: <Leaf className="h-8 w-8" />,
-      title: "Quality Products",
-      description: "We source only the finest organic and fresh products from trusted local vendors."
+      title: "Nutrient Dense",
+      description: "Organic foods often contain more nutrients and antioxidants than conventionally grown foods."
     },
     {
-      icon: <Truck className="h-8 w-8" />,
-      title: "Fast Delivery",
-      description: "Get your groceries delivered fresh and on time, every time with our efficient delivery system."
+      icon: <Heart className="h-8 w-8" />,
+      title: "Better for Your Health",
+      description: "Free from synthetic pesticides, herbicides, and chemical fertilizers that can harm your body."
+    },
+    {
+      icon: <Shield className="h-8 w-8" />,
+      title: "No Harmful Chemicals",
+      description: "Organic farming prohibits the use of synthetic chemicals, GMOs, and antibiotics."
+    },
+    {
+      icon: <Sprout className="h-8 w-8" />,
+      title: "Environmentally Sustainable",
+      description: "Organic farming practices protect soil, water, and biodiversity for future generations."
     },
     {
       icon: <Award className="h-8 w-8" />,
-      title: "Satisfaction Guaranteed",
-      description: "We stand behind our products and services with a 100% satisfaction guarantee."
+      title: "Higher Quality Standards",
+      description: "Strict certification processes ensure consistent quality and authenticity."
+    },
+    {
+      icon: <Users className="h-8 w-8" />,
+      title: "Supports Local Farmers",
+      description: "Buying organic supports small-scale farmers who use sustainable practices."
+    }
+  ];
+
+  const practices = [
+    {
+      title: "Natural Pest Control",
+      description: "Using beneficial insects, companion planting, and natural repellents instead of synthetic pesticides."
+    },
+    {
+      title: "Soil Health Management",
+      description: "Building soil fertility through composting, crop rotation, and cover crops."
+    },
+    {
+      title: "Biodiversity Conservation",
+      description: "Maintaining diverse ecosystems that support wildlife and beneficial organisms."
+    },
+    {
+      title: "Water Conservation",
+      description: "Implementing efficient irrigation systems and protecting water sources from contamination."
     }
   ];
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">About GroceryNext</h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Your trusted partner for fresh, organic groceries delivered to your doorstep
+      <SectionHeader 
+        title="Why Choose Organic?" 
+        subtitle="Discover the benefits of organic products for your health and the environment"
+      />
+
+      {/* Hero Section */}
+      <motion.div 
+        className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 mb-16 text-white text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">The Organic Difference</h2>
+        <p className="text-xl max-w-3xl mx-auto">
+          Organic products are grown and processed according to strict standards that prioritize 
+          environmental sustainability, animal welfare, and human health.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Story</h2>
-          <p className="text-gray-600 mb-4">
-            Founded in 2023, GroceryNext was born out of a simple idea: to make fresh, organic groceries 
-            accessible to everyone without compromising on quality or convenience. What started as a small 
-            local delivery service has grown into a comprehensive platform connecting customers with the 
-            best local vendors.
-          </p>
-          <p className="text-gray-600 mb-4">
-            Our journey began when our founder, Shivaganesh Gajavelli, noticed the gap between consumers 
-            seeking fresh organic produce and local farmers struggling to reach urban markets. With a 
-            vision to bridge this gap, GroceryNext was created to support local agriculture while 
-            providing customers with the freshest products.
-          </p>
-          <p className="text-gray-600">
-            Today, we partner with over 200 local vendors and serve thousands of customers across 
-            multiple cities, all while maintaining our commitment to quality, sustainability, and 
-            community support.
-          </p>
-        </div>
-        
-        <div className="bg-gray-100 rounded-xl p-8 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-5xl font-bold text-primary-600 mb-2">200+</div>
-            <div className="text-lg text-gray-700">Local Vendors</div>
-          </div>
-          <div className="mx-8 h-16 w-px bg-gray-300"></div>
-          <div className="text-center">
-            <div className="text-5xl font-bold text-primary-600 mb-2">5000+</div>
-            <div className="text-lg text-gray-700">Happy Customers</div>
-          </div>
-          <div className="mx-8 h-16 w-px bg-gray-300"></div>
-          <div className="text-center">
-            <div className="text-5xl font-bold text-primary-600 mb-2">98%</div>
-            <div className="text-lg text-gray-700">Satisfaction Rate</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Why Choose Us</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="card text-center p-6">
-              <div className="flex justify-center mb-4">
-                <div className="p-3 bg-primary-100 rounded-full text-primary-600">
-                  {feature.icon}
-                </div>
+      {/* Benefits Section */}
+      <section className="mb-16">
+        <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Benefits of Organic Products</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {benefits.map((benefit, index) => (
+            <motion.div
+              key={index}
+              className="card text-center hover:shadow-lg transition-shadow"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600">
+                {benefit.icon}
               </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </div>
+              <h4 className="text-xl font-semibold mb-2">{benefit.title}</h4>
+              <p className="text-gray-600">{benefit.description}</p>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="bg-primary-50 rounded-xl p-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
-        <p className="text-gray-600 max-w-3xl mx-auto mb-6">
-          To revolutionize the way people access fresh groceries by creating a sustainable ecosystem 
-          that benefits customers, vendors, and the environment while fostering community connections.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Sustainability</h3>
-            <p className="text-gray-600">
-              Supporting local farmers and reducing carbon footprint through efficient delivery routes
-            </p>
-          </div>
-          <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Community</h3>
-            <p className="text-gray-600">
-              Building stronger local economies by connecting customers directly with vendors
-            </p>
-          </div>
-          <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Health</h3>
-            <p className="text-gray-600">
-              Promoting healthier lifestyles through access to fresh, organic, and nutritious foods
-            </p>
+      {/* Organic Practices */}
+      <section className="mb-16">
+        <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Organic Farming Practices</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {practices.map((practice, index) => (
+            <motion.div
+              key={index}
+              className="flex gap-6 p-6 bg-white rounded-xl border border-gray-200"
+              initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                <span className="text-lg font-bold">{index + 1}</span>
+              </div>
+              <div>
+                <h4 className="text-xl font-semibold mb-2">{practice.title}</h4>
+                <p className="text-gray-600">{practice.description}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Certification Info */}
+      <section className="mb-16 bg-green-50 rounded-2xl p-8">
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Organic Certification</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <p className="text-gray-700 mb-4">
+                Organic products sold on OrganicNext are certified by recognized organic certification bodies. 
+                These certifications ensure that products meet strict organic standards throughout the 
+                production and processing chain.
+              </p>
+              <p className="text-gray-700 mb-4">
+                Look for these certifications when shopping:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>India Organic (NPOP) - National Programme for Organic Production</li>
+                <li>USDA Organic - United States Department of Agriculture</li>
+                <li>EU Organic - European Union Organic Standards</li>
+                <li>Jaivik Bharat - India&apos;s new organic logo</li>
+              </ul>
+            </div>
+            <div className="flex justify-center">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                    <Leaf className="h-8 w-8 text-green-600" />
+                  </div>
+                  <span className="font-medium text-sm text-center">India Organic</span>
+                </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                    <Leaf className="h-8 w-8 text-green-600" />
+                  </div>
+                  <span className="font-medium text-sm text-center">USDA Organic</span>
+                </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                    <Leaf className="h-8 w-8 text-green-600" />
+                  </div>
+                  <span className="font-medium text-sm text-center">EU Organic</span>
+                </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                    <Leaf className="h-8 w-8 text-green-600" />
+                  </div>
+                  <span className="font-medium text-sm text-center">Jaivik Bharat</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Mission Statement */}
+      <section className="text-center py-12">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">Our Mission</h3>
+        <motion.blockquote 
+          className="text-xl italic text-gray-700 max-w-3xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          &quot;Empowering healthy living through authentic organic products while supporting 
+          sustainable farming and local communities.&quot;
+        </motion.blockquote>
+        <p className="mt-6 text-gray-600 max-w-2xl mx-auto">
+          At OrganicNext, we believe in the power of organic products to transform lives and 
+          protect our planet. We&apos;re committed to connecting health-conscious consumers with 
+          trusted organic producers who share our values.
+        </p>
+      </section>
     </div>
   );
 }

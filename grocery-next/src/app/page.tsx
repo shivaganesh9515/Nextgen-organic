@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Package, Truck, Shield } from 'lucide-react';
+import { ShoppingCart, Package, Truck, Shield, CheckCircle, Users, DollarSign } from 'lucide-react';
 import { products } from '../lib/data/products';
 import { categories } from '../lib/data/categories';
 import { vendors } from '../lib/data/vendors';
@@ -55,7 +55,7 @@ export default function HomePage() {
       id: 3,
       title: "Become a Vendor",
       subtitle: "Join our marketplace",
-      description: "Reach more customers by selling your products on GroceryNext",
+      description: "Reach more customers by selling your products on OrganicNext",
       image: "/images/hero/vendor.jpg",
       ctaText: "Learn More",
       ctaLink: "/vendors/join",
@@ -126,7 +126,7 @@ export default function HomePage() {
 
       {/* Why Choose Us */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Why Choose GroceryNext?</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Why Choose OrganicNext?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="text-center">
             <div className="mx-auto w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
@@ -134,7 +134,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg font-semibold mb-2">Easy Shopping</h3>
             <p className="text-gray-600">
-              Browse and order from thousands of products with just a few clicks
+              Browse and order from thousands of organic products with just a few clicks
             </p>
           </div>
           <div className="text-center">
@@ -143,7 +143,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg font-semibold mb-2">Quality Products</h3>
             <p className="text-gray-600">
-              We source only the best products from trusted vendors
+              We source only the best organic products from trusted vendors
             </p>
           </div>
           <div className="text-center">
@@ -152,7 +152,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg font-semibold mb-2">Fast Delivery</h3>
             <p className="text-gray-600">
-              Get your groceries delivered fresh and on time, every time
+              Get your organic groceries delivered fresh and on time, every time
             </p>
           </div>
           <div className="text-center">
@@ -176,6 +176,98 @@ export default function HomePage() {
           </Link>
         </div>
         <VendorGrid vendors={topVendors} />
+      </section>
+
+      {/* Vendor CTA Section */}
+      <section className="mb-16 bg-gradient-to-r from-primary-50 to-green-50 rounded-2xl p-8">
+        <div className="container mx-auto">
+          <div className="row items-center">
+            <div className="lg:w-1/2 mb-8 lg:mb-0">
+              <div className="vendor-cta-content">
+                <span className="inline-block bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full mb-4">
+                  Join Our Marketplace
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                  Wanna Become a Vendor?
+                </h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  Partner with us to reach thousands of health-conscious customers 
+                  looking for authentic organic products. Grow your organic business 
+                  and contribute to a healthier planet.
+                </p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                    <span>Zero Listing Fees for First 3 Months</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                    <span>Dedicated Vendor Dashboard</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                    <span>Real-time Sales Analytics</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                    <span>Direct Payments via Razorpay</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                    <span>Marketing & SEO Support</span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link 
+                    href="/contact" 
+                    className="btn-primary text-center py-3 px-6 rounded-lg font-medium"
+                  >
+                    Contact Us to Get Started
+                  </Link>
+                  <Link 
+                    href="/vendors/join" 
+                    className="btn-outline text-center py-3 px-6 rounded-lg font-medium"
+                  >
+                    Apply as Vendor
+                  </Link>
+                </div>
+                
+                <p className="text-gray-500 mt-4">
+                  <small>Already a vendor? <Link href="/vendor/signin" className="text-primary-600 hover:underline">Sign in to your dashboard</Link></small>
+                </p>
+              </div>
+            </div>
+            
+            <div className="lg:w-1/2">
+              <div className="vendor-cta-image relative">
+                <img 
+                  src="/images/hero/vendor.jpg" 
+                  alt="Become a Vendor" 
+                  className="w-full h-auto rounded-xl shadow-lg"
+                />
+                <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-4">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 text-center shadow-lg">
+                    <Users className="h-6 w-6 text-primary-600 mx-auto mb-2" />
+                    <h3 className="text-xl font-bold text-gray-900">500+</h3>
+                    <p className="text-sm text-gray-600">Active Vendors</p>
+                  </div>
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 text-center shadow-lg">
+                    <Users className="h-6 w-6 text-primary-600 mx-auto mb-2" />
+                    <h3 className="text-xl font-bold text-gray-900">50K+</h3>
+                    <p className="text-sm text-gray-600">Happy Customers</p>
+                  </div>
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 text-center shadow-lg">
+                    <CheckCircle className="h-6 w-6 text-primary-600 mx-auto mb-2" />
+                    <h3 className="text-xl font-bold text-gray-900">100%</h3>
+                    <p className="text-sm text-gray-600">Organic Certified</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

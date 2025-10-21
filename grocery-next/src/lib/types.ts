@@ -23,6 +23,7 @@ export interface Product {
   isFeatured?: boolean;
   nutritionInfo?: NutritionInfo;
   ingredients?: string[];
+  certifications?: string[];
 }
 
 export interface Vendor {

@@ -20,7 +20,6 @@ export default function Header() {
   const cartItemsCount = getTotalItems();
   const shopLinkRef = useRef<HTMLAnchorElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const mobileShopButtonRef = useRef<HTMLButtonElement>(null);
   const megaMenuTimer = useRef<NodeJS.Timeout | null>(null);
 
   const toggleMenu = () => {
@@ -118,13 +117,13 @@ export default function Header() {
     };
   }, []);
 
-  // Navigation items
+  // Updated navigation items for organic marketplace
   const navItems = [
     { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'Vendors', href: '/vendors' },
-    { name: 'Offers', href: '/offers' },
-    { name: 'About', href: '/about' },
+    { name: 'Shop by Category', href: '/shop' },
+    { name: 'Why Organic?', href: '/about' },
+    { name: 'Our Vendors', href: '/vendors' },
+    { name: 'Health Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
   ];
 
@@ -135,7 +134,7 @@ export default function Header() {
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold text-primary-600">
-              GroceryNext
+              OrganicNext
             </Link>
           </div>
 
@@ -144,7 +143,7 @@ export default function Header() {
             <div className="relative w-full">
               <input
                 type="text"
-                placeholder="Search for products, vendors, categories..."
+                placeholder="Search organic products, vendors, categories..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white/50 backdrop-blur-sm"
               />
               <button 
@@ -177,7 +176,7 @@ export default function Header() {
               )}
             </Link>
 
-            {/* User menu */}
+            {/* User menu - NO VENDOR LOGIN HERE */}
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button 
@@ -233,9 +232,15 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/auth/signin" className="text-gray-600 hover:text-primary-600" aria-label="Sign in">
-                <User className="h-6 w-6" />
-              </Link>
+              <div className="flex items-center space-x-2">
+                <Link href="/auth/signin" className="text-gray-600 hover:text-primary-600 text-sm" aria-label="Customer Sign In">
+                  Sign In
+                </Link>
+                <span className="text-gray-300">|</span>
+                <Link href="/auth/signup" className="text-gray-600 hover:text-primary-600 text-sm" aria-label="Customer Sign Up">
+                  Sign Up
+                </Link>
+              </div>
             )}
 
             {/* Mobile menu button */}
@@ -263,7 +268,7 @@ export default function Header() {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search for products, vendors, categories..."
+                  placeholder="Search organic products, vendors, categories..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white/50 backdrop-blur-sm"
                 />
                 <button 
@@ -290,7 +295,7 @@ export default function Header() {
               <ul className="flex flex-col space-y-2">
                 {navItems.map((item) => (
                   <li key={item.name} className="relative">
-                    {item.name === 'Shop' ? (
+                    {item.name === 'Shop by Category' ? (
                       <>
                         <button 
                           className={`text-gray-600 hover:text-primary-600 font-medium flex items-center w-full text-left ${
@@ -332,7 +337,7 @@ export default function Header() {
           <ul className="flex flex-row space-x-8">
             {navItems.map((item) => (
               <li key={item.name} className="relative">
-                {item.name === 'Shop' ? (
+                {item.name === 'Shop by Category' ? (
                   <>
                     <Link 
                       ref={shopLinkRef}
