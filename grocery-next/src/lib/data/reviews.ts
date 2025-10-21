@@ -1,0 +1,40 @@
+import { Review } from '../types';
+
+export const reviews: Review[] = [
+  {
+    id: 'r1',
+    userId: 'u1',
+    userName: 'Shivaganesh Gajavelli',
+    userAvatar: '/images/users/user1.jpg',
+    rating: 5,
+    comment: 'These bananas are absolutely fresh and delicious! Will definitely order again.',
+    date: new Date('2025-10-15'),
+    images: ['/images/reviews/banana-review1.jpg'],
+    helpful: 12,
+    verified: true,
+  },
+  {
+    id: 'r2',
+    userId: 'u2',
+    userName: 'Priya Sharma',
+    userAvatar: '/images/users/user2.jpg',
+    rating: 4,
+    comment: 'Great quality apples, but delivery was a bit late.',
+    date: new Date('2025-10-10'),
+    images: [],
+    helpful: 8,
+    verified: true,
+  },
+  {
+    id: 'r3',
+    userId: 'u3',
+    userName: 'Rahul Kumar',
+    userAvatar: '/images/users/user3.jpg',
+    rating: 5,
+    comment: 'The bread is so fresh and tasty. Love the whole wheat option!',
+    date: new Date('2025-10-05'),
+    images: ['/images/reviews/bread-review1.jpg', '/images/reviews/bread-review2.jpg'],
+    helpful: 15,
+    verified: true,
+  },
+];

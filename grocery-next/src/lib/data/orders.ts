@@ -1,0 +1,121 @@
+import { Order } from '../types';
+import { products } from './products';
+import { vendors } from './vendors';
+
+export const orders: Order[] = [
+  {
+    id: 'order_1',
+    items: [
+      {
+        product: products[0],
+        quantity: 2,
+      },
+      {
+        product: products[1],
+        quantity: 1,
+      },
+    ],
+    subtotal: 120,
+    deliveryFee: 20,
+    discount: 10,
+    total: 130,
+    status: 'delivered',
+    paymentMethod: 'card',
+    paymentStatus: 'paid',
+    deliveryAddress: {
+      id: 'addr_1',
+      type: 'home',
+      name: 'Home',
+      phone: '+91 98765 43210',
+      address: '123 Main Street',
+      addressLine2: 'Apartment 4B',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400001',
+      isDefault: true,
+    },
+    deliverySlot: {
+      id: 'slot_1',
+      date: '2025-10-20',
+      time: '10:00 - 12:00',
+      fee: 0,
+    },
+    orderDate: new Date('2025-10-20T10:30:00'),
+    deliveryDate: new Date('2025-10-20T11:45:00'),
+    trackingNumber: 'TRK123456789',
+  },
+  {
+    id: 'order_2',
+    items: [
+      {
+        product: products[2],
+        quantity: 1,
+      },
+      {
+        product: products[3],
+        quantity: 3,
+      },
+    ],
+    subtotal: 150,
+    deliveryFee: 20,
+    discount: 0,
+    total: 170,
+    status: 'processing',
+    paymentMethod: 'upi',
+    paymentStatus: 'paid',
+    deliveryAddress: {
+      id: 'addr_1',
+      type: 'home',
+      name: 'Home',
+      phone: '+91 98765 43210',
+      address: '123 Main Street',
+      addressLine2: 'Apartment 4B',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400001',
+      isDefault: true,
+    },
+    deliverySlot: {
+      id: 'slot_2',
+      date: '2025-10-22',
+      time: '14:00 - 16:00',
+      fee: 20,
+    },
+    orderDate: new Date('2025-10-21T14:20:00'),
+  },
+  {
+    id: 'order_3',
+    items: [
+      {
+        product: products[4],
+        quantity: 2,
+      },
+    ],
+    subtotal: 100,
+    deliveryFee: 0,
+    discount: 5,
+    total: 95,
+    status: 'out_for_delivery',
+    paymentMethod: 'cod',
+    paymentStatus: 'pending',
+    deliveryAddress: {
+      id: 'addr_1',
+      type: 'home',
+      name: 'Home',
+      phone: '+91 98765 43210',
+      address: '123 Main Street',
+      addressLine2: 'Apartment 4B',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400001',
+      isDefault: true,
+    },
+    deliverySlot: {
+      id: 'slot_3',
+      date: '2025-10-21',
+      time: '08:00 - 10:00',
+      fee: 0,
+    },
+    orderDate: new Date('2025-10-21T08:15:00'),
+  },
+];
