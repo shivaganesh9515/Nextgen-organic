@@ -1,0 +1,118 @@
+/* CSS to prevent flickering and improve stability */
+
+/* Prevent layout shifts during image loading */
+img {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1px;
+}
+
+/* Smooth transitions for all animated elements */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Prevent flickering on hover states */
+.card {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Smooth height transitions for expandable sections */
+.expandable-section {
+  transition: height 0.3s ease-out;
+  overflow: hidden;
+}
+
+/* Prevent flickering in dropdown menus */
+.dropdown-menu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth opacity transitions */
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Prevent image flickering during loading */
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.image-container .image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f3f4f6;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.image-container .image-loaded {
+  opacity: 1;
+}
+
+.image-container .image-loading {
+  opacity: 0;
+}
+
+/* Prevent flickering in product grids */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  transition: all 0.3s ease-out;
+}
+
+/* Smooth transitions for filter changes */
+.filter-section {
+  transition: all 0.3s ease-out;
+}
+
+/* Prevent flickering in pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-out;
+}
+
+/* Smooth transitions for modal dialogs */
+.modal {
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.modal-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+}

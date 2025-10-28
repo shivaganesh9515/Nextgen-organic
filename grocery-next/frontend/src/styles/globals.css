@@ -1,0 +1,348 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@import "./stability.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Fresh, organic-inspired color palette with lime-600 */
+  --color-brand-green: #65a30d; /* Lime-600 */
+  --color-brand-dark-green: #52840b; /* Darker shade for hover states */
+  --color-brand-navy: #2C3E50; /* Dark navy from circular border */
+  --color-brand-beige: #fbfcf9; /* Soft natural beige */
+  --color-brand-gold: #D4AF37; /* Subtle gold from seeds - accent */
+  
+  /* Updated primary color to match new brand palette */
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #65a30d; /* Lime-600 */
+  --color-primary-600: #65a30d; /* Lime-600 */
+  --color-primary-700: #52840b; /* Darker shade */
+  --color-primary-800: #3f6508;
+  --color-primary-900: #2c4606;
+
+  /* New off-white and subtle earthy shades */
+  --color-off-white-1: #fefffe;
+  --color-off-white-2: #fbfcf9;
+  --color-off-white-3: #fdfefd;
+  --color-off-white-4: #fbfcfa;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Better touch handling for mobile */
+    touch-action: manipulation;
+  }
+
+  body {
+    @apply antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+  }
+
+  /* Ensure proper sizing on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  /* Prevent overscroll on mobile */
+  body {
+    overscroll-behavior: none;
+  }
+
+  /* Improve text rendering on mobile */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-green text-white px-6 py-3 rounded-lg hover:bg-brand-dark-green 
+           transition-all duration-200 font-medium shadow-md hover:shadow-lg 
+           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    /* Better touch targets */
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .btn-secondary {
+    @apply bg-brand-beige text-brand-navy px-6 py-3 rounded-lg hover:bg-brand-beige/80 
+           transition-all duration-200 font-medium active:scale-95;
+    /* Better touch targets */
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .btn-outline {
+    @apply border-2 border-brand-green text-brand-green px-6 py-3 rounded-lg 
+           hover:bg-brand-beige transition-all duration-200 font-medium active:scale-95;
+    /* Better touch targets */
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .product-card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4 flex flex-col h-full;
+  }
+
+  .product-image-container {
+    @apply aspect-square w-full overflow-hidden rounded-md mb-4;
+  }
+
+  .product-image {
+    @apply w-full h-full object-cover;
+  }
+
+  .product-info {
+    @apply flex-1 flex flex-col justify-between;
+  }
+
+  .product-price-container {
+    @apply flex items-center space-x-2 mb-3;
+  }
+
+  .product-price-new {
+    @apply text-lg font-bold text-green-600;
+  }
+
+  .product-price-old {
+    @apply text-sm text-gray-500 line-through;
+  }
+
+  .quantity-controls {
+    @apply flex items-center space-x-3 border rounded-md p-1;
+  }
+
+  .card {
+    @apply bg-off-white-2 rounded-xl shadow-sm border border-gray-200 p-6 
+           hover:shadow-md transition-shadow duration-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg 
+           focus:ring-2 focus:ring-brand-green focus:border-transparent 
+           transition-all duration-200 outline-none;
+    /* Better touch targets */
+    min-height: 44px;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-brand-green/10 text-brand-green;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-red-800;
+  }
+
+  /* Responsive container */
+  .main-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-spacing {
+    @apply py-12 lg:py-16;
+  }
+
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4;
+  }
+
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-green to-brand-gold 
+           bg-clip-text text-transparent;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  /* Responsive utilities */
+  .max-h-screen-80 {
+    max-height: 80vh;
+  }
+
+  .max-h-screen-50 {
+    max-height: 50vh;
+  }
+
+  /* Device compatibility utilities */
+  .touch-optimized {
+    -webkit-touch-callout: default;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Slick Carousel Styles */
+.slick-slider {
+  @apply relative;
+}
+
+.slick-list {
+  @apply overflow-hidden;
+}
+
+.slick-track {
+  @apply flex;
+}
+
+.slick-slide {
+  @apply px-2;
+}
+
+.slick-dots {
+  @apply flex justify-center mt-6 space-x-2;
+}
+
+.slick-dots li button:before {
+  @apply text-brand-green;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-brand-beige;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-green/50 rounded-full hover:bg-brand-green;
+}
+
+/* Focus styles for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2;
+}
+
+/* Responsive images */
+img {
+  @apply max-w-full h-auto;
+}
+
+/* Prevent text selection on buttons */
+button {
+  @apply select-none;
+}
+
+/* Responsive tables */
+table {
+  @apply w-full;
+}
+
+@media (max-width: 640px) {
+  table {
+    @apply block overflow-x-auto;
+  }
+}
+
+/* Responsive video embeds */
+.video-responsive {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.video-responsive iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Device-specific adjustments */
+@media (max-width: 768px) {
+  /* Improve touch targets on mobile */
+  a, button, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, textarea, select {
+    font-size: 16px;
+  }
+  
+  /* Better spacing on mobile */
+  .container {
+    @apply px-4;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    @apply border-2 border-brand-navy;
+  }
+  
+  .btn-outline {
+    @apply border-2;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,375 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum BulkOrderStatus {
+  PENDING
+  QUOTED
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  phone         String?
+  role          UserRole  @default(CUSTOMER)
+  emailVerified Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Customer specific
+  addresses     Address[]
+  orders        Order[]
+  bulkOrders    BulkOrder[]
+  reviews       Review[]
+  wishlist      WishlistItem[]
+  cart          CartItem[]
+
+  // Vendor specific
+  vendor        Vendor?
+
+  @@map("users")
+}
+
+model Vendor {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  businessName    String
+  businessType    String
+  description     String?
+  logo            String?
+  banner          String?
+  address         String
+  city            String
+  state           String
+  pincode         String
+  phone           String
+  alternatePhone  String?
+  gstNumber       String?
+  panNumber       String?
+  bankAccount     String?
+  ifscCode        String?
+  status          VendorStatus  @default(PENDING)
+  rating          Float         @default(0)
+  totalReviews    Int           @default(0)
+  totalSales      Float         @default(0)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products        Product[]
+  orders          Order[]
+  bulkOrders      BulkOrder[]
+  reviews         Review[]
+
+  @@map("vendors")
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  slug          String    @unique
+  icon          String?
+  image         String?
+  description   String?
+  isActive      Boolean   @default(true)
+  sortOrder     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  subcategories Subcategory[]
+  products      Product[]
+
+  @@map("categories")
+}
+
+model Subcategory {
+  id          String    @id @default(cuid())
+  categoryId  String
+  name        String
+  slug        String
+  description String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products    Product[]
+
+  @@unique([categoryId, slug])
+  @@map("subcategories")
+}
+
+model Product {
+  id            String    @id @default(cuid())
+  vendorId      String
+  categoryId    String
+  subcategoryId String?
+  name          String
+  slug          String
+  description   String?
+  images        String[]  @default([])
+  unit          String    // kg, gram, liter, piece, etc.
+  variants      Json?     // Different sizes/weights
+  price         Float
+  discountPrice Float?
+  stock         Int       @default(0)
+  minOrderQty   Int       @default(1)
+  maxOrderQty   Int?
+  isOrganic     Boolean   @default(true)
+  certifications String[] @default([])
+  tags          String[]  @default([])
+  nutritionInfo Json?
+  storageInfo   String?
+  shelfLife     String?
+  harvestDate   DateTime?
+  isActive      Boolean   @default(true)
+  isFeatured    Boolean   @default(false)
+  views         Int       @default(0)
+  sales         Int       @default(0)
+  rating        Float     @default(0)
+  reviewCount   Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  category      Category      @relation(fields: [categoryId], references: [id])
+  subcategory   Subcategory?  @relation(fields: [subcategoryId], references: [id])
+  orderItems    OrderItem[]
+  bulkOrderItems BulkOrderItem[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  cartItems     CartItem[]
+
+  @@unique([vendorId, slug])
+  @@map("products")
+}
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  type      String  @default("home") // home, work, other
+  firstName String
+  lastName  String
+  phone     String
+  address   String
+  city      String
+  state     String
+  pincode   String
+  landmark  String?
+  isDefault Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders    Order[]
+
+  @@map("addresses")
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  customerId      String
+  vendorId        String
+  addressId       String
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String?       // razorpay, cod, wallet
+  razorpayOrderId String?
+  razorpayPaymentId String?
+  subtotal        Float
+  deliveryFee     Float         @default(0)
+  tax             Float         @default(0)
+  discount        Float         @default(0)
+  total           Float
+  notes           String?
+  deliveryDate    DateTime?
+  deliverySlot    String?       // morning, afternoon, evening
+  estimatedDelivery DateTime?
+  actualDelivery  DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  customer        User          @relation(fields: [customerId], references: [id])
+  vendor          Vendor        @relation(fields: [vendorId], references: [id])
+  address         Address       @relation(fields: [addressId], references: [id])
+  items           OrderItem[]
+  tracking        OrderTracking[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  unit      String
+  price     Float
+  total     Float
+
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model OrderTracking {
+  id          String   @id @default(cuid())
+  orderId     String
+  status      String
+  description String?
+  timestamp   DateTime @default(now())
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_tracking")
+}
+
+model BulkOrder {
+  id            String          @id @default(cuid())
+  customerId    String
+  vendorId      String?
+  status        BulkOrderStatus @default(PENDING)
+  title         String
+  description   String
+  requirements  Json            // detailed requirements
+  budget        Float?
+  quantity      String          // e.g., "500kg rice, 200kg wheat"
+  deliveryDate  DateTime
+  location      String
+  contactInfo   Json
+  quotedPrice   Float?
+  quotedDetails String?
+  responseDate  DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  customer      User            @relation(fields: [customerId], references: [id])
+  vendor        Vendor?         @relation(fields: [vendorId], references: [id])
+  items         BulkOrderItem[]
+
+  @@map("bulk_orders")
+}
+
+model BulkOrderItem {
+  id          String @id @default(cuid())
+  bulkOrderId String
+  productId   String?
+  productName String
+  quantity    String
+  unit        String
+  notes       String?
+
+  bulkOrder   BulkOrder @relation(fields: [bulkOrderId], references: [id], onDelete: Cascade)
+  product     Product?  @relation(fields: [productId], references: [id])
+
+  @@map("bulk_order_items")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String?
+  vendorId  String?
+  rating    Int      @db.SmallInt
+  title     String?
+  comment   String?
+  images    String[] @default([])
+  isVerified Boolean @default(false)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vendor    Vendor?  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("wishlist_items")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model Settings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
