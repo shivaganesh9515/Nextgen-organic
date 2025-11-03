@@ -6,6 +6,7 @@
   --color-organic-accent: #0d9488;
   --color-organic-background: #f0fdf4;
   --color-organic-text: #14532d;
+  --color-green-100-50: rgb(220 252 231 / 0.5);
 }
 
 /* Organic Design System */
@@ -31,15 +32,15 @@
 
 /* Shadows */
 @utility shadow-organic {
-  box-shadow: 0 10px 15px -3px var(--color-green-100/50), 0 4px 6px -4px var(--color-green-100/50);
+  box-shadow: 0 10px 15px -3px var(--color-green-100-50), 0 4px 6px -4px var(--color-green-100-50);
 }
 
 @utility shadow-organic-xl {
-  box-shadow: 0 20px 25px -5px var(--color-green-100/50), 0 8px 10px -6px var(--color-green-100/50);
+  box-shadow: 0 20px 25px -5px var(--color-green-100-50), 0 8px 10px -6px var(--color-green-100-50);
 }
 
 @utility shadow-organic-lg {
-  box-shadow: 0 10px 15px -3px var(--color-green-100/50), 0 4px 6px -4px var(--color-green-100/50);
+  box-shadow: 0 10px 15px -3px var(--color-green-100-50), 0 4px 6px -4px var(--color-green-100-50);
 }
 
 /* Cards */
