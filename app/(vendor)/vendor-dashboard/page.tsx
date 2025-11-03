@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -7,7 +8,11 @@ import {
   ShoppingCart, 
   DollarSign,
   TrendingUp,
-  Plus
+  Plus,
+  BarChart3,
+  Users,
+  Clock,
+  Star
 } from 'lucide-react';
 
 export default function VendorDashboard() {
@@ -35,7 +40,42 @@ export default function VendorDashboard() {
       title: "Rating",
       value: "4.8/5",
       description: "+0.2 from last month",
-      icon: TrendingUp,
+      icon: Star,
+    },
+  ];
+
+  // Mock data for sales chart
+  const salesData = [
+    { month: 'Jan', sales: 4000 },
+    { month: 'Feb', sales: 3000 },
+    { month: 'Mar', sales: 2000 },
+    { month: 'Apr', sales: 2780 },
+    { month: 'May', sales: 1890 },
+    { month: 'Jun', sales: 2390 },
+  ];
+
+  // Mock data for top products
+  const topProducts = [
+    {
+      id: '1',
+      name: 'Organic Apples',
+      sales: 120,
+      revenue: 358.80,
+      rating: 4.8,
+    },
+    {
+      id: '2',
+      name: 'Whole Grain Bread',
+      sales: 85,
+      revenue: 296.65,
+      rating: 4.6,
+    },
+    {
+      id: '3',
+      name: 'Free Range Eggs',
+      sales: 150,
+      revenue: 748.50,
+      rating: 4.9,
     },
   ];
 
@@ -43,7 +83,7 @@ export default function VendorDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Vendor Dashboard</h1>
-        <p className="text-gray-500">Welcome back! Here{`'`}s your store performance.</p>
+        <p className="text-gray-500">Welcome back! Here{'\''}s your store performance.</p>
       </div>
 
       {/* Stats Grid */}
@@ -64,6 +104,80 @@ export default function VendorDashboard() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Performance Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Sales Chart */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Sales Overview</CardTitle>
+            <CardDescription>
+              Your sales performance over the last 6 months
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80 flex items-center justify-center">
+              <div className="text-center">
+                <BarChart3 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">Sales chart visualization would appear here</p>
+                <p className="text-sm text-gray-400 mt-2">Integrated with Chart.js or Recharts</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Customer Insights */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Customer Insights</CardTitle>
+            <CardDescription>
+              Key metrics about your customers
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Users className="h-5 w-5 text-blue-500 mr-2" />
+                  <span>Repeat Customers</span>
+                </div>
+                <span className="font-bold">68%</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Clock className="h-5 w-5 text-green-500 mr-2" />
+                  <span>Avg. Order Value</span>
+                </div>
+                <span className="font-bold">$42.50</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Star className="h-5 w-5 text-yellow-500 mr-2" />
+                  <span>Product Rating</span>
+                </div>
+                <span className="font-bold">4.8/5</span>
+              </div>
+              <div className="pt-4">
+                <h4 className="font-medium mb-2">Top Customer Segments</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Health Conscious</span>
+                    <span>35%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Family Shoppers</span>
+                    <span>28%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Eco-Friendly</span>
+                    <span>22%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Recent Activity */}
@@ -116,30 +230,23 @@ export default function VendorDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 mr-3" />
-                <div className="flex-1">
-                  <p className="font-medium">Organic Apples</p>
-                  <p className="text-sm text-gray-500">120 sold</p>
+              {topProducts.map((product) => (
+                <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <p className="font-medium">{product.name}</p>
+                    <div className="flex items-center mt-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="text-sm text-gray-500 ml-1">{product.rating}</span>
+                      <span className="text-sm text-gray-400 mx-2">•</span>
+                      <span className="text-sm text-gray-500">{product.sales} sold</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold">${product.revenue.toFixed(2)}</p>
+                    <p className="text-sm text-gray-500">{product.sales} orders</p>
+                  </div>
                 </div>
-                <span className="text-sm font-bold">$2.99</span>
-              </div>
-              <div className="flex items-center">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 mr-3" />
-                <div className="flex-1">
-                  <p className="font-medium">Whole Grain Bread</p>
-                  <p className="text-sm text-gray-500">85 sold</p>
-                </div>
-                <span className="text-sm font-bold">$3.49</span>
-              </div>
-              <div className="flex items-center">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 mr-3" />
-                <div className="flex-1">
-                  <p className="font-medium">Free Range Eggs</p>
-                  <p className="text-sm text-gray-500">150 sold</p>
-                </div>
-                <span className="text-sm font-bold">$4.99</span>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
