@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
+import { signOut } from 'next-auth/react';
 import { 
   ShoppingCart, 
   User, 
@@ -18,13 +19,13 @@ import { useCartStore } from '@/store/cartStore';
 
 export default function OrganicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const { items } = useCartStore();
   
   const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
   };
 
   const navLinks = [

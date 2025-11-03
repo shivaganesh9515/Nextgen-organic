@@ -4,6 +4,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import OrganicHeader from '@/components/layout/OrganicHeader';
 import Footer from '@/components/layout/Footer';
+import AuthProvider from '@/components/auth/AuthProvider';
+import { SessionProvider } from 'next-auth/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,13 +22,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-col min-h-screen">
-          <OrganicHeader />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <SessionProvider>
+          <AuthProvider>
+            <div className="flex flex-col min-h-screen">
+              <OrganicHeader />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </AuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );
