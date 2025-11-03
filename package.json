@@ -55,9 +55,10 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/next": "^8.0.7",
     "@types/node": "^20.19.24",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "@types/styled-components": "^5.1.35",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",

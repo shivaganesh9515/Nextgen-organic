@@ -3,120 +3,290 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ===== ORGANIC COLOR PALETTE ===== */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Primary - Earthy Green */
+  --color-primary: #2D5016;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-light: #4A7C2C;
+  --color-primary-dark: #1A3309;
+  
+  /* Secondary - Natural Brown */
+  --color-secondary: #8B6F47;
+  --color-secondary-foreground: #FFFFFF;
+  --color-secondary-light: #B89968;
+  --color-secondary-dark: #6B5334;
+  
+  /* Accent - Fresh Leaf */
+  --color-accent: #7CB342;
+  --color-accent-foreground: #FFFFFF;
+  --color-accent-light: #9CCC65;
+  --color-accent-dark: #558B2F;
+  
+  /* Organic Neutrals */
+  --color-sand: #F5F1E8;
+  --color-cream: #FFF8E7;
+  --color-earth: #D7CCC8;
+  --color-bark: #5D4037;
+  
+  /* Background */
+  --color-background: #FAFAF8;
+  --color-foreground: #2C2C2C;
+  
+  /* Card & UI Elements */
+  --color-card: #FFFFFF;
+  --color-card-foreground: #2C2C2C;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #2C2C2C;
+  
+  /* Muted - Soft Sage */
+  --color-muted: #E8F5E9;
+  --color-muted-foreground: #558B2F;
+  
+  /* Destructive - Organic Red */
+  --color-destructive: #C62828;
+  --color-border: #E0DED8;
+  --color-input: #E8F5E9;
+  --color-ring: #7CB342;
+  
+  /* Chart Colors - Natural Palette */
+  --color-chart-1: #7CB342;
+  --color-chart-2: #8B6F47;
+  --color-chart-3: #FFA726;
+  --color-chart-4: #4CAF50;
+  --color-chart-5: #66BB6A;
+  
+  /* Organic Radius */
+  --radius: 1rem;
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  
+  /* Custom Fonts */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-organic: 'Caveat', cursive;
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
+/* ===== DARK MODE - Organic Night Theme ===== */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --color-background: #1A1A18;
+  --color-foreground: #F5F1E8;
+  --color-card: #2C2A26;
+  --color-card-foreground: #F5F1E8;
+  --color-primary: #7CB342;
+  --color-secondary: #B89968;
+  --color-muted: #2C2A26;
+  --color-border: #3F3D38;
 }
 
+/* ===== ORGANIC TYPOGRAPHY ===== */
 @layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=Caveat:wght@400;600;700&display=swap');
+  
   * {
     @apply border-border outline-ring/50;
   }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  h1 {
+    @apply text-5xl md:text-6xl lg:text-7xl;
+  }
+  
+  h2 {
+    @apply text-4xl md:text-5xl;
+  }
+  
+  h3 {
+    @apply text-3xl md:text-4xl;
+  }
+}
+
+/* ===== ORGANIC ANIMATIONS ===== */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes leaf-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes grow {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes organic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-leaf-fall {
+  animation: leaf-fall 8s linear infinite;
+}
+
+.animate-grow {
+  animation: grow 0.5s ease-out;
+}
+
+.animate-organic-pulse {
+  animation: organic-pulse 2s ease-in-out infinite;
+}
+
+/* ===== ORGANIC PATTERNS ===== */
+.organic-texture {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.leaf-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 15c0 8.28-6.72 15-15 15s-15-6.72-15-15S6.72 0 15 0s15 6.72 15 15z' fill='%237CB342' fill-opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.organic-gradient {
+  background: linear-gradient(135deg, #7CB342 0%, #558B2F 100%);
+}
+
+.earth-gradient {
+  background: linear-gradient(135deg, #8B6F47 0%, #5D4037 100%);
+}
+
+.cream-gradient {
+  background: linear-gradient(135deg, #FFF8E7 0%, #F5F1E8 100%);
+}
+
+/* ===== ORGANIC UI ELEMENTS ===== */
+.organic-card {
+  @apply bg-card rounded-xl border border-border shadow-sm;
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(124, 179, 66, 0.05) 0%, transparent 50%);
+}
+
+.organic-card:hover {
+  @apply shadow-lg border-primary/20;
+  transform: translateY(-4px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.organic-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  color: #2D5016;
+  box-shadow: 0 2px 4px rgba(124, 179, 66, 0.1);
+}
+
+.organic-badge-premium {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFE082 100%);
+  color: #6B5334;
+  box-shadow: 0 2px 4px rgba(124, 179, 66, 0.1);
+}
+
+/* ===== ORGANIC BUTTONS ===== */
+.btn-organic {
+  @apply px-6 py-3 rounded-xl font-semibold text-white;
+  background: linear-gradient(135deg, #7CB342 0%, #558B2F 100%);
+  box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-organic:hover {
+  box-shadow: 0 6px 20px rgba(124, 179, 66, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-organic:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3);
+}
+
+.btn-earth {
+  @apply px-6 py-3 rounded-xl font-semibold text-white;
+  background: linear-gradient(135deg, #8B6F47 0%, #5D4037 100%);
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-earth:hover {
+  box-shadow: 0 6px 20px rgba(139, 111, 71, 0.4);
+}
+
+/* ===== ORGANIC INPUTS ===== */
+.input-organic {
+  @apply w-full px-4 py-3 rounded-xl border-2 border-border bg-background;
+  transition: all 0.3s ease;
+}
+
+.input-organic:focus {
+  @apply border-primary outline-none ring-4 ring-primary/20;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F1E8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7CB342 0%, #558B2F 100%);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #558B2F 0%, #2D5016 100%);
+}
+
+/* ===== ORGANIC SHADOWS ===== */
+.shadow-organic {
+  box-shadow: 
+    0 4px 6px -1px rgba(45, 80, 22, 0.1),
+    0 2px 4px -1px rgba(45, 80, 22, 0.06);
+}
+
+.shadow-organic-lg {
+  box-shadow: 
+    0 10px 15px -3px rgba(45, 80, 22, 0.1),
+    0 4px 6px -2px rgba(45, 80, 22, 0.05);
+}
+
+.shadow-organic-xl {
+  box-shadow: 
+    0 20px 25px -5px rgba(45, 80, 22, 0.1),
+    0 10px 10px -5px rgba(45, 80, 22, 0.04);
+}
+
+/* ===== SELECTION STYLES ===== */
+::selection {
+  background-color: #7CB342;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #7CB342;
+  color: white;
 }

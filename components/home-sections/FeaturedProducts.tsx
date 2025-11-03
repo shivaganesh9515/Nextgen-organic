@@ -1,7 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import Link from 'next/link';
 
 export default function FeaturedProducts() {
@@ -46,65 +45,72 @@ export default function FeaturedProducts() {
   ];
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-16 bg-gradient-to-b from-white to-bg-cream">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">Featured Products</h2>
-          <Button variant="outline" asChild>
-            <Link href="/products">View All Products</Link>
-          </Button>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+          <div>
+            <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
+            <p className="text-gray-600">Our most popular organic products</p>
+          </div>
+          <button className="mt-4 md:mt-0 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold shadow-organic hover:shadow-organic-lg transition-all hover:-translate-y-1">
+            View All Products
+          </button>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
-            <Card key={product.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="p-4">
-                <div className="relative">
-                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48" />
-                  {product.discount && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      {product.discount}% OFF
-                    </div>
-                  )}
+            <div 
+              key={product.id} 
+              className="group relative bg-white rounded-3xl overflow-hidden shadow-organic hover:shadow-organic-xl transition-all duration-500 transform hover:-translate-y-2"
+            >
+              <div className="relative h-48 bg-gradient-to-br from-green-100 to-emerald-100 overflow-hidden">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-6xl">🍎</span>
                 </div>
-              </CardHeader>
-              <CardContent className="p-4">
-                <CardTitle className="text-lg">{product.name}</CardTitle>
-                <CardDescription className="mt-2">{product.description}</CardDescription>
-                <div className="flex items-center mt-2">
-                  <div className="flex text-yellow-400">
+                {product.discount && (
+                  <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    {product.discount}% OFF
+                  </div>
+                )}
+              </div>
+              <div className="p-6 space-y-4">
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
+                  {product.name}
+                </h3>
+                <p className="text-gray-600 text-sm">{product.description}</p>
+                <div className="flex items-center space-x-2">
+                  <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
-                        className={`w-4 h-4 fill-current ${
-                          i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'
-                        }`}
-                        viewBox="0 0 24 24"
+                        className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        viewBox="0 0 20 20"
                       >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
                   </div>
-                  <span className="text-sm text-gray-500 ml-2">({product.rating})</span>
+                  <span className="text-sm font-semibold text-gray-700">{product.rating}</span>
                 </div>
-                <div className="mt-2 flex items-center">
-                  <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
+                <div className="flex items-baseline space-x-3">
+                  <span className="text-2xl font-bold text-green-600">${product.price.toFixed(2)}</span>
                   {product.originalPrice && (
-                    <span className="text-sm text-gray-500 line-through ml-2">
-                      ${product.originalPrice.toFixed(2)}
-                    </span>
+                    <span className="text-lg text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
                   )}
                 </div>
-              </CardContent>
-              <CardFooter className="p-4 pt-0 flex justify-between">
-                <Button variant="outline" size="sm">
-                  Add to Cart
-                </Button>
-                <Button size="sm" asChild>
-                  <Link href={`/products/${product.id}`}>View Details</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold text-sm shadow-organic hover:shadow-organic-lg transition-all hover:-translate-y-1">
+                    Add
+                  </button>
+                  <button className="px-4 py-2 bg-white text-green-700 rounded-xl font-bold text-sm shadow-organic hover:shadow-organic-lg transition-all border-2 border-green-200 hover:border-green-400 hover:-translate-y-1">
+                    View
+                  </button>
+                </div>
+              </div>
+              <div className="absolute bottom-4 right-4 text-2xl opacity-10 pointer-events-none">
+                🌿
+              </div>
+            </div>
           ))}
         </div>
       </div>
