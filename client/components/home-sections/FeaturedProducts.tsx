@@ -2,115 +2,241 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Star, ShoppingCart, Heart, Leaf } from 'lucide-react';
+import { useCartStore } from '@/store/cartStore';
 
 export default function FeaturedProducts() {
-  // Mock data for featured products
+  const { addItem } = useCartStore();
+
+  // Indian featured products
   const featuredProducts = [
     {
       id: 1,
-      name: 'Organic Apples',
-      price: 2.99,
-      originalPrice: 3.99,
-      discount: 25,
-      image: '/placeholder.svg',
-      description: 'Fresh organic apples from local farms',
-      rating: 4.8,
+      name: 'Organic Aam (Mango)',
+      price: 250,
+      originalPrice: 299,
+      discount: 16,
+      image: '',
+      description: 'Premium Alphonso mangoes from Ratnagiri, Maharashtra',
+      rating: 4.9,
+      reviewCount: 892,
+      unit: '1kg',
+      vendor: 'Nature\'s Best',
     },
     {
       id: 2,
-      name: 'Whole Grain Bread',
-      price: 3.49,
-      image: '/placeholder.svg',
-      description: 'Freshly baked whole grain bread',
-      rating: 4.6,
+      name: 'Desi Ghee',
+      price: 800,
+      originalPrice: 850,
+      discount: 6,
+      image: '',
+      description: 'Pure cow ghee, traditional bilona method',
+      rating: 4.9,
+      reviewCount: 1245,
+      unit: '500g',
+      vendor: 'Farm Fresh Direct',
     },
     {
       id: 3,
-      name: 'Free Range Eggs',
-      price: 4.99,
-      originalPrice: 5.99,
-      discount: 17,
-      image: '/placeholder.svg',
-      description: 'Farm fresh free range eggs',
-      rating: 4.9,
+      name: 'Organic Basmati Rice',
+      price: 220,
+      originalPrice: 250,
+      discount: 12,
+      image: '',
+      description: 'Premium Dehradun basmati, aged 1 year',
+      rating: 4.8,
+      reviewCount: 567,
+      unit: '1kg',
+      vendor: 'Organic Harvest',
     },
     {
       id: 4,
-      name: 'Greek Yogurt',
-      price: 1.99,
-      image: '/placeholder.svg',
-      description: 'Creamy Greek yogurt, 100% natural',
+      name: 'Fresh Palak (Spinach)',
+      price: 40,
+      originalPrice: 45,
+      discount: 11,
+      image: '',
+      description: 'Organic spinach, freshly harvested',
       rating: 4.7,
+      reviewCount: 445,
+      unit: '500g',
+      vendor: 'Green Valley Farm',
+    },
+    {
+      id: 5,
+      name: 'Turmeric Powder (Haldi)',
+      price: 110,
+      originalPrice: 120,
+      discount: 8,
+      image: '',
+      description: 'Pure organic turmeric, Erode sourced',
+      rating: 4.9,
+      reviewCount: 1023,
+      unit: '250g',
+      vendor: 'Nature\'s Best',
+    },
+    {
+      id: 6,
+      name: 'Organic Paneer',
+      price: 250,
+      originalPrice: 280,
+      discount: 11,
+      image: '',
+      description: 'Fresh homemade paneer, made daily',
+      rating: 4.8,
+      reviewCount: 634,
+      unit: '500g',
+      vendor: 'Farm Fresh Direct',
+    },
+    {
+      id: 7,
+      name: 'Sarson Ka Tel (Mustard Oil)',
+      price: 165,
+      originalPrice: 180,
+      discount: 8,
+      image: '',
+      description: 'Cold-pressed mustard oil, Kachhi Ghani',
+      rating: 4.7,
+      reviewCount: 723,
+      unit: '1 liter',
+      vendor: 'Organic Harvest',
+    },
+    {
+      id: 8,
+      name: 'Organic Full Cream Milk',
+      price: 60,
+      originalPrice: 65,
+      discount: 8,
+      image: '',
+      description: 'Farm fresh organic milk, daily delivery',
+      rating: 4.8,
+      reviewCount: 1456,
+      unit: '1 liter',
+      vendor: 'Green Valley Farm',
     },
   ];
 
+  const handleAddToCart = (product: typeof featuredProducts[0]) => {
+    addItem({
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      image: product.image || '/placeholder.svg',
+      vendorId: product.vendor || 'vendor1',
+    });
+  };
+
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-bg-cream">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-nature-pattern relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#87a96b]/10 to-transparent rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-[#8b6f47]/10 to-transparent rounded-full blur-3xl"></div>
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center mb-12">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
-            <p className="text-gray-600">Our most popular organic products</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-3 text-gradient-organic">
+              Featured Organic Products
+            </h2>
+            <p className="text-[#5a5a5a] text-lg">Handpicked natural goodness from trusted Indian farms</p>
           </div>
-          <button className="mt-4 md:mt-0 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold shadow-organic hover:shadow-organic-lg transition-all hover:-translate-y-1">
-            View All Products
-          </button>
+          <Button 
+            variant="organic" 
+            size="lg"
+            className="mt-4 md:mt-0"
+            asChild
+          >
+            <Link href="/products">
+              <Leaf className="w-5 h-5 mr-2" />
+              View All Products
+            </Link>
+          </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
-            <div 
-              key={product.id} 
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-organic hover:shadow-organic-xl transition-all duration-500 transform hover:-translate-y-2"
+            <Card
+              key={product.id}
+              className="group relative overflow-hidden card-organic border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2"
             >
-              <div className="relative h-48 bg-gradient-to-br from-green-100 to-emerald-100 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-6xl">🍎</span>
+              {/* Discount Badge */}
+              {product.discount && (
+                <Badge className="absolute top-4 right-4 z-10 bg-gradient-to-r from-[#c17767] to-[#d48777] text-white animate-gentle-pulse">
+                  -{product.discount}%
+                </Badge>
+              )}
+
+              {/* Wishlist Button */}
+              <button
+                className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm p-2.5 rounded-full hover:bg-[#e8f5e9] transition-all opacity-0 group-hover:opacity-100 border border-[#d4c4a8]/30"
+                aria-label="Add to wishlist"
+              >
+                <Heart className="w-5 h-5 text-[#4a7c59] hover:text-[#c17767]" />
+              </button>
+
+              {/* Product Image */}
+              <div className="relative h-48 bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+                {/* Organic Badge */}
+                <div className="absolute bottom-2 left-2">
+                  <Badge className="badge-organic text-xs">
+                    <Leaf className="w-3 h-3 mr-1 inline" />
+                    Organic
+                  </Badge>
                 </div>
-                {product.discount && (
-                  <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    {product.discount}% OFF
-                  </div>
-                )}
               </div>
-              <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
+
+              <CardContent className="p-6">
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-3">
+                  <Star className="w-4 h-4 fill-[#fbbf24] text-[#fbbf24]" />
+                  <span className="text-sm font-semibold text-[#2d5016]">{product.rating}</span>
+                  <span className="text-xs text-[#8b8b8b]">({product.reviewCount})</span>
+                </div>
+
+                {/* Product Name */}
+                <h3 className="text-lg font-bold text-[#2d5016] mb-2 group-hover:text-[#4a7c59] transition-colors line-clamp-1 min-h-[2.5rem]">
                   {product.name}
                 </h3>
-                <p className="text-gray-600 text-sm">{product.description}</p>
-                <div className="flex items-center space-x-2">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
+
+                {/* Description */}
+                <p className="text-sm text-[#5a5a5a] mb-3 line-clamp-2 min-h-[2.5rem]">
+                  {product.description}
+                </p>
+
+                {/* Unit */}
+                <p className="text-xs text-[#8b8b8b] mb-3">{product.unit}</p>
+
+                {/* Vendor */}
+                <p className="text-xs text-[#5a5a5a] mb-4">by {product.vendor}</p>
+
+                {/* Price */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-[#4a7c59]">₹{product.price}</span>
+                    {product.originalPrice && (
+                      <span className="text-sm text-[#8b8b8b] line-through">₹{product.originalPrice}</span>
+                    )}
                   </div>
-                  <span className="text-sm font-semibold text-gray-700">{product.rating}</span>
                 </div>
-                <div className="flex items-baseline space-x-3">
-                  <span className="text-2xl font-bold text-green-600">${product.price.toFixed(2)}</span>
-                  {product.originalPrice && (
-                    <span className="text-lg text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
-                  )}
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="organic"
+                    className="flex-1"
+                    size="sm"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Add to Cart
+                  </Button>
                 </div>
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold text-sm shadow-organic hover:shadow-organic-lg transition-all hover:-translate-y-1">
-                    Add
-                  </button>
-                  <button className="px-4 py-2 bg-white text-green-700 rounded-xl font-bold text-sm shadow-organic hover:shadow-organic-lg transition-all border-2 border-green-200 hover:border-green-400 hover:-translate-y-1">
-                    View
-                  </button>
-                </div>
-              </div>
-              <div className="absolute bottom-4 right-4 text-2xl opacity-10 pointer-events-none">
-                🌿
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

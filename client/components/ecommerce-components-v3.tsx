@@ -25,7 +25,7 @@ import {
   MapPin, Award, ShoppingBag, Heart, Share2, Truck, Shield,
   RotateCcw, AlertCircle, Minus, Plus, Trash2, X, CheckCircle,
   Filter, Grid, List, Menu, Bell, LogOut, Phone, Mail, ArrowRight,
-  Sprout, ChevronDown, Eye, EyeOff, Lock, User, Zap, Leaf
+  Sprout, ChevronDown, Eye, EyeOff, Lock, User, Zap, Leaf, ShoppingCart, Package
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { useCartStore } from '@/store/cartStore';
 
 // ============================================
 // TYPES & INTERFACES
@@ -624,122 +625,124 @@ const ProductCard: React.FC = () => {
 // ============================================
 
 export const ShoppingCartPage: React.FC = () => {
-  const [cartItems] = useState<CartItem[]>([
-    {
-      product: {
-        id: '1',
-        name: 'Organic Tomatoes',
-        price: 249,
-        originalPrice: 399,
-        image: 'https://via.placeholder.com/100x100?text=Tomatoes',
-        rating: 4.8,
-        reviewCount: 142,
-        category: 'Vegetables',
-        vendor: {
-          id: 'v1',
-          name: 'Fresh Farms',
-          rating: 4.9,
-          verified: true
-        },
-        description: 'Fresh organic tomatoes',
-        stock: 100,
-        certifications: ['India Organic']
-      },
-      quantity: 2
-    },
-    {
-      product: {
-        id: '2',
-        name: 'Organic Milk',
-        price: 199,
-        originalPrice: 299,
-        image: 'https://via.placeholder.com/100x100?text=Milk',
-        rating: 4.7,
-        reviewCount: 89,
-        category: 'Dairy',
-        vendor: {
-          id: 'v2',
-          name: 'Dairy Organics',
-          rating: 4.8,
-          verified: true
-        },
-        description: 'Fresh organic milk',
-        stock: 100,
-        certifications: ['FSSAI']
-      },
-      quantity: 1
-    }
-  ]);
+  const { items, updateQuantity, removeItem, getTotalPrice } = useCartStore();
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
-  const discount = cartItems.reduce(
-    (acc, item) =>
-      acc +
-      (item.product.originalPrice ? item.product.originalPrice - item.product.price : 0) *
-        item.quantity,
-    0
-  );
+  const handleDecreaseQuantity = (itemId: string, currentQuantity: number) => {
+    if (currentQuantity <= 1) {
+      removeItem(itemId);
+    } else {
+      updateQuantity(itemId, currentQuantity - 1);
+    }
+  };
+
+  const handleIncreaseQuantity = (itemId: string, currentQuantity: number) => {
+    updateQuantity(itemId, currentQuantity + 1);
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    removeItem(itemId);
+  };
+
+  const totalPrice = getTotalPrice();
+  const discount = 0; // Can be calculated if needed
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-nature-pattern py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
-
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gradient-organic">
+            Your Organic Cart
+          </h1>
+          <p className="text-[#5a5a5a] text-lg">Fresh, natural products handpicked for you</p>
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            {cartItems.length === 0 ? (
-              <Card>
-                <CardContent className="pt-12 text-center pb-12">
-                  <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-xl text-gray-600">Your cart is empty</p>
-                  <Link href="/products">
-                    <Button className="mt-6 bg-green-600 hover:bg-green-700">
-                      Continue Shopping
-                    </Button>
-                  </Link>
+          <div className="lg:col-span-2">
+            {items.length === 0 ? (
+              <Card className="card-organic border-2 border-[#d4c4a8]">
+                <CardContent className="py-16 text-center">
+                  <div className="mb-6">
+                    <ShoppingCart className="w-20 h-20 mx-auto text-[#87a96b] animate-gentle-pulse" />
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-3 text-[#2d5016]">Your cart is empty</h3>
+                  <p className="text-[#5a5a5a] mb-8 text-lg">Start adding organic goodness to your cart!</p>
+                  <Button variant="organic" size="lg" asChild>
+                    <Link href="/products">
+                      <Leaf className="w-5 h-5 mr-2" />
+                      Browse Organic Products
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             ) : (
-              cartItems.map((item) => (
-                <Card key={item.product.id} className="overflow-hidden">
-                  <CardContent className="pt-6">
+              items.map((item) => (
+                <Card key={item.id} className="card-organic mb-4 overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300">
+                  <CardContent className="p-6">
                     <div className="flex gap-6">
-                      {/* Image */}
-                      <div className="w-24 h-24 flex-shrink-0 rounded-lg bg-gray-100" />
+                      {/* Product Image */}
+                      <div className="w-28 h-28 bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] rounded-2xl flex-shrink-0 overflow-hidden border-2 border-[#d4c4a8]/30">
+                        {item.image ? (
+                          <img 
+                            src={item.image} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[#87a96b]">
+                            <Package className="w-10 h-10" />
+                          </div>
+                        )}
+                      </div>
 
-                      {/* Details */}
+                      {/* Product Details */}
                       <div className="flex-1">
-                        <h3 className="font-bold text-gray-900 mb-1">{item.product.name}</h3>
-                        <p className="text-sm text-gray-600 mb-3">{item.product.vendor.name}</p>
-                        <div className="flex items-center gap-4">
-                          <span className="font-bold text-lg text-green-600">
-                            ₹{item.product.price * item.quantity}
-                          </span>
-                          {item.product.originalPrice && (
-                            <span className="text-gray-500 line-through text-sm">
-                              ₹{item.product.originalPrice * item.quantity}
+                        <h3 className="font-semibold text-xl mb-2 text-[#2d5016]">{item.name}</h3>
+                        <div className="flex items-center gap-3 mb-4">
+                                                         <p className="text-[#4a7c59] font-bold text-2xl">
+                                   ₹{item.price.toFixed(2)}
+                                 </p>
+                          <span className="badge-organic">Organic</span>
+                        </div>
+
+                        {/* Quantity & Remove */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center border-2 border-[#d4c4a8] rounded-xl bg-[#faf9f6] overflow-hidden">
+                            <button 
+                              className="p-2 hover:bg-[#e8f5e9] transition-colors text-[#4a7c59] font-semibold"
+                              onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus className="w-5 h-5" />
+                            </button>
+                            <span className="px-4 font-semibold min-w-[3rem] text-center text-[#2d5016] bg-white py-2">
+                              {item.quantity}
                             </span>
-                          )}
+                            <button 
+                              className="p-2 hover:bg-[#e8f5e9] transition-colors text-[#4a7c59] font-semibold"
+                              onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
+                              aria-label="Increase quantity"
+                            >
+                              <Plus className="w-5 h-5" />
+                            </button>
+                          </div>
+                          <button 
+                            className="text-[#c17767] hover:text-[#b06858] font-semibold flex items-center gap-2 transition-colors hover:bg-[#f5f1e8] px-4 py-2 rounded-xl"
+                            onClick={() => handleRemoveItem(item.id)}
+                          >
+                            <Trash2 className="w-5 h-5" />
+                            <span className="hidden sm:inline">Remove</span>
+                          </button>
                         </div>
                       </div>
 
-                      {/* Quantity & Remove */}
-                      <div className="flex flex-col items-end gap-3">
-                        <div className="flex items-center border border-gray-300 rounded-lg">
-                          <button className="p-1 hover:bg-gray-100" aria-label="Decrease quantity">
-                            <Minus className="w-4 h-4" />
-                          </button>
-                          <span className="px-3 font-semibold">{item.quantity}</span>
-                          <button className="p-1 hover:bg-gray-100" aria-label="Increase quantity">
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <button className="text-red-600 hover:text-red-700 font-semibold flex items-center gap-1">
-                          <Trash2 className="w-4 h-4" />
-                          Remove
-                        </button>
-                      </div>
+                                                   {/* Total Price */}
+                             <div className="text-right flex flex-col justify-between">
+                               <p className="font-bold text-2xl text-[#2d5016]">
+                                 ₹{(item.price * item.quantity).toFixed(2)}
+                               </p>
+                               <span className="text-xs text-[#87a96b] font-medium">Total</span>
+                             </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -749,44 +752,44 @@ export const ShoppingCartPage: React.FC = () => {
 
           {/* Order Summary */}
           <div>
-            <Card className="sticky top-8">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+            <Card className="sticky top-8 card-organic border-2 border-[#d4c4a8]">
+              <CardHeader className="bg-gradient-to-br from-[#e8f5e9] to-white rounded-t-2xl border-b border-[#d4c4a8]/30">
+                <CardTitle className="flex items-center gap-2">
+                  <Leaf className="w-5 h-5 text-[#4a7c59]" />
+                  Order Summary
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between text-gray-700">
-                  <span>Subtotal:</span>
-                  <span className="font-semibold">₹{totalPrice + discount}</span>
-                </div>
-                <div className="flex justify-between text-green-600">
-                  <span>Discount:</span>
-                  <span className="font-semibold">-₹{discount}</span>
-                </div>
-                <div className="flex justify-between text-gray-700">
-                  <span>Delivery Fee:</span>
-                  <span className="font-semibold text-green-600">FREE</span>
-                </div>
-
-                <Separator />
-
-                <div className="flex justify-between text-xl font-bold text-gray-900">
-                  <span>Total:</span>
-                  <span>₹{totalPrice}</span>
-                </div>
-
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold h-12">
-                  Proceed to Checkout
+              <CardContent className="space-y-4 pt-6">
+                                       <div className="flex justify-between text-[#5a5a5a]">
+                         <span>Subtotal</span>
+                         <span className="font-semibold text-[#2d5016]">₹{totalPrice.toFixed(2)}</span>
+                       </div>
+                       {discount > 0 && (
+                         <div className="flex justify-between text-[#4a7c59]">
+                           <span>Discount</span>
+                           <span className="font-semibold">-₹{discount.toFixed(2)}</span>
+                         </div>
+                       )}
+                       <div className="flex justify-between text-[#5a5a5a]">
+                         <span>Shipping</span>
+                         <span className="font-semibold text-[#4a7c59]">Free</span>
+                       </div>
+                       <div className="divider-organic my-4"></div>
+                       <div className="flex justify-between text-xl font-bold text-[#2d5016]">
+                         <span>Total</span>
+                         <span className="text-[#4a7c59]">₹{(totalPrice - discount).toFixed(2)}</span>
+                       </div>
+                <Button className="w-full mt-6" variant="organic" size="lg" asChild>
+                  <Link href="/checkout">
+                    <Sprout className="w-5 h-5 mr-2" />
+                    Proceed to Checkout
+                  </Link>
                 </Button>
-
                 <Link href="/products">
-                  <Button variant="outline" className="w-full font-semibold h-11">
+                  <Button variant="outline" className="w-full" size="lg">
                     Continue Shopping
                   </Button>
                 </Link>
-
-                <p className="text-xs text-gray-600 text-center mt-4">
-                  Free delivery on orders above ₹500. Safe and secure checkout.
-                </p>
               </CardContent>
             </Card>
           </div>

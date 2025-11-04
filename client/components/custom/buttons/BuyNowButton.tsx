@@ -7,7 +7,8 @@ interface BuyNowButtonProps extends React.ComponentProps<typeof Button> {
 export default function BuyNowButton({ children = 'Buy Now', ...props }: BuyNowButtonProps) {
   return (
     <Button 
-      className="bg-orange-500 hover:bg-orange-600 text-white" 
+      variant="buy-now"
+      className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 font-bold" 
       {...props}
     >
       {children}

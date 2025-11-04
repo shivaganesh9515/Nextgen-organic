@@ -105,10 +105,10 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button variant="secondary" size="lg" asChild>
-              <Link href="/register">Sign Up as Customer</Link>
+              <Link href="/auth/register">Sign Up as Customer</Link>
             </Button>
             <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-green-600" asChild>
-              <Link href="/vendor-register">Register as Vendor</Link>
+              <Link href="/auth/vendor-register">Register as Vendor</Link>
             </Button>
           </div>
         </div>

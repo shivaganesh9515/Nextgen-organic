@@ -236,12 +236,12 @@ export const Navbar: React.FC<{
               </DropdownMenu>
             ) : (
               <div className="flex gap-2">
-                <Link href="/login">
+                <Link href="/auth/login">
                   <Button variant="outline" size="sm">
                     Login
                   </Button>
                 </Link>
-                <Link href="/register">
+                <Link href="/auth/register">
                   <Button size="sm" className="bg-green-600 hover:bg-green-700">
                     Sign Up
                   </Button>

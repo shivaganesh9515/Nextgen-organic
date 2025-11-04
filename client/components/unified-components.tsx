@@ -331,8 +331,8 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="font-semibold mb-4">For Vendors</h4>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li><a href="/vendor/register" className="hover:text-white transition">Become a Vendor</a></li>
-              <li><a href="/vendor/login" className="hover:text-white transition">Vendor Login</a></li>
+              <li><a href="/auth/vendor-register" className="hover:text-white transition">Become a Vendor</a></li>
+              <li><a href="/auth/login" className="hover:text-white transition">Vendor Login</a></li>
               <li><a href="/faq" className="hover:text-white transition">FAQ</a></li>
             </ul>
           </div>

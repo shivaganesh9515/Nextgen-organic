@@ -10,7 +10,8 @@ import {
   CheckCircle,
   User,
   Mail,
-  Lock
+  Lock,
+  Sprout
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,15 +22,23 @@ import Link from 'next/link';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setError('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,215 +46,226 @@ export default function RegisterPage() {
     setError('');
     setSuccess(false);
 
-    // Basic validation
-    if (password !== confirmPassword) {
+    // Validation
+    if (!formData.name || !formData.email || !formData.password) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    if (password.length < 6) {
+    if (formData.password.length < 6) {
       setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // API call to register user
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
       
-      // In a real app, you would make an API call to register the user
       setSuccess(true);
       
       // Redirect to login page after successful registration
       setTimeout(() => {
         router.push('/auth/login');
       }, 2000);
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred. Please try again.');
       console.error('Registration error:', err);
     } finally {
       setLoading(false);
     }
   };
 
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-nature-pattern py-12 px-4">
+        <Card className="max-w-md w-full card-organic shadow-2xl border-2 border-[#d4c4a8]">
+          <CardContent className="pt-6 text-center">
+            <CheckCircle className="w-16 h-16 text-[#4a7c59] mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2 text-[#2d5016]">Registration Successful!</h2>
+            <p className="text-[#5a5a5a] mb-4">
+              Your account has been created successfully. You can now sign in.
+            </p>
+            <p className="text-sm text-[#8b8b8b]">Redirecting to login...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-            DailyPick
-          </h1>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Or{' '}
-            <Link href="/auth/login" className="font-medium text-green-600 hover:text-green-500">
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Register</CardTitle>
-            <CardDescription>
-              Create a new account to get started
-            </CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-nature-pattern py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <Card className="shadow-2xl border-0 card-organic">
+          <CardHeader className="space-y-1 text-center">
+            <div className="mx-auto mb-4">
+              <Sprout className="w-12 h-12 text-[#4a7c59] mx-auto" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-[#2d5016]">Create Account</CardTitle>
+            <CardDescription className="text-[#5a5a5a]">Sign up to start your organic journey</CardDescription>
           </CardHeader>
+          
           <CardContent>
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+            {error && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-              {success && (
-                <Alert className="border-green-200 bg-green-50">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-800">
-                    Account created successfully! Redirecting to login...
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              <div>
-                <Label htmlFor="name">Full Name</Label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-[#2d5016]">Full Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8b8b8b] w-5 h-5" />
                   <Input
                     id="name"
                     name="name"
                     type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="appearance-none rounded-md shadow-sm pl-10"
                     placeholder="John Doe"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="pl-10 input-organic"
+                    disabled={loading}
                   />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="email">Email address</Label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-[#2d5016]">Email Address</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8b8b8b] w-5 h-5" />
                   <Input
                     id="email"
                     name="email"
                     type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none rounded-md shadow-sm pl-10"
                     placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="pl-10 input-organic"
+                    disabled={loading}
                   />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-[#2d5016]">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8b8b8b] w-5 h-5" />
                   <Input
                     id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none rounded-md shadow-sm pl-10 pr-10"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="pl-10 pr-10 input-organic"
+                    disabled={loading}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#8b8b8b] hover:text-[#4a7c59]"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Password must be at least 6 characters
-                </p>
               </div>
 
-              <div>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-[#2d5016]">Confirm Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8b8b8b] w-5 h-5" />
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="appearance-none rounded-md shadow-sm pl-10 pr-10"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    className="pl-10 pr-10 input-organic"
+                    disabled={loading}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#8b8b8b] hover:text-[#4a7c59]"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <div>
-                <Button
-                  type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
-                    </>
-                  ) : (
-                    'Create Account'
-                  )}
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                variant="organic"
+                className="w-full"
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <Sprout className="w-4 h-4 mr-2" />
+                    Create Account
+                  </>
+                )}
+              </Button>
             </form>
           </CardContent>
-          <CardFooter>
-            <div className="text-sm text-gray-600">
-              By creating an account, you agree to our{' '}
-              <Link href="/terms" className="font-medium text-green-600 hover:text-green-500">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="font-medium text-green-600 hover:text-green-500">
-                Privacy Policy
+          
+          <CardFooter className="flex flex-col space-y-4">
+            <p className="text-center text-sm text-[#5a5a5a]">
+              Already have an account?{' '}
+              <Link href="/auth/login" className="font-medium text-[#4a7c59] hover:text-[#2d5016]">
+                Sign in
               </Link>
-              .
-            </div>
+            </p>
+            <p className="text-center text-sm text-[#5a5a5a]">
+              Want to sell with us?{' '}
+              <Link href="/auth/vendor-register" className="font-medium text-[#4a7c59] hover:text-[#2d5016]">
+                Apply as Vendor
+              </Link>
+            </p>
           </CardFooter>
         </Card>
       </div>

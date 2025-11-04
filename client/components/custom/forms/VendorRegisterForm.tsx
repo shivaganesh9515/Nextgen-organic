@@ -147,7 +147,7 @@ export default function VendorRegisterForm({ onRegister, loading }: VendorRegist
       </div>
       
       <div className="text-sm text-center">
-        <Link href="/login" className="font-medium text-green-600 hover:text-green-500">
+        <Link href="/auth/login" className="font-medium text-green-600 hover:text-green-500">
           Already have an account? Sign in
         </Link>
       </div>

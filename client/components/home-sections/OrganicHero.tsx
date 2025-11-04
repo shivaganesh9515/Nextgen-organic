@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowRight, Leaf, Sprout, ShoppingBag, CheckCircle, Star } from 'lucide-react';
+import Link from 'next/link';
 
 export default function OrganicHero() {
   const [scrollY, setScrollY] = useState(0);
@@ -18,16 +22,17 @@ export default function OrganicHero() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-lime-50">
+    <div className="relative min-h-screen overflow-hidden bg-nature-pattern">
       {/* Animated Background Leaves */}
       {leaves.map((leaf, i) => (
         <div
           key={i}
-          className="absolute text-6xl opacity-20"
+          className="absolute text-6xl opacity-10"
           style={{
             left: leaf.left,
-            animation: `leaf-fall 8s linear infinite`,
+            animation: `float 8s ease-in-out infinite`,
             animationDelay: leaf.delay,
+            transform: `translateY(${scrollY * 0.5}px)`,
           }}
         >
           🍃
@@ -40,76 +45,66 @@ export default function OrganicHero() {
         backgroundSize: '60px 60px',
       }} />
 
+      {/* Decorative Blur Circles */}
+      <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-[#87a96b]/20 to-transparent rounded-full blur-3xl"></div>
+      <div className="absolute bottom-10 right-20 w-96 h-96 bg-gradient-to-tr from-[#8b6f47]/20 to-transparent rounded-full blur-3xl"></div>
+
       {/* Hero Content */}
       <div className="relative z-10 container mx-auto px-4 pt-32 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div 
-            className="space-y-8 animate-grow"
-            style={{ transform: `translateY(${scrollY * 0.2}px)` }}
-          >
-            {/* Organic Badge */}
-            <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-organic">
-              <span className="text-2xl">🌱</span>
-              <span className="text-sm font-semibold text-green-800">100% Organic & Fresh</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content - Text */}
+          <div className="text-center lg:text-left space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#e8f5e9] to-[#c8e6c9] border border-[#a5d6a7] text-[#2d5016] font-semibold">
+              <Sprout className="w-4 h-4" />
+              Premium Organic Marketplace
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-emerald-600">
-                Farm Fresh
-              </span>
-              <span className="block text-green-900 mt-2">
-                Organic Groceries
-              </span>
-              <span className="block text-amber-600 text-5xl mt-2" style={{ fontFamily: 'Caveat, cursive' }}>
-                to Your Doorstep
-              </span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <span className="text-gradient-organic">Fresh Organic</span>
+              <br />
+              <span className="text-[#2d5016]">Products Delivered</span>
+              <br />
+              <span className="text-[#4a7c59]">to Your Doorstep</span>
             </h1>
 
             {/* Description */}
-            <p className="text-xl text-gray-700 leading-relaxed max-w-xl">
-              Experience the goodness of nature with our handpicked organic products. 
-              Fresh from local farms, delivered with love. 🍅🥕🥬
+            <p className="text-xl md:text-2xl text-[#5a5a5a] leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              Discover premium quality organic products from certified farms. Fresh, natural, and delivered with care.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <button className="group relative px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl font-bold text-lg shadow-organic-lg hover:shadow-organic-xl transition-all duration-300 hover:-translate-y-1">
-                <span className="relative z-10 flex items-center">
-                  Shop Now
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-green-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-
-              <button className="px-8 py-4 bg-white text-green-700 rounded-2xl font-bold text-lg shadow-organic hover:shadow-organic-lg transition-all duration-300 border-2 border-green-200 hover:border-green-400 hover:-translate-y-1">
-                View Products
-              </button>
+            {/* Features */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto lg:mx-0">
+              <div className="flex items-center gap-2 justify-center lg:justify-start">
+                <CheckCircle className="w-5 h-5 text-[#4a7c59]" />
+                <span className="text-[#2d5016] font-medium">100% Certified</span>
+              </div>
+              <div className="flex items-center gap-2 justify-center lg:justify-start">
+                <CheckCircle className="w-5 h-5 text-[#4a7c59]" />
+                <span className="text-[#2d5016] font-medium">Fresh Daily</span>
+              </div>
+              <div className="flex items-center gap-2 justify-center lg:justify-start">
+                <CheckCircle className="w-5 h-5 text-[#4a7c59]" />
+                <span className="text-[#2d5016] font-medium">Free Delivery</span>
+              </div>
             </div>
 
-            {/* Trust Badges */}
-            <div className="flex flex-wrap gap-6 pt-8">
-              <div className="flex items-center space-x-2">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">✓</span>
-                </div>
-                <div>
-                  <p className="font-semibold text-green-900">Certified Organic</p>
-                  <p className="text-sm text-gray-600">100% Natural</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🚚</span>
-                </div>
-                <div>
-                  <p className="font-semibold text-green-900">Same Day Delivery</p>
-                  <p className="text-sm text-gray-600">Within 24 hours</p>
-                </div>
-              </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Button variant="organic" size="lg" className="text-lg px-8 py-6" asChild>
+                <Link href="/products">
+                  <ShoppingBag className="w-5 h-5 mr-2" />
+                  Shop Organic Products
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-2 border-[#8b6f47] text-[#8b6f47] hover:bg-[#f5f1e8]" asChild>
+                <Link href="/vendors">
+                  <Leaf className="w-5 h-5 mr-2" />
+                  Explore Vendors
+                </Link>
+              </Button>
             </div>
           </div>
 
@@ -118,74 +113,49 @@ export default function OrganicHero() {
             {/* Main Image Container */}
             <div className="relative">
               {/* Decorative Circles */}
-              <div className="absolute -top-10 -right-10 w-72 h-72 bg-green-200 rounded-full opacity-30 blur-3xl" />
-              <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-amber-200 rounded-full opacity-30 blur-3xl" />
+              <div className="absolute -top-10 -right-10 w-72 h-72 bg-gradient-to-br from-[#87a96b]/30 to-transparent rounded-full blur-3xl" />
+              <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-gradient-to-tr from-[#8b6f47]/30 to-transparent rounded-full blur-3xl" />
               
               {/* Product Showcase */}
-              <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-organic-xl">
+              <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-organic-xl border-2 border-[#d4c4a8]/50">
                 {/* Placeholder for Product Image */}
-                <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center">
+                <div className="aspect-square bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] rounded-2xl flex items-center justify-center border-2 border-[#d4c4a8]/30">
                   <div className="text-center space-y-4">
                     <div className="text-8xl">🥗</div>
-                    <p className="text-2xl font-bold text-green-900">Fresh Organic Basket</p>
+                    <p className="text-2xl font-bold text-[#2d5016]">Fresh Organic Basket</p>
                     <div className="flex items-center justify-center space-x-2">
-                      <span className="text-3xl font-bold text-green-600">₹299</span>
-                      <span className="text-xl text-gray-500 line-through">₹450</span>
+                      <span className="text-3xl font-bold text-[#4a7c59]">$29.99</span>
+                      <span className="text-xl text-[#8b8b8b] line-through">$45.00</span>
                     </div>
-                    <div className="inline-flex items-center bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">
+                    <div className="inline-flex items-center bg-gradient-to-r from-[#c17767] to-[#d48777] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
                       34% OFF
                     </div>
                   </div>
                 </div>
 
                 {/* Floating Rating Card */}
-                <div className="absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-organic-lg">
+                <div className="absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-organic-lg border-2 border-[#d4c4a8]/50">
                   <div className="flex items-center space-x-2">
-                    <span className="text-3xl">⭐</span>
+                    <Star className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />
                     <div>
-                      <p className="text-2xl font-bold text-green-900">4.8</p>
-                      <p className="text-xs text-gray-600">2.5k+ reviews</p>
+                      <p className="font-bold text-[#2d5016]">4.9</p>
+                      <p className="text-xs text-[#8b8b8b]">500+ Reviews</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Floating Stock Card */}
-                <div className="absolute -bottom-6 -left-6 bg-green-600 text-white rounded-2xl p-4 shadow-organic-lg">
-                  <p className="text-sm font-semibold">🔥 Trending</p>
-                  <p className="text-xs opacity-90">500+ sold today</p>
+                {/* Organic Badge */}
+                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                  <div className="badge-organic px-6 py-2">
+                    <Leaf className="w-4 h-4 mr-2 inline" />
+                    Certified Organic
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 text-6xl animate-float" style={{ animationDelay: '1s' }}>🌿</div>
-            <div className="absolute bottom-20 left-0 text-5xl animate-float" style={{ animationDelay: '0.5s' }}>🍊</div>
           </div>
         </div>
       </div>
-
-      {/* Bottom Wave */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white" />
-        </svg>
-      </div>
-
-      <style jsx>{`
-        @keyframes leaf-fall {
-          0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-          50% { opacity: 1; }
-          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        @keyframes grow {
-          0% { transform: scale(0.9); opacity: 0; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }

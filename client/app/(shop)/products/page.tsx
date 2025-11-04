@@ -1,12 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/store/cartStore';
 import Link from 'next/link';
+import { ShoppingCart, Star, Leaf, Search, Filter } from 'lucide-react';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -15,115 +19,103 @@ interface Product {
   discountedPrice: number;
   discount: number;
   category: string;
+  categorySlug: string;
   rating: number;
   reviewCount: number;
   image: string;
+  vendor?: string;
+  unit?: string;
 }
 
+// Indian products data
+const indianProducts: Product[] = [
+  // Fresh Vegetables (156 products - sample)
+  { id: 'v1', name: 'Organic Bhindi (Okra)', price: 60, discountedPrice: 55, discount: 8, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.7, reviewCount: 234, image: '', unit: '500g', vendor: 'Green Valley Farm' },
+  { id: 'v2', name: 'Baingan (Eggplant)', price: 50, discountedPrice: 45, discount: 10, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.6, reviewCount: 189, image: '', unit: '1kg', vendor: 'Organic Harvest' },
+  { id: 'v3', name: 'Shimla Mirch (Bell Pepper)', price: 80, discountedPrice: 75, discount: 6, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.8, reviewCount: 312, image: '', unit: '500g', vendor: 'Farm Fresh Direct' },
+  { id: 'v4', name: 'Aloo (Potato)', price: 35, discountedPrice: 30, discount: 14, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.5, reviewCount: 456, image: '', unit: '1kg', vendor: 'Nature\'s Best' },
+  { id: 'v5', name: 'Pyaz (Onion)', price: 40, discountedPrice: 35, discount: 12, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.6, reviewCount: 389, image: '', unit: '1kg', vendor: 'Green Valley Farm' },
+  { id: 'v6', name: 'Tamatar (Tomato)', price: 55, discountedPrice: 50, discount: 9, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.7, reviewCount: 523, image: '', unit: '1kg', vendor: 'Organic Harvest' },
+  { id: 'v7', name: 'Gajar (Carrot)', price: 70, discountedPrice: 65, discount: 7, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.8, reviewCount: 298, image: '', unit: '1kg', vendor: 'Farm Fresh Direct' },
+  { id: 'v8', name: 'Dhaniya (Coriander Leaves)', price: 20, discountedPrice: 18, discount: 10, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.9, reviewCount: 167, image: '', unit: '100g', vendor: 'Nature\'s Best' },
+  { id: 'v9', name: 'Palak (Spinach)', price: 45, discountedPrice: 40, discount: 11, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.7, reviewCount: 445, image: '', unit: '500g', vendor: 'Green Valley Farm' },
+  { id: 'v10', name: 'Lauki (Bottle Gourd)', price: 40, discountedPrice: 35, discount: 12, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.5, reviewCount: 234, image: '', unit: '1kg', vendor: 'Organic Harvest' },
+  { id: 'v11', name: 'Tinda (Apple Gourd)', price: 50, discountedPrice: 45, discount: 10, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.6, reviewCount: 156, image: '', unit: '500g', vendor: 'Farm Fresh Direct' },
+  { id: 'v12', name: 'Karela (Bitter Gourd)', price: 60, discountedPrice: 55, discount: 8, category: 'Fresh Vegetables', categorySlug: 'fresh-vegetables', rating: 4.4, reviewCount: 198, image: '', unit: '500g', vendor: 'Nature\'s Best' },
+  
+  // Organic Fruits (124 products - sample)
+  { id: 'f1', name: 'Desi Kela (Banana)', price: 50, discountedPrice: 45, discount: 10, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.8, reviewCount: 678, image: '', unit: '1 dozen', vendor: 'Green Valley Farm' },
+  { id: 'f2', name: 'Seb (Apple)', price: 180, discountedPrice: 160, discount: 11, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.7, reviewCount: 523, image: '', unit: '1kg', vendor: 'Organic Harvest' },
+  { id: 'f3', name: 'Santra (Orange)', price: 120, discountedPrice: 110, discount: 8, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.6, reviewCount: 412, image: '', unit: '1kg', vendor: 'Farm Fresh Direct' },
+  { id: 'f4', name: 'Aam (Mango)', price: 250, discountedPrice: 220, discount: 12, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.9, reviewCount: 892, image: '', unit: '1kg', vendor: 'Nature\'s Best' },
+  { id: 'f5', name: 'Angur (Grapes)', price: 150, discountedPrice: 135, discount: 10, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.7, reviewCount: 367, image: '', unit: '500g', vendor: 'Green Valley Farm' },
+  { id: 'f6', name: 'Papita (Papaya)', price: 80, discountedPrice: 70, discount: 12, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.5, reviewCount: 289, image: '', unit: '1 piece', vendor: 'Organic Harvest' },
+  { id: 'f7', name: 'Ananas (Pineapple)', price: 100, discountedPrice: 90, discount: 10, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.6, reviewCount: 234, image: '', unit: '1 piece', vendor: 'Farm Fresh Direct' },
+  { id: 'f8', name: 'Chikoo (Sapota)', price: 120, discountedPrice: 110, discount: 8, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.7, reviewCount: 178, image: '', unit: '1kg', vendor: 'Nature\'s Best' },
+  { id: 'f9', name: 'Jamun (Black Plum)', price: 200, discountedPrice: 180, discount: 10, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.8, reviewCount: 145, image: '', unit: '1kg', vendor: 'Green Valley Farm' },
+  { id: 'f10', name: 'Amla (Indian Gooseberry)', price: 150, discountedPrice: 135, discount: 10, category: 'Organic Fruits', categorySlug: 'organic-fruits', rating: 4.9, reviewCount: 267, image: '', unit: '500g', vendor: 'Organic Harvest' },
+  
+  // Dairy Products (89 products - sample)
+  { id: 'd1', name: 'Organic Full Cream Milk', price: 65, discountedPrice: 60, discount: 8, category: 'Dairy Products', categorySlug: 'dairy-products', rating: 4.8, reviewCount: 1245, image: '', unit: '1 liter', vendor: 'Farm Fresh Direct' },
+  { id: 'd2', name: 'Desi Ghee', price: 850, discountedPrice: 800, discount: 6, category: 'Dairy Products', categorySlug: 'dairy-products', rating: 4.9, reviewCount: 892, image: '', unit: '500g', vendor: 'Nature\'s Best' },
+  { id: 'd3', name: 'Organic Paneer', price: 280, discountedPrice: 250, discount: 11, category: 'Dairy Products', categorySlug: 'dairy-products', rating: 4.7, reviewCount: 567, image: '', unit: '500g', vendor: 'Green Valley Farm' },
+  { id: 'd4', name: 'Organic Curd', price: 55, discountedPrice: 50, discount: 9, category: 'Dairy Products', categorySlug: 'dairy-products', rating: 4.6, reviewCount: 723, image: '', unit: '500g', vendor: 'Organic Harvest' },
+  { id: 'd5', name: 'Butter', price: 450, discountedPrice: 420, discount: 7, category: 'Dairy Products', categorySlug: 'dairy-products', rating: 4.8, reviewCount: 434, image: '', unit: '500g', vendor: 'Farm Fresh Direct' },
+  
+  // Fresh Herbs (45 products - sample)
+  { id: 'h1', name: 'Tulsi (Holy Basil)', price: 50, discountedPrice: 45, discount: 10, category: 'Fresh Herbs', categorySlug: 'fresh-herbs', rating: 4.9, reviewCount: 234, image: '', unit: '100g', vendor: 'Nature\'s Best' },
+  { id: 'h2', name: 'Mint Leaves (Pudina)', price: 30, discountedPrice: 25, discount: 17, category: 'Fresh Herbs', categorySlug: 'fresh-herbs', rating: 4.8, reviewCount: 456, image: '', unit: '100g', vendor: 'Green Valley Farm' },
+  { id: 'h3', name: 'Curry Leaves (Kadi Patta)', price: 20, discountedPrice: 18, discount: 10, category: 'Fresh Herbs', categorySlug: 'fresh-herbs', rating: 4.7, reviewCount: 389, image: '', unit: '100g', vendor: 'Organic Harvest' },
+  
+  // Bakery Items (67 products - sample)
+  { id: 'b1', name: 'Organic Whole Wheat Roti', price: 120, discountedPrice: 110, discount: 8, category: 'Bakery Items', categorySlug: 'bakery-items', rating: 4.6, reviewCount: 523, image: '', unit: '10 pieces', vendor: 'Farm Fresh Direct' },
+  { id: 'b2', name: 'Brown Bread', price: 55, discountedPrice: 50, discount: 9, category: 'Bakery Items', categorySlug: 'bakery-items', rating: 4.7, reviewCount: 678, image: '', unit: '400g', vendor: 'Nature\'s Best' },
+  { id: 'b3', name: 'Organic Paratha', price: 180, discountedPrice: 160, discount: 11, category: 'Bakery Items', categorySlug: 'bakery-items', rating: 4.8, reviewCount: 445, image: '', unit: '6 pieces', vendor: 'Green Valley Farm' },
+  
+  // Spices & Oils (92 products - sample)
+  { id: 's1', name: 'Turmeric Powder (Haldi)', price: 120, discountedPrice: 110, discount: 8, category: 'Spices & Oils', categorySlug: 'spices-oils', rating: 4.9, reviewCount: 892, image: '', unit: '250g', vendor: 'Organic Harvest' },
+  { id: 's2', name: 'Cumin Seeds (Jeera)', price: 150, discountedPrice: 135, discount: 10, category: 'Spices & Oils', categorySlug: 'spices-oils', rating: 4.8, reviewCount: 567, image: '', unit: '250g', vendor: 'Farm Fresh Direct' },
+  { id: 's3', name: 'Mustard Oil (Sarson Ka Tel)', price: 180, discountedPrice: 165, discount: 8, category: 'Spices & Oils', categorySlug: 'spices-oils', rating: 4.7, reviewCount: 723, image: '', unit: '1 liter', vendor: 'Nature\'s Best' },
+  { id: 's4', name: 'Red Chili Powder (Lal Mirch)', price: 100, discountedPrice: 90, discount: 10, category: 'Spices & Oils', categorySlug: 'spices-oils', rating: 4.6, reviewCount: 634, image: '', unit: '250g', vendor: 'Green Valley Farm' },
+];
+
 export default function ProductsPage() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>(categoryParam || 'all');
   const [sortOption, setSortOption] = useState('popular');
+
   const { addItem } = useCartStore();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        // In a real app, you would fetch from your API
-        // const response = await fetch('/api/products');
-        // const data = await response.json();
-        // setProducts(data.data);
-        
-        // Mock data for now
-        const mockProducts: Product[] = [
-          {
-            id: '1',
-            name: 'Organic Apples',
-            price: 2.99,
-            discountedPrice: 2.69,
-            discount: 10,
-            category: 'Fruits',
-            rating: 4.8,
-            reviewCount: 24,
-            image: '/placeholder.svg',
-          },
-          {
-            id: '2',
-            name: 'Whole Grain Bread',
-            price: 3.49,
-            discountedPrice: 3.49,
-            discount: 0,
-            category: 'Bakery',
-            rating: 4.6,
-            reviewCount: 18,
-            image: '/placeholder.svg',
-          },
-          {
-            id: '3',
-            name: 'Free Range Eggs',
-            price: 4.99,
-            discountedPrice: 4.99,
-            discount: 0,
-            category: 'Dairy',
-            rating: 4.9,
-            reviewCount: 32,
-            image: '/placeholder.svg',
-          },
-          {
-            id: '4',
-            name: 'Greek Yogurt',
-            price: 1.99,
-            discountedPrice: 1.79,
-            discount: 10,
-            category: 'Dairy',
-            rating: 4.7,
-            reviewCount: 15,
-            image: '/placeholder.svg',
-          },
-          {
-            id: '5',
-            name: 'Fresh Spinach',
-            price: 2.49,
-            discountedPrice: 2.49,
-            discount: 0,
-            category: 'Vegetables',
-            rating: 4.5,
-            reviewCount: 12,
-            image: '/placeholder.svg',
-          },
-          {
-            id: '6',
-            name: 'Organic Bananas',
-            price: 1.99,
-            discountedPrice: 1.79,
-            discount: 10,
-            category: 'Fruits',
-            rating: 4.6,
-            reviewCount: 20,
-            image: '/placeholder.svg',
-          },
-        ];
-        
-        setProducts(mockProducts);
-        setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch products:', error);
-        setLoading(false);
-      }
+      setLoading(true);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setProducts(indianProducts);
+      setLoading(false);
     };
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    if (categoryParam) {
+      setCategoryFilter(categoryParam);
+    }
+  }, [categoryParam]);
 
   const handleAddToCart = (product: Product) => {
     addItem({
       id: product.id,
       name: product.name,
       price: product.discountedPrice,
-      image: product.image,
-      vendorId: 'vendor1',
+      image: product.image || '/placeholder.svg',
+      vendorId: product.vendor || 'vendor1',
     });
   };
 
@@ -131,58 +123,82 @@ export default function ProductsPage() {
   const filteredProducts = products
     .filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
+      const matchesCategory = categoryFilter === 'all' || product.categorySlug === categoryFilter || product.category === categoryFilter;
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
       if (sortOption === 'price-low') return a.discountedPrice - b.discountedPrice;
       if (sortOption === 'price-high') return b.discountedPrice - a.discountedPrice;
       if (sortOption === 'rating') return b.rating - a.rating;
-      return 0; // Default sort by popularity
+      return 0;
     });
 
   // Get unique categories
-  const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
+  const categories = [
+    { value: 'all', label: 'All Products' },
+    { value: 'fresh-vegetables', label: 'Fresh Vegetables' },
+    { value: 'organic-fruits', label: 'Organic Fruits' },
+    { value: 'dairy-products', label: 'Dairy Products' },
+    { value: 'fresh-herbs', label: 'Fresh Herbs' },
+    { value: 'bakery-items', label: 'Bakery Items' },
+    { value: 'spices-oils', label: 'Spices & Oils' },
+  ];
+
+  const currentCategory = categories.find(cat => cat.value === categoryFilter);
 
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading products...</div>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="spinner-organic w-12 h-12 mx-auto mb-4"></div>
+            <p className="text-[#5a5a5a]">Loading products...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">All Products</h1>
-        
-        {/* Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1">
+    <div className="min-h-screen bg-nature-pattern py-8 px-4">
+      <div className="container mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gradient-organic">
+            {currentCategory?.label || 'All Products'}
+          </h1>
+          <p className="text-[#5a5a5a] text-lg">
+            {filteredProducts.length} products available
+          </p>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-white/50 backdrop-blur-sm rounded-2xl p-4 border border-[#d4c4a8]/30">
+          <div className="flex items-center gap-4 flex-1">
+            <Search className="w-5 h-5 text-[#8b8b8b]" />
             <Input
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 max-w-md input-organic"
             />
           </div>
-          <div className="w-full md:w-48">
+          <div className="flex items-center gap-4">
+            <Filter className="w-5 h-5 text-[#8b8b8b]" />
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger>
+              <SelectTrigger className="w-48 input-organic">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category === 'all' ? 'All Categories' : category}
+                {categories.map((cat) => (
+                  <SelectItem key={cat.value} value={cat.value}>
+                    {cat.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="w-full md:w-48">
             <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger>
+              <SelectTrigger className="w-48 input-organic">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -194,79 +210,87 @@ export default function ProductsPage() {
             </Select>
           </div>
         </div>
-      </div>
 
-      {/* Products Grid */}
-      {filteredProducts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-xl">No products found matching your criteria.</p>
-          <Button 
-            variant="outline" 
-            className="mt-4"
-            onClick={() => {
-              setSearchTerm('');
-              setCategoryFilter('all');
-            }}
-          >
-            Clear Filters
-          </Button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <Card key={product.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="p-4">
-                <div className="relative">
-                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48" />
+        {/* Products Grid */}
+        {filteredProducts.length === 0 ? (
+          <Card className="card-organic border-2 border-[#d4c4a8]">
+            <CardContent className="py-16 text-center">
+              <p className="text-xl text-[#5a5a5a] mb-4">No products found</p>
+              <p className="text-[#8b8b8b]">Try adjusting your filters</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <Card
+                key={product.id}
+                className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2"
+              >
+                {/* Product Image */}
+                <div className="relative h-48 bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
                   {product.discount > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      {product.discount}% OFF
-                    </div>
+                    <Badge className="absolute top-3 right-3 bg-gradient-to-r from-[#c17767] to-[#d48777] text-white">
+                      -{product.discount}%
+                    </Badge>
                   )}
-                </div>
-              </CardHeader>
-              <CardContent className="p-4">
-                <CardTitle className="text-lg">{product.name}</CardTitle>
-                <CardDescription className="mt-2">{product.category}</CardDescription>
-                <div className="flex items-center mt-2">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`w-4 h-4 fill-current ${
-                          i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'
-                        }`}
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    ))}
+                  <div className="absolute bottom-2 left-2">
+                    <Badge className="badge-organic text-xs">
+                      <Leaf className="w-3 h-3 mr-1 inline" />
+                      Organic
+                    </Badge>
                   </div>
-                  <span className="text-sm text-gray-500 ml-2">({product.reviewCount})</span>
                 </div>
-                <div className="mt-2 flex items-center">
-                  <span className="text-lg font-bold">
-                    ${product.discountedPrice.toFixed(2)}
-                  </span>
-                  {product.discount > 0 && (
-                    <span className="text-sm text-gray-500 line-through ml-2">
-                      ${product.price.toFixed(2)}
-                    </span>
+
+                <CardContent className="p-6">
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 mb-3">
+                    <Star className="w-4 h-4 fill-[#fbbf24] text-[#fbbf24]" />
+                    <span className="text-sm font-semibold text-[#2d5016]">{product.rating}</span>
+                    <span className="text-xs text-[#8b8b8b]">({product.reviewCount})</span>
+                  </div>
+
+                  {/* Product Name */}
+                  <h3 className="text-lg font-bold text-[#2d5016] mb-2 group-hover:text-[#4a7c59] transition-colors line-clamp-2 min-h-[3rem]">
+                    {product.name}
+                  </h3>
+
+                  {/* Unit */}
+                  {product.unit && (
+                    <p className="text-xs text-[#8b8b8b] mb-3">{product.unit}</p>
                   )}
-                </div>
-              </CardContent>
-              <CardFooter className="p-4 pt-0 flex justify-between">
-                <Button variant="outline" size="sm" onClick={() => handleAddToCart(product)}>
-                  Add to Cart
-                </Button>
-                <Button size="sm" asChild>
-                  <Link href={`/products/${product.id}`}>View Details</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      )}
+
+                  {/* Vendor */}
+                  {product.vendor && (
+                    <p className="text-xs text-[#5a5a5a] mb-3">by {product.vendor}</p>
+                  )}
+
+                  {/* Price */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-[#4a7c59]">₹{product.discountedPrice}</span>
+                      {product.discount > 0 && (
+                        <span className="text-sm text-[#8b8b8b] line-through">₹{product.price}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <Button
+                    variant="organic"
+                    className="w-full"
+                    size="sm"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Add to Cart
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

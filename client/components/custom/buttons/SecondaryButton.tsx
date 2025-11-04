@@ -8,7 +8,7 @@ export default function SecondaryButton({ children, ...props }: SecondaryButtonP
   return (
     <Button 
       variant="outline"
-      className="border-green-600 text-green-600 hover:bg-green-50" 
+      className="border-2 border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 hover:border-green-700 shadow-sm transition-all duration-300" 
       {...props}
     >
       {children}

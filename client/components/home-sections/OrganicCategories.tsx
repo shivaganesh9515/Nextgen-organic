@@ -1,230 +1,134 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, TrendingUp } from 'lucide-react';
 
 export default function OrganicCategories() {
   const [activeCategory, setActiveCategory] = useState(0);
 
   const categories = [
     {
-      id: 1,
+      id: 'fresh-vegetables',
       name: 'Fresh Vegetables',
       icon: '🥬',
-      color: 'from-green-400 to-emerald-500',
-      bgColor: 'bg-green-50',
+      slug: 'fresh-vegetables',
+      color: 'from-[#4a7c59] to-[#87a96b]',
+      bgColor: 'bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9]',
       count: 156,
       trending: true,
     },
     {
-      id: 2,
+      id: 'organic-fruits',
       name: 'Organic Fruits',
       icon: '🍎',
-      color: 'from-red-400 to-rose-500',
-      bgColor: 'bg-red-50',
+      slug: 'organic-fruits',
+      color: 'from-[#c17767] to-[#d48777]',
+      bgColor: 'bg-gradient-to-br from-[#ffe0db] to-[#ffd4cc]',
       count: 124,
       trending: true,
     },
     {
-      id: 3,
+      id: 'dairy-products',
       name: 'Dairy Products',
       icon: '🥛',
-      color: 'from-blue-400 to-cyan-500',
-      bgColor: 'bg-blue-50',
+      slug: 'dairy-products',
+      color: 'from-[#5a9d6e] to-[#6ab882]',
+      bgColor: 'bg-gradient-to-br from-[#e3f2fd] to-[#bbdefb]',
       count: 89,
       trending: false,
     },
     {
-      id: 4,
+      id: 'fresh-herbs',
       name: 'Fresh Herbs',
       icon: '🌿',
-      color: 'from-lime-400 to-green-500',
-      bgColor: 'bg-lime-50',
+      slug: 'fresh-herbs',
+      color: 'from-[#87a96b] to-[#9bc280]',
+      bgColor: 'bg-gradient-to-br from-[#f1f8e9] to-[#dcedc8]',
       count: 45,
       trending: false,
     },
     {
-      id: 5,
+      id: 'bakery-items',
       name: 'Bakery Items',
       icon: '🍞',
-      color: 'from-amber-400 to-orange-500',
-      bgColor: 'bg-amber-50',
+      slug: 'bakery-items',
+      color: 'from-[#8b6f47] to-[#a68b5b]',
+      bgColor: 'bg-gradient-to-br from-[#fff8e1] to-[#ffecb3]',
       count: 67,
       trending: false,
     },
     {
-      id: 6,
+      id: 'spices-oils',
       name: 'Spices & Oils',
       icon: '🌶️',
-      color: 'from-yellow-400 to-amber-500',
-      bgColor: 'bg-yellow-50',
+      slug: 'spices-oils',
+      color: 'from-[#f59e0b] to-[#fbbf24]',
+      bgColor: 'bg-gradient-to-br from-[#fffbf0] to-[#ffe7cc]',
       count: 92,
       trending: true,
     },
   ];
 
   return (
-    <div className="py-20 bg-gradient-to-b from-white via-green-50/30 to-white">
+    <div className="py-20 bg-nature-pattern relative overflow-hidden">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-16 space-y-4">
-          <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-            🌱 Explore Our Range
-          </span>
-          <h2 className="text-5xl font-bold text-gray-900">
-            Shop by{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600">
-              Category
-            </span>
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-3 text-gradient-organic">
+            Browse by Category
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Fresh, organic products handpicked from local farms to your kitchen
+          <p className="text-[#5a5a5a] text-lg max-w-2xl mx-auto">
+            Explore our wide range of organic products organized by category
           </p>
         </div>
 
-        {/* Categories Grid - Modern Design */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-16">
-          {categories.map((category, index) => (
-            <div
-              key={category.id}
-              className={`group relative cursor-pointer transition-all duration-300 ${
-                activeCategory === index ? 'scale-105' : 'hover:scale-105'
-              }`}
-              onClick={() => setActiveCategory(index)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  setActiveCategory(index);
-                }
-              }}
-            >
-              {/* Category Card */}
-              <div className={`relative ${category.bgColor} rounded-3xl p-6 h-48 flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden`}>
-                {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                
-                {/* Trending Badge */}
-                {category.trending && (
-                  <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
-                    🔥 Hot
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categories.map((category) => (
+            <Link key={category.id} href={`/products?category=${category.slug}`}>
+              <Card className="card-organic group cursor-pointer border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 h-full">
+                <CardHeader className="p-6 pb-4">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-16 h-16 ${category.bgColor} rounded-2xl flex items-center justify-center text-4xl border-2 border-[#d4c4a8]/30 group-hover:scale-110 transition-transform duration-300`}>
+                      {category.icon}
+                    </div>
+                    {category.trending && (
+                      <div className="flex items-center gap-1 bg-gradient-to-r from-[#c17767] to-[#d48777] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        <TrendingUp className="w-3 h-3" />
+                        Trending
+                      </div>
+                    )}
                   </div>
-                )}
-
-                {/* Icon */}
-                <div className="text-6xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
-                  {category.icon}
-                </div>
-
-                {/* Category Name */}
-                <h3 className="text-sm font-bold text-gray-900 text-center mb-2">
-                  {category.name}
-                </h3>
-
-                {/* Product Count */}
-                <span className="text-xs text-gray-500 font-semibold">
-                  {category.count} Products
-                </span>
-
-                {/* Hover Effect - Arrow */}
-                <div className="absolute bottom-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-
-                {/* Decorative Leaf */}
-                <div className="absolute -bottom-2 -right-2 text-4xl opacity-5 group-hover:opacity-10 transition-opacity">
-                  🍃
-                </div>
-              </div>
-
-              {/* Active Indicator */}
-              {activeCategory === index && (
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full" />
-              )}
-            </div>
+                  <CardTitle className="text-2xl font-bold text-[#2d5016] mb-2 group-hover:text-[#4a7c59] transition-colors">
+                    {category.name}
+                  </CardTitle>
+                  <p className="text-[#8b8b8b] text-sm">{category.count} products available</p>
+                </CardHeader>
+                <CardContent className="p-6 pt-0">
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-2 border-[#8b6f47] text-[#8b6f47] hover:bg-[#f5f1e8] hover:border-[#4a7c59] hover:text-[#4a7c59] group-hover:translate-x-1 transition-all"
+                    asChild
+                  >
+                    <div className="flex items-center justify-center">
+                      Browse Products
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
-        {/* Featured Category Banner */}
-        <div className="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 15c0 8.28-6.72 15-15 15s-15-6.72-15-15S6.72 0 15 0s15 6.72 15 15z' fill='white' fill-opacity='1'/%3E%3C/svg%3E")`,
-              backgroundSize: '60px 60px',
-            }} />
-          </div>
-
-          <div className="relative grid md:grid-cols-2 gap-8 p-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-6 text-white">
-              <span className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold">
-                🎉 Special Offer
-              </span>
-              <h3 className="text-4xl font-bold leading-tight">
-                Get 30% OFF on<br />
-                First Order
-              </h3>
-              <p className="text-green-50 text-lg">
-                Use code <span className="font-bold bg-white/20 px-3 py-1 rounded-lg">ORGANIC30</span> at checkout
-              </p>
-              <div className="flex gap-4">
-                <button className="px-6 py-3 bg-white text-green-600 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                  Shop Now
-                </button>
-                <button className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl font-bold border-2 border-white/30 hover:bg-white/30 transition-all">
-                  Learn More
-                </button>
-              </div>
-            </div>
-
-            {/* Right Content - Floating Products */}
-            <div className="relative h-64 hidden md:block">
-              <div className="absolute top-0 right-20 animate-float">
-                <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-6xl shadow-xl">
-                  🥕
-                </div>
-              </div>
-              <div className="absolute top-20 right-0 animate-float" style={{ animationDelay: '0.5s' }}>
-                <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-5xl shadow-xl">
-                  🍅
-                </div>
-              </div>
-              <div className="absolute bottom-0 right-32 animate-float" style={{ animationDelay: '1s' }}>
-                <div className="w-28 h-28 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-5xl shadow-xl">
-                  🥬
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Why Choose Us */}
-        <div className="grid md:grid-cols-4 gap-6 mt-16">
-          {[
-            { icon: '✓', title: '100% Organic', desc: 'Certified fresh products' },
-            { icon: '🚚', title: 'Fast Delivery', desc: 'Within 24 hours' },
-            { icon: '💰', title: 'Best Prices', desc: 'Competitive rates' },
-            { icon: '🎁', title: 'Easy Returns', desc: '7-day return policy' },
-          ].map((feature, i) => (
-            <div key={i} className="text-center p-6 bg-white rounded-2xl shadow-organic hover:shadow-organic-lg transition-all hover:-translate-y-1">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                {feature.icon}
-              </div>
-              <h4 className="font-bold text-gray-900 mb-2">{feature.title}</h4>
-              <p className="text-sm text-gray-600">{feature.desc}</p>
-            </div>
-          ))}
+        <div className="text-center mt-12">
+          <Button variant="organic" size="lg" asChild>
+            <Link href="/products">
+              View All Products
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+          </Button>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }

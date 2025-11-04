@@ -35,10 +35,10 @@ export default function TopBar() {
           <CartIcon />
           <div className="hidden md:flex items-center space-x-2">
             <Button variant="outline" asChild>
-              <Link href="/login">Login</Link>
+              <Link href="/auth/login">Login</Link>
             </Button>
             <Button asChild>
-              <Link href="/register">Sign Up</Link>
+              <Link href="/auth/register">Sign Up</Link>
             </Button>
           </div>
         </div>

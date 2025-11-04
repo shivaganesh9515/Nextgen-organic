@@ -4,6 +4,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { JWT } from 'next-auth/jwt';
 
 interface CustomUser extends User {
+  id?: string;
   role?: string;
 }
 
