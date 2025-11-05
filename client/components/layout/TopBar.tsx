@@ -13,7 +13,7 @@ export default function TopBar() {
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center">
           <Link href="/" className="text-xl font-bold text-green-600 mr-8">
-            DailyPick
+            Nextgen Organics
           </Link>
           <div className="hidden md:flex items-center">
             <div className="relative">

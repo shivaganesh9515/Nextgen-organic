@@ -35,7 +35,7 @@ export default function WhyChooseUs() {
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Why Choose DailyPick</h2>
+          <h2 className="text-3xl font-bold mb-4">Why Choose Nextgen Organics</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             We{`'`}re committed to providing the best organic grocery experience with quality, sustainability, and convenience
           </p>
@@ -43,12 +43,12 @@ export default function WhyChooseUs() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center p-6 rounded-2xl hover:bg-green-50 transition-all">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div key={index} className="text-center p-6 rounded-2xl hover:bg-green-50 transition-all h-full flex flex-col">
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 flex-shrink-0">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 flex-grow">
                 {feature.description}
               </p>
             </div>

@@ -32,7 +32,7 @@ export default function Sidebar() {
         <div className="flex flex-col flex-grow pt-5 bg-white overflow-y-auto border-r border-gray-200">
           <div className="flex items-center justify-between px-4">
             <Link href="/" className="text-2xl font-bold text-green-600">
-              DailyPick
+              Nextgen Organics
             </Link>
           </div>
           <div className="mt-5 flex-grow flex flex-col">

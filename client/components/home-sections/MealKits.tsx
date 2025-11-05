@@ -512,7 +512,7 @@ export default function MealKits({ showAll = false }: MealKitsProps) {
           {mealKits.map((kit) => (
             <Card
               key={kit.id}
-              className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2"
+              className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 h-full flex flex-col"
             >
               {/* Discount Badge */}
               {kit.discount && (
@@ -539,7 +539,7 @@ export default function MealKits({ showAll = false }: MealKitsProps) {
                 )}
               </div>
 
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-grow">
                 {/* Rating */}
                 <div className="flex items-center gap-1 mb-3">
                   <Star className="w-4 h-4 fill-[#fbbf24] text-[#fbbf24]" />
@@ -553,7 +553,7 @@ export default function MealKits({ showAll = false }: MealKitsProps) {
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-[#5a5a5a] mb-4 line-clamp-2 min-h-[2.5rem]">
+                <p className="text-sm text-[#5a5a5a] mb-4 line-clamp-2 flex-grow">
                   {kit.description}
                 </p>
 
@@ -576,7 +576,7 @@ export default function MealKits({ showAll = false }: MealKitsProps) {
                 </div>
 
                 {/* Ingredients Preview */}
-                <div className="mb-4">
+                <div className="mb-4 flex-grow">
                   <p className="text-xs text-[#8b8b8b] mb-2">Includes:</p>
                   <p className="text-xs text-[#5a5a5a] line-clamp-2">
                     {kit.ingredients.slice(0, 3).join(', ')}...
@@ -594,15 +594,17 @@ export default function MealKits({ showAll = false }: MealKitsProps) {
                 </div>
 
                 {/* Actions */}
-                <Button
-                  variant="organic"
-                  className="w-full"
-                  size="sm"
-                  onClick={() => handleAddToCart(kit)}
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Add to Cart
-                </Button>
+                <div className="mt-auto">
+                  <Button
+                    variant="organic"
+                    className="w-full"
+                    size="sm"
+                    onClick={() => handleAddToCart(kit)}
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Add to Cart
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

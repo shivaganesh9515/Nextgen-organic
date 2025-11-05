@@ -160,7 +160,7 @@ export default function FeaturedProducts() {
           {featuredProducts.map((product) => (
             <Card
               key={product.id}
-              className="group relative overflow-hidden card-organic border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2"
+              className="group relative overflow-hidden card-organic border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 h-full flex flex-col"
             >
               {/* Discount Badge */}
               {product.discount && (
@@ -189,7 +189,7 @@ export default function FeaturedProducts() {
                 </div>
               </div>
 
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-grow">
                 {/* Rating */}
                 <div className="flex items-center gap-1 mb-3">
                   <Star className="w-4 h-4 fill-[#fbbf24] text-[#fbbf24]" />
@@ -198,12 +198,12 @@ export default function FeaturedProducts() {
                 </div>
 
                 {/* Product Name */}
-                <h3 className="text-lg font-bold text-[#2d5016] mb-2 group-hover:text-[#4a7c59] transition-colors line-clamp-1 min-h-[2.5rem]">
+                <h3 className="text-lg font-bold text-[#2d5016] mb-2 group-hover:text-[#4a7c59] transition-colors line-clamp-1">
                   {product.name}
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-[#5a5a5a] mb-3 line-clamp-2 min-h-[2.5rem]">
+                <p className="text-sm text-[#5a5a5a] mb-3 line-clamp-2 flex-grow">
                   {product.description}
                 </p>
 
@@ -224,7 +224,7 @@ export default function FeaturedProducts() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-auto">
                   <Button
                     variant="organic"
                     className="flex-1"

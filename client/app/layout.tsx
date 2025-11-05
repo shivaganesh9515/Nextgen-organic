@@ -9,8 +9,8 @@ import Providers from '@/components/Providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'DailyPick - Fresh Organic Groceries Delivered',
-  description: 'Get fresh, organic groceries delivered to your doorstep',
+  title: 'Nextgen Organics - Fresh Organic Groceries Delivered',
+  description: 'Get fresh, organic groceries delivered to your doorstep with Nextgen Organics',
 };
 
 export default function RootLayout({

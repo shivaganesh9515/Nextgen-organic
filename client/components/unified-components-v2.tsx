@@ -102,7 +102,7 @@ export const Navbar: React.FC<{
                 <Sprout className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-xl font-bold text-gray-900">NextGen</span>
+                <span className="text-xl font-bold text-gray-900">Nextgen</span>
                 <span className="text-xs text-green-600 font-semibold block">Organics</span>
               </div>
             </div>
@@ -461,7 +461,7 @@ export const VendorRecruitmentCTA: React.FC = () => {
               Want to Become a Vendor?
             </h2>
             <p className="text-xl text-green-50 mb-8 leading-relaxed">
-              Connect with thousands of health-conscious customers who are actively seeking premium organic products. Grow your business with NextGen Organics.
+              Connect with thousands of health-conscious customers who are actively seeking premium organic products. Grow your business with Nextgen Organics.
             </p>
 
             <ul className="space-y-4 mb-8">

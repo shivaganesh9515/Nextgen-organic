@@ -89,7 +89,7 @@ export default function VendorRegisterPage() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-            DailyPick
+            Nextgen Organics
           </h1>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Register as a Vendor

@@ -82,7 +82,7 @@ export default function VendorDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Vendor Dashboard</h1>
+        <h1 className="text-3xl font-bold">Nextgen Organics Vendor Dashboard</h1>
         <p className="text-gray-500">Welcome back! Here{'\''}s your store performance.</p>
       </div>
 

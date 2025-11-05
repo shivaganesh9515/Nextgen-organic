@@ -33,7 +33,7 @@ export default function ReturnsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 mb-4">
-                At DailyPick, we want you to be completely satisfied with your purchase. 
+                At Nextgen Organics, we want you to be completely satisfied with your purchase. 
                 If for any reason you{`'`}re not happy with your order, we{`'`}ll make it right.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -96,7 +96,7 @@ export default function ReturnsPage() {
               </CardHeader>
               <CardContent>
                 <ol className="list-decimal list-inside space-y-2">
-                  <li>Bring items to any DailyPick location</li>
+                  <li>Bring items to any Nextgen Organics location</li>
                   <li>Have your order number or ID ready</li>
                   <li>Items must be in original condition</li>
                   <li>Get refund within 24 hours</li>

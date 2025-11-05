@@ -98,7 +98,7 @@ export default function UserDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">My Account</h1>
+        <h1 className="text-3xl font-bold">Nextgen Organics - My Account</h1>
         <p className="text-gray-500">Welcome back! Here{'\''}s your account overview.</p>
       </div>
 

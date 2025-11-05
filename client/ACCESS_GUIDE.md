@@ -1,6 +1,6 @@
 # Platform Access Guide
 
-This guide explains how to access the NextGen Organics platform as different user roles: Customer, Vendor, and Admin.
+This guide explains how to access the Nextgen Organics platform as different user roles: Customer, Vendor, and Admin.
 
 ## Role-Based Access Overview
 

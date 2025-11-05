@@ -12,7 +12,7 @@ export default function Footer() {
                 🌱
               </div>
               <h3 className="text-2xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">
-                DailyPick Organic
+                Nextgen Organics
               </h3>
             </div>
             <p className="text-green-100">
@@ -51,7 +51,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-green-400 mt-8 pt-8 text-center text-green-100">
-          <p>&copy; {new Date().getFullYear()} DailyPick Organic. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Nextgen Organics Organic. All rights reserved.</p>
         </div>
       </div>
     </footer>

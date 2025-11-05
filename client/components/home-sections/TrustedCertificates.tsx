@@ -53,7 +53,7 @@ export default function TrustedCertificates() {
           {certifications.map((cert) => (
             <div 
               key={cert.id} 
-              className="flex flex-col items-center p-6 bg-gray-50 rounded-xl hover:shadow-md transition-shadow"
+              className="flex flex-col items-center p-6 bg-gray-50 rounded-xl hover:shadow-md transition-shadow h-full"
             >
               <div className="w-16 h-16 bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mb-4">
                 <span className="text-green-600 font-bold text-lg">{cert.shortName}</span>

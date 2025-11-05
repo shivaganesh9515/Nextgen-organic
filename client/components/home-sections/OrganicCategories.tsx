@@ -86,7 +86,7 @@ export default function OrganicCategories() {
           {categories.map((category) => (
             <Link key={category.id} href={`/products?category=${category.slug}`}>
               <Card className="card-organic group cursor-pointer border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 h-full">
-                <CardHeader className="p-6 pb-4">
+                <CardHeader className="p-6 pb-4 flex-grow">
                   <div className="flex items-start justify-between mb-4">
                     <div className={`w-16 h-16 ${category.bgColor} rounded-2xl flex items-center justify-center text-4xl border-2 border-[#d4c4a8]/30 group-hover:scale-110 transition-transform duration-300`}>
                       {category.icon}

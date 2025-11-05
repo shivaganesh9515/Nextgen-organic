@@ -7,12 +7,12 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center">About DailyPick</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center">About Nextgen Organics</h1>
         
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
           <p className="text-gray-700 mb-4">
-            At DailyPick, we believe that access to fresh, quality groceries should be convenient, 
+            At Nextgen Organics, we believe that access to fresh, quality groceries should be convenient, 
             affordable, and sustainable. Our mission is to connect local communities with trusted 
             vendors who provide the freshest products while supporting local businesses.
           </p>
@@ -101,7 +101,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold mb-4">Join Our Community</h2>
           <p className="mb-6 max-w-2xl mx-auto">
             Whether you{`'`}re a customer looking for fresh groceries or a vendor wanting to grow your business, 
-            we{`'`}d love to have you as part of the DailyPick community.
+            we{`'`}d love to have you as part of the Nextgen Organics community.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button variant="secondary" size="lg" asChild>

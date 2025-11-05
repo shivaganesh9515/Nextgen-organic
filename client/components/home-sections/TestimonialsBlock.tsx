@@ -18,7 +18,7 @@ export default function TestimonialsBlock() {
       name: 'Michael Chen',
       role: 'Restaurant Owner',
       company: 'Tasty Bistro',
-      content: 'As a restaurant owner, quality is everything. DailyPick has become our go-to supplier for fresh ingredients.',
+      content: 'As a restaurant owner, quality is everything. Nextgen Organics has become our go-to supplier for fresh ingredients.',
       rating: 5,
     },
     {
@@ -26,7 +26,7 @@ export default function TestimonialsBlock() {
       name: 'Emma Rodriguez',
       role: 'Vendor Partner',
       company: 'Green Acres Farm',
-      content: 'Joining DailyPick was the best decision for my farm. Their platform has helped me reach more customers than I ever could alone.',
+      content: 'Joining Nextgen Organics was the best decision for my farm. Their platform has helped me reach more customers than I ever could alone.',
       rating: 5,
     },
   ];

@@ -67,25 +67,25 @@ export default function VendorCTA() {
           <div className="relative">
             <div className="bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] rounded-3xl p-8 border-2 border-[#d4c4a8]/50 card-organic">
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30">
-                  <Users className="w-12 h-12 text-[#4a7c59] mx-auto mb-3" />
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30 flex flex-col h-full">
+                  <Users className="w-12 h-12 text-[#4a7c59] mx-auto mb-3 flex-shrink-0" />
                   <h3 className="font-bold text-[#2d5016] mb-1">500+</h3>
-                  <p className="text-sm text-[#5a5a5a]">Active Vendors</p>
+                  <p className="text-sm text-[#5a5a5a] flex-grow">Active Vendors</p>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30">
-                  <Users className="w-12 h-12 text-[#4a7c59] mx-auto mb-3" />
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30 flex flex-col h-full">
+                  <Users className="w-12 h-12 text-[#4a7c59] mx-auto mb-3 flex-shrink-0" />
                   <h3 className="font-bold text-[#2d5016] mb-1">50K+</h3>
-                  <p className="text-sm text-[#5a5a5a]">Happy Customers</p>
+                  <p className="text-sm text-[#5a5a5a] flex-grow">Happy Customers</p>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30">
-                  <Store className="w-12 h-12 text-[#4a7c59] mx-auto mb-3" />
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30 flex flex-col h-full">
+                  <Store className="w-12 h-12 text-[#4a7c59] mx-auto mb-3 flex-shrink-0" />
                   <h3 className="font-bold text-[#2d5016] mb-1">10K+</h3>
-                  <p className="text-sm text-[#5a5a5a]">Products Listed</p>
+                  <p className="text-sm text-[#5a5a5a] flex-grow">Products Listed</p>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30">
-                  <CheckCircle className="w-12 h-12 text-[#4a7c59] mx-auto mb-3" />
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center border border-[#d4c4a8]/30 flex flex-col h-full">
+                  <CheckCircle className="w-12 h-12 text-[#4a7c59] mx-auto mb-3 flex-shrink-0" />
                   <h3 className="font-bold text-[#2d5016] mb-1">100%</h3>
-                  <p className="text-sm text-[#5a5a5a]">Organic Certified</p>
+                  <p className="text-sm text-[#5a5a5a] flex-grow">Organic Certified</p>
                 </div>
               </div>
             </div>

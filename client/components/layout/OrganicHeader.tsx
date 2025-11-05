@@ -101,7 +101,7 @@ export default function OrganicHeader() {
               <div className="w-10 h-10 bg-gradient-to-br from-[#4a7c59] to-[#5a9d6e] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                 <span className="text-xl">🌱</span>
               </div>
-              <div className="font-bold text-xl tracking-tight text-[#2d5016]">DailyPick</div>
+              <div className="font-bold text-xl tracking-tight text-[#2d5016]">Nextgen Organics</div>
             </Link>
 
             {/* Right Side - Icons & Actions */}

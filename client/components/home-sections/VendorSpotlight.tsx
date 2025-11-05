@@ -88,8 +88,8 @@ export default function VendorSpotlight() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {featuredVendors.map((vendor) => (
             <Link key={vendor.id} href={`/vendors/${vendor.id}`}>
-              <Card className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 cursor-pointer">
-                <div className="md:flex">
+              <Card className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 cursor-pointer h-full">
+                <div className="md:flex h-full">
                   {/* Vendor Image */}
                   <div className="md:w-2/5 h-64 md:h-auto bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] relative flex items-center justify-center">
                     <div className="text-center">
@@ -102,7 +102,7 @@ export default function VendorSpotlight() {
                   </div>
                   
                   {/* Vendor Info */}
-                  <div className="p-8 md:w-3/5">
+                  <div className="p-8 md:w-3/5 flex flex-col">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-2xl font-bold text-[#2d5016] group-hover:text-[#4a7c59] transition-colors">
                         {vendor.name}
@@ -114,7 +114,7 @@ export default function VendorSpotlight() {
                       </div>
                     </div>
                     
-                    <p className="text-[#5a5a5a] mb-4 line-clamp-2">{vendor.description}</p>
+                    <p className="text-[#5a5a5a] mb-4 line-clamp-2 flex-grow">{vendor.description}</p>
                     
                     {/* Location */}
                     <div className="flex items-center gap-2 mb-4 text-[#5a5a5a]">
@@ -147,7 +147,7 @@ export default function VendorSpotlight() {
                     </div>
                     
                     {/* Sustainability Badges */}
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6 flex-grow">
                       {vendor.sustainabilityBadges.slice(0, 2).map((badge, index) => (
                         <Badge 
                           key={index} 
@@ -160,13 +160,15 @@ export default function VendorSpotlight() {
                     </div>
                     
                     {/* View Store Button */}
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-2 border-[#8b6f47] text-[#8b6f47] hover:bg-[#f5f1e8] group-hover:border-[#4a7c59] group-hover:text-[#4a7c59] transition-all"
-                    >
-                      View Store & Products
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                    <div className="mt-auto">
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-2 border-[#8b6f47] text-[#8b6f47] hover:bg-[#f5f1e8] group-hover:border-[#4a7c59] group-hover:text-[#4a7c59] transition-all"
+                      >
+                        View Store & Products
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Card>

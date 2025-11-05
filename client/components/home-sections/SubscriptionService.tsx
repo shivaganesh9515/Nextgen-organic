@@ -173,7 +173,7 @@ export default function SubscriptionService() {
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
-                className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2"
+                className="card-organic group overflow-hidden border-2 border-[#d4c4a8]/50 hover:border-[#87a96b] transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 h-full flex flex-col"
               >
                 {/* Discount Badge */}
                 {product.discount && (
@@ -199,7 +199,7 @@ export default function SubscriptionService() {
                   </div>
                 </div>
 
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex flex-col flex-grow">
                   {/* Category */}
                   <p className="text-xs text-[#8b8b8b] mb-2 uppercase tracking-wide">{product.category}</p>
                   
@@ -210,7 +210,7 @@ export default function SubscriptionService() {
 
                   {/* Description */}
                   {product.description && (
-                    <p className="text-sm text-[#5a5a5a] mb-4 line-clamp-2">
+                    <p className="text-sm text-[#5a5a5a] mb-4 line-clamp-2 flex-grow">
                       {product.description}
                     </p>
                   )}
@@ -237,15 +237,17 @@ export default function SubscriptionService() {
                   </div>
 
                   {/* Subscribe Button */}
-                  <Button
-                    variant="organic"
-                    className="w-full"
-                    size="lg"
-                    onClick={() => handleSubscribe(product)}
-                  >
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Subscribe Now
-                  </Button>
+                  <div className="mt-auto">
+                    <Button
+                      variant="organic"
+                      className="w-full"
+                      size="lg"
+                      onClick={() => handleSubscribe(product)}
+                    >
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Subscribe Now
+                    </Button>
+                  </div>
 
                   {/* Features */}
                   <div className="mt-4 pt-4 border-t border-[#d4c4a8]/30">

@@ -460,7 +460,7 @@ export default function PremiumDashboard() {
               <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                 🌿
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">DailyPick Analytics</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Nextgen Organics Dashboard</h1>
             </div>
 
             {/* Dashboard Switcher */}

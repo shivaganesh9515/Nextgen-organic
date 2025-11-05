@@ -351,7 +351,7 @@ export const Footer: React.FC = () => {
         <Separator className="bg-gray-800 mb-6" />
 
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-          <p>&copy; 2025 NextGen Organics. All rights reserved.</p>
+          <p>&copy; 2025 Nextgen Organics. All rights reserved.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-white transition">Facebook</a>
             <a href="#" className="hover:text-white transition">Instagram</a>
@@ -429,7 +429,7 @@ export const Toast: React.FC<{
       <Alert className={`flex items-center gap-3 ${colors[type]}`}>
         {icons[type]}
         <AlertDescription>{message}</AlertDescription>
-        <button onClick={onClose} className="ml-auto">
+        <button onClick={onClose} className="ml-auto" aria-label="Close notification">
           <X className="w-4 h-4" />
         </button>
       </Alert>
@@ -463,6 +463,7 @@ export const Rating: React.FC<{
             onMouseLeave={() => !readonly && setHoverRating(0)}
             disabled={readonly}
             className={`${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-110'} transition-transform`}
+            aria-label={`Rate ${ratingValue} out of ${max} stars`}
           >
             <Star
               className={`w-5 h-5 ${
@@ -1067,6 +1068,7 @@ export const ProductUpload: React.FC = () => {
                           onChange={handleImageUpload}
                           className="hidden"
                           id="image-upload"
+                          aria-label="Upload product images"
                         />
                       </div>
                     </DialogTrigger>
@@ -2063,7 +2065,7 @@ export default {
 /*
 🎯 CURSOR IDE PROMPT - Copy this to use with Cursor:
 
-"I have a unified components file for NextGen Organics marketplace. 
+"I have a unified components file for Nextgen Organics marketplace. 
 It contains:
 
 🔵 SHARED COMPONENTS (Navbar, Footer, LoadingSpinner, Toast, Rating, StatCard)

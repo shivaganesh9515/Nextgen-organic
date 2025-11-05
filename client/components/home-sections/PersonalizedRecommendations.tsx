@@ -83,7 +83,7 @@ export default function PersonalizedRecommendations() {
           {recommendedProducts.map((product) => (
             <div 
               key={product.id} 
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-organic hover:shadow-organic-xl transition-all duration-500 transform hover:-translate-y-2"
+              className="group relative bg-white rounded-3xl overflow-hidden shadow-organic hover:shadow-organic-xl transition-all duration-500 transform hover:-translate-y-2 h-full flex flex-col"
             >
               <div className="relative h-48 bg-gradient-to-br from-green-100 to-emerald-100 overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -99,7 +99,7 @@ export default function PersonalizedRecommendations() {
                   </div>
                 )}
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 flex flex-col flex-grow">
                 <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
                   {product.name}
                 </h3>
@@ -117,7 +117,7 @@ export default function PersonalizedRecommendations() {
                   </div>
                   <span className="text-sm font-semibold text-gray-700">{product.rating}</span>
                 </div>
-                <div className="flex items-baseline space-x-3">
+                <div className="flex items-baseline space-x-3 mt-auto">
                   <span className="text-2xl font-bold text-green-600">₹{product.price}</span>
                   {product.discountedPrice && (
                     <span className="text-lg text-gray-400 line-through">₹{product.discountedPrice}</span>
