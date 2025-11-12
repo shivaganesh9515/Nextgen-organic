@@ -32,7 +32,6 @@ export default function VendorRegisterPage() {
     phone: '',
     storeName: '',
     storeAddress: '',
-    storeDescription: '',
     password: '',
     confirmPassword: '',
   });
@@ -67,17 +66,13 @@ export default function VendorRegisterPage() {
     }
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/vendors/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      // In a real app, you would make an API call to register the vendor
       setSuccess(true);
       
+      // Redirect to login page after successful registration
       setTimeout(() => {
         router.push('/auth/login');
       }, 2000);
@@ -89,240 +84,243 @@ export default function VendorRegisterPage() {
     }
   };
 
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white py-12 px-4">
-        <Card className="max-w-md w-full shadow-2xl">
-          <CardContent className="pt-6 text-center">
-            <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Registration Successful!</h2>
-            <p className="text-gray-600 mb-4">
-              Your vendor application has been submitted. Our team will review it and get back to you soon.
-            </p>
-            <p className="text-sm text-gray-500">Redirecting to login...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
-        <Card className="shadow-2xl border-0">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4">
-              <Store className="w-12 h-12 text-green-600 mx-auto" />
-            </div>
-            <CardTitle className="text-3xl font-bold">Become a Vendor</CardTitle>
-            <CardDescription className="text-lg">
-              Join our marketplace and start selling your organic products today
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            Nextgen Organics
+          </h1>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            Register as a Vendor
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Join our network of organic vendors and reach thousands of customers
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Vendor Registration</CardTitle>
+            <CardDescription>
+              Fill in your details to create a vendor account
             </CardDescription>
           </CardHeader>
-
           <CardContent>
-            {error && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Personal Information */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Personal Information</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">
-                      <User className="inline w-4 h-4 mr-2" />
-                      Full Name *
-                    </Label>
+              {success && (
+                <Alert className="border-green-200 bg-green-50">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    Vendor account registration submitted successfully! Our team will review your application and contact you soon.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="name">Full Name</Label>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-gray-400" />
+                    </div>
                     <Input
                       id="name"
+                      name="name"
                       type="text"
-                      placeholder="John Doe"
+                      required
                       value={formData.name}
                       onChange={handleChange}
-                      required
+                      className="appearance-none rounded-md shadow-sm pl-10"
+                      placeholder="John Doe"
                     />
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">
-                      <Mail className="inline w-4 h-4 mr-2" />
-                      Email Address *
-                    </Label>
+                <div>
+                  <Label htmlFor="email">Email address</Label>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
+                    </div>
                     <Input
                       id="email"
+                      name="email"
                       type="email"
-                      placeholder="john@example.com"
+                      autoComplete="email"
+                      required
                       value={formData.email}
                       onChange={handleChange}
-                      required
+                      className="appearance-none rounded-md shadow-sm pl-10"
+                      placeholder="you@example.com"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">
-                    <Phone className="inline w-4 h-4 mr-2" />
-                    Phone Number *
-                  </Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+1 (555) 123-4567"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                  />
+                <div>
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Phone className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="appearance-none rounded-md shadow-sm pl-10"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="storeName">Store/Business Name</Label>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Store className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <Input
+                      id="storeName"
+                      name="storeName"
+                      type="text"
+                      required
+                      value={formData.storeName}
+                      onChange={handleChange}
+                      className="appearance-none rounded-md shadow-sm pl-10"
+                      placeholder="Organic Fresh Farms"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Store Information */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Store Information</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="storeName">
-                    <Store className="inline w-4 h-4 mr-2" />
-                    Store Name *
-                  </Label>
-                  <Input
-                    id="storeName"
-                    type="text"
-                    placeholder="Organic Farm Store"
-                    value={formData.storeName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="storeAddress">
-                    <MapPin className="inline w-4 h-4 mr-2" />
-                    Store Address *
-                  </Label>
-                  <Input
+              <div>
+                <Label htmlFor="storeAddress">Store/Business Address</Label>
+                <div className="mt-1 relative">
+                  <div className="absolute top-3 left-3 pointer-events-none">
+                    <MapPin className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Textarea
                     id="storeAddress"
-                    type="text"
-                    placeholder="123 Main St, City, State, ZIP"
+                    name="storeAddress"
+                    required
                     value={formData.storeAddress}
                     onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="storeDescription">
-                    <FileText className="inline w-4 h-4 mr-2" />
-                    Store Description *
-                  </Label>
-                  <Textarea
-                    id="storeDescription"
-                    placeholder="Tell us about your store and products..."
-                    value={formData.storeDescription}
-                    onChange={handleChange}
-                    required
-                    rows={4}
+                    className="appearance-none rounded-md shadow-sm pl-10"
+                    placeholder="123 Organic Street, Green Valley, CA 90210"
+                    rows={3}
                   />
                 </div>
               </div>
 
-              {/* Security */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Security</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">
-                    <Lock className="inline w-4 h-4 mr-2" />
-                    Password *
-                  </Label>
-                  <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      required
                       value={formData.password}
                       onChange={handleChange}
-                      required
-                      className="pr-10"
+                      className="appearance-none rounded-md shadow-sm pl-10 pr-10"
+                      placeholder="••••••••"
                     />
                     <button
                       type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
                     </button>
                   </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Password must be at least 6 characters
+                  </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">
-                    <Lock className="inline w-4 h-4 mr-2" />
-                    Confirm Password *
-                  </Label>
-                  <div className="relative">
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
                     <Input
                       id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      required
-                      className="pr-10"
+                      className="appearance-none rounded-md shadow-sm pl-10 pr-10"
+                      placeholder="••••••••"
                     />
                     <button
                       type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
                     </button>
                   </div>
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                variant="organic"
-                className="w-full"
-                size="lg"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Submitting Application...
-                  </>
-                ) : (
-                  <>
-                    <Store className="w-4 h-4 mr-2" />
-                    Submit Vendor Application
-                  </>
-                )}
-              </Button>
+              <div>
+                <Button
+                  type="submit"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Registering...
+                    </>
+                  ) : (
+                    'Register as Vendor'
+                  )}
+                </Button>
+              </div>
             </form>
           </CardContent>
-
-          <CardFooter className="flex flex-col space-y-2">
-            <p className="text-center text-sm text-gray-600">
+          <CardFooter className="flex flex-col items-start">
+            <div className="text-sm text-gray-600 mb-4">
+              <FileText className="inline w-4 h-4 mr-1" />
+              By registering, you agree to our{' '}
+              <Link href="/vendor-terms" className="font-medium text-green-600 hover:text-green-500">
+                Vendor Terms & Conditions
+              </Link>
+            </div>
+            <div className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/auth/login" className="font-medium text-green-600 hover:text-green-700">
+              <Link href="/auth/login" className="font-medium text-green-600 hover:text-green-500">
                 Sign in
               </Link>
-            </p>
-            <p className="text-center text-sm text-gray-600">
-              Want to shop instead?{' '}
-              <Link href="/auth/register" className="font-medium text-green-600 hover:text-green-700">
-                Register as Customer
-              </Link>
-            </p>
+            </div>
           </CardFooter>
         </Card>
       </div>
