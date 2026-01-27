@@ -1,54 +1,60 @@
-"use client";
-
 import Link from "next/link";
-import Image from "next/image";
-import { Leaf, ArrowLeft } from "lucide-react";
+import { Arrowright, Store, Tractor, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#F5F5F0] flex items-center justify-center px-6">
-      <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#262A2B]/60 hover:text-[#4A6741] transition-colors">
-        <ArrowLeft size={20} /> Back to Home
-      </Link>
+    <div className="min-h-screen pt-32 pb-20 bg-[#F5F5F0]">
+      <div className="container mx-auto px-6 max-w-5xl">
+         <div className="text-center mb-16">
+            <h1 className="text-4xl font-bold text-[#1a1c1e] mb-4">Welcome Back</h1>
+            <p className="text-[#64748B]">Choose your portal to continue.</p>
+         </div>
 
-      <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-sm border border-[#E5E5E0]">
-        <div className="flex flex-col items-center mb-8">
-           <div className="relative w-20 h-20 mb-6 drop-shadow-sm">
-             <Image 
-               src="/logo.png" 
-               alt="Next360 Logo" 
-               fill 
-               className="object-contain" 
-               priority
-             />
-           </div>
-           <h1 className="font-heading font-bold text-2xl text-[#262A2B]">Vendor Portal</h1>
-           <p className="text-center text-[#262A2B]/60 mt-2">Access your farm or hub dashboard</p>
-        </div>
-
-        <form className="space-y-5">
-           <div className="space-y-2">
-              <label className="text-sm font-medium text-[#262A2B]/70">Email / ID</label>
-              <input type="email" className="w-full px-4 py-3 bg-[#F5F5F0] rounded-lg border border-transparent focus:border-[#4A6741] focus:bg-white outline-none transition-all" placeholder="farmer@next360.com" />
-          </div>
-          <div className="space-y-2">
-              <label className="text-sm font-medium text-[#262A2B]/70">Password</label>
-              <input type="password" className="w-full px-4 py-3 bg-[#F5F5F0] rounded-lg border border-transparent focus:border-[#4A6741] focus:bg-white outline-none transition-all" />
-          </div>
-          
-          <Link 
-            href="/dashboard"
-            className="block w-full py-4 bg-[#4A6741] text-white font-bold rounded-lg hover:bg-[#3D5536] transition-colors shadow-lg hover:shadow-xl text-center"
-          >
-            Secure Login
-          </Link>
-        </form>
-
-        <div className="mt-8 text-center text-sm text-[#262A2B]/50">
-          <p>Don't have an account?</p>
-          <Link href="/vendors" className="text-[#4A6741] font-medium hover:underline">Apply to be a vendor</Link>
-        </div>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <LoginCard 
+               role="Customer" 
+               icon={Store} 
+               desc="Order fresh organic produce directly to your home." 
+               link="#" 
+               color="blue"
+            />
+            <LoginCard 
+               role="Vendor" 
+               icon={Tractor} 
+               desc="Manage your harvests, products, and earnings." 
+               link="/login/vendor" 
+               color="neon"
+            />
+            <LoginCard 
+               role="Admin" 
+               icon={ShieldCheck} 
+               desc="Oversee the ecosystem, verify farms, and manage hubs." 
+               link="/login/admin" 
+               color="zinc"
+            />
+         </div>
       </div>
     </div>
   );
+}
+
+function LoginCard({ role, icon: Icon, desc, link, color }: any) {
+   const colors = {
+      blue: "hover:border-blue-500 hover:shadow-blue-500/10",
+      neon: "hover:border-[#65A30D] hover:shadow-[#65A30D]/10",
+      zinc: "hover:border-zinc-500 hover:shadow-zinc-500/10"
+   };
+
+   return (
+      <Link href={link} className={`bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 transition-all duration-300 hover:-translate-y-2 group ${colors[color]}`}>
+         <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center text-[#1a1c1e] mb-6 group-hover:scale-110 transition-transform">
+            <Icon size={32} strokeWidth={1.5} />
+         </div>
+         <h3 className="text-2xl font-bold text-[#1a1c1e] mb-3">{role}</h3>
+         <p className="text-[#64748B] mb-8 leading-relaxed">{desc}</p>
+         <div className="flex items-center gap-2 font-bold text-[#1a1c1e] group-hover:gap-4 transition-all">
+            Login <Arrowright size={18} />
+         </div>
+      </Link>
+   );
 }

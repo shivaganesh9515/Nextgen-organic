@@ -9,12 +9,16 @@ import { VendorCTA } from "@/components/sections/VendorCTA";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { LiveTicker } from "@/components/ui/LiveTicker";
 import { FarmerStories } from "@/components/sections/FarmerStories";
+import { WhatWeDo } from "@/components/sections/WhatWeDo";
+import { WhyNext360 } from "@/components/sections/WhyNext360";
 
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
       <Hero />
+      <FadeIn direction="up" fullWidth><WhatWeDo /></FadeIn>
       <FadeIn direction="up" fullWidth><Categories /></FadeIn>
+      <FadeIn direction="up" fullWidth><WhyNext360 /></FadeIn>
       <FadeIn direction="up" fullWidth><FoodTypes /></FadeIn>
       <FadeIn direction="up" fullWidth><TrustModel /></FadeIn>
       <FadeIn direction="up" fullWidth><HowItWorks /></FadeIn>
