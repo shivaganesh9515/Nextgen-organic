@@ -1,116 +1,151 @@
-import { View, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
+import { View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
-import { PRODUCTS, VENDORS } from '@/constants/mocks';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, interpolate, Extrapolation, useSharedValue } from 'react-native-reanimated';
-import { AnimatedPressable } from '@/components/AnimatedPressable';
+import { Ionicons } from '@expo/vector-icons';
+import { PRODUCTS } from '@/constants/mocks';
+import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
-const { width } = Dimensions.get('window');
-const IMG_HEIGHT = 300;
-
-export default function ProductDetailScreen() {
+export default function ProductDetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollY = useSharedValue(0);
+  const product = PRODUCTS.find(p => p.id === id) || PRODUCTS[0];
+  const [quantity, setQuantity] = useState(1);
+  const { addItem, updateQuantity, getItemQuantity } = useCart();
   
-  const product = PRODUCTS.find(p => p.id === id);
-  const vendor = product ? VENDORS.find(v => v.id === product.vendorId) : null;
-
-  const scrollHandler = useAnimatedScrollHandler(event => {
-    scrollY.value = event.contentOffset.y;
-  });
-
-  const imageAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(
-            scrollY.value,
-            [-IMG_HEIGHT, 0, IMG_HEIGHT],
-            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-          ),
-        },
-        {
-          scale: interpolate(scrollY.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1])
-        },
-      ],
-    };
-  });
-
-  if (!product) {
-      return (
-          <ScreenWrapper className="justify-center items-center">
-              <ThemedText>Product not found</ThemedText>
-          </ScreenWrapper>
-      )
-  }
+  const currentCartQty = getItemQuantity(product.id);
+  
+  const handleAddToCart = () => {
+    // Logic: If already in cart, just update/add the selected quantity. 
+    // If not, add new item locally.
+    // For simplicity: Add the currently selected 'quantity' to the cart.
+    
+    if (currentCartQty > 0) {
+       // If item exists, we add 'quantity' to existing.
+       updateQuantity(product.id, quantity);
+    } else {
+       // Add item
+       addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        vendorId: product.vendorId
+      });
+      // If user selected more than 1, add the rest
+      if (quantity > 1) {
+         updateQuantity(product.id, quantity - 1);
+      }
+    }
+    // Navigate to cart
+    router.push('/(tabs)/cart');
+  };
 
   return (
-    <View className="flex-1 bg-white">
-      <Stack.Screen options={{ headerShown: false }} />
-      
-      <Animated.ScrollView 
-        ref={scrollRef}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Parallax Image Header */}
-        <Animated.View style={[{ height: IMG_HEIGHT, width: '100%' }, imageAnimatedStyle]}>
-             <Image source={{ uri: product.image }} className="w-full h-full" resizeMode="cover" />
-        </Animated.View>
-        
-        {/* Content */}
-        <View className="px-6 py-8 -mt-6 bg-white rounded-t-3xl shadow-lg pb-32 min-h-screen">
-            <View className="flex-row justify-between items-start mb-4">
-                <View className="flex-1 mr-4">
-                    <ThemedText variant="h2" weight="bold" className="mb-2">{product.name}</ThemedText>
-                    {vendor && (
-                        <ThemedText variant="caption" color="secondary" weight="medium">
-                            By {vendor.name} • {vendor.location}
-                        </ThemedText>
-                    )}
-                </View>
-                <ThemedText variant="h2" color="primary" weight="bold">
-                    ${product.price.toFixed(2)}
+    <ScreenWrapper bg="bg-white">
+      <View className="flex-1">
+        <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+            
+            {/* Header */}
+            <View className="px-6 pt-4 mb-6 flex-row justify-between items-center">
+                <TouchableOpacity onPress={() => router.back()}>
+                    <Ionicons name="chevron-back" size={28} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Ionicons name="heart-outline" size={28} color="black" />
+                </TouchableOpacity>
+            </View>
+
+            {/* Title Section */}
+            <View className="px-8 items-center mb-6">
+                <ThemedText variant="h2" color="dark" weight="bold" className="text-center text-3xl mb-2 font-heading leading-tight">
+                    {product.name}
+                </ThemedText>
+                <ThemedText variant="body" color="gray" className="text-base opacity-60">
+                    By NextGen Farm
                 </ThemedText>
             </View>
 
-            <View className="h-[1px] bg-stone-100 my-4" />
+            {/* Meta Pills */}
+            <View className="flex-row justify-center gap-4 mb-8">
+                <View className="flex-row items-center bg-white border border-gray-100 rounded-full px-4 py-2 shadow-sm">
+                    <Ionicons name="star" size={16} color="#FBBF24" style={{ marginRight: 6 }} />
+                    <ThemedText weight="bold" color="dark">{product.rating}</ThemedText>
+                </View>
+                <View className="flex-row items-center bg-white border border-gray-100 rounded-full px-4 py-2 shadow-sm">
+                    <Ionicons name="leaf" size={16} color="#2D6A4F" style={{ marginRight: 6 }} />
+                    <ThemedText weight="bold" color="dark">Organic</ThemedText>
+                </View>
+            </View>
 
-            <ThemedText variant="h3" weight="semibold" className="mb-3">Description</ThemedText>
-            <ThemedText variant="body" color="gray" className="leading-6 mb-8">
-                {product.description}
-            </ThemedText>
+            {/* Image */}
+            <View className="px-6 mb-8">
+                <View className="w-full aspect-[4/3] rounded-[32px] overflow-hidden shadow-sm">
+                    <Image source={{ uri: product.image }} className="w-full h-full" resizeMode="cover" />
+                </View>
+            </View>
 
-             <ThemedText variant="h3" weight="semibold" className="mb-3">Reviews ({product.reviews})</ThemedText>
-             <View className="flex-row items-center mb-4">
-                 <ThemedText variant="body" weight="bold" className="mr-2">{product.rating} / 5.0</ThemedText>
-                 <ThemedText variant="caption" color="gray">Based on customer feedback</ThemedText>
-             </View>
+            {/* Price & Quantity Row */}
+            <View className="px-6 flex-row items-center justify-between mb-8">
+                <View className="flex-row items-center gap-4">
+                    {/* Dark Pill Control */}
+                    <View className="flex-row items-center bg-[#262A2B] rounded-full p-1.5 pl-4 pr-1.5 gap-4">
+                       <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))}>
+                          <Ionicons name="remove" size={24} color="white" />
+                       </TouchableOpacity>
+                       <TouchableOpacity onPress={() => setQuantity(quantity + 1)} className="w-10 h-10 bg-white/20 rounded-full items-center justify-center">
+                          <Ionicons name="add" size={24} color="white" />
+                       </TouchableOpacity>
+                    </View>
+
+                    {/* Count */}
+                    <View className="w-12 h-12 bg-gray-50 rounded-full items-center justify-center border border-gray-100">
+                        <ThemedText weight="bold" color="dark" className="text-xl">{quantity}</ThemedText>
+                    </View>
+                </View>
+
+                {/* Price */}
+                <ThemedText variant="h2" color="dark" weight="bold" className="text-3xl font-heading text-[#2D6A4F]">
+                    ₹ {(product.price * quantity).toFixed(2)}
+                </ThemedText>
+            </View>
+
+            {/* Description */}
+            <View className="px-6 mb-8">
+                <ThemedText variant="h3" color="dark" className="mb-3 text-xl font-bold">Description</ThemedText>
+                <ThemedText variant="body" color="gray" className="leading-6 opacity-70">
+                    {product.description} Experience the freshest organic produce delivered straight from our verified farms to your doorstep. Guaranteed quality and taste. {' '}
+                    <ThemedText className="text-[#2D6A4F]" weight="bold">Read more</ThemedText>
+                </ThemedText>
+            </View>
+
+        </ScrollView>
+
+        {/* Footer */}
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-8 pt-4 flex-row gap-4 items-center shadow-lg shadow-black/5 border-t border-gray-50">
+            <TouchableOpacity 
+                activeOpacity={0.9}
+                onPress={handleAddToCart}
+                className="flex-1 bg-[#2D6A4F] h-16 rounded-full items-center justify-center shadow-lg shadow-[#2D6A4F]/25"
+            >
+                <ThemedText color="white" weight="bold" className="text-lg">
+                    Add {quantity} to Cart - ₹{(product.price * quantity).toFixed(2)}
+                </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+                onPress={() => router.push('/(tabs)/cart')}
+                className="w-16 h-16 bg-[#262A2B] rounded-full items-center justify-center relative"
+            >
+                 <Ionicons name="bag-handle-outline" size={24} color="white" />
+                 {currentCartQty > 0 && (
+                     <View className="absolute top-4 right-4 bg-[#D64045] w-3 h-3 rounded-full border border-[#262A2B]" />
+                 )}
+            </TouchableOpacity>
         </View>
-      </Animated.ScrollView>
-      
-      {/* Back Button Overlay */}
-      <SafeAreaView className="absolute top-0 left-0 right-0 p-4 z-50">
-           <AnimatedPressable onPress={() => router.back()} className="w-10 h-10 bg-white/80 rounded-full items-center justify-center shadow-sm">
-              <ThemedText>←</ThemedText>
-           </AnimatedPressable>
-      </SafeAreaView>
 
-      {/* Sticky Bottom Bar */}
-      <SafeAreaView edges={['bottom']} className="absolute bottom-0 left-0 right-0 bg-white border-t border-stone-100 p-6 z-50">
-          <AnimatedPressable 
-             scale={0.97}
-             className="w-full bg-primary py-4 rounded-xl items-center shadow-lg transform active:scale-95 transition-transform"
-          >
-              <ThemedText variant="body" color="white" weight="bold">Add to Cart - ${product.price.toFixed(2)}</ThemedText>
-          </AnimatedPressable>
-      </SafeAreaView>
-    </View>
+      </View>
+    </ScreenWrapper>
   );
 }

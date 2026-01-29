@@ -6,6 +6,7 @@ import { PRODUCTS, VENDORS } from '@/constants/mocks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, interpolate, useSharedValue } from 'react-native-reanimated';
 import { AnimatedPressable } from '@/components/AnimatedPressable';
+import { Ionicons } from '@expo/vector-icons';
 
 const IMG_HEIGHT = 200;
 
@@ -55,8 +56,8 @@ export default function VendorScreen() {
       </Animated.View>
 
       <SafeAreaView className="absolute top-0 left-0 right-0 p-4 z-50">
-           <AnimatedPressable onPress={() => router.back()} className="w-10 h-10 bg-white/20 rounded-full items-center justify-center">
-              <ThemedText color="white">←</ThemedText>
+           <AnimatedPressable onPress={() => router.back()} className="w-10 h-10 bg-white/20 rounded-full items-center justify-center backdrop-blur-md">
+              <Ionicons name="arrow-back" size={24} color="white" />
            </AnimatedPressable>
       </SafeAreaView>
 

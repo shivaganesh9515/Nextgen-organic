@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "replace_this_with_a_secure_key_in_production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Supabase
+    SUPABASE_URL: str = ""
+    SUPABASE_KEY: str = ""
+    SUPABASE_SERVICE_KEY: str = ""
 
     class Config:
         env_file = ".env"

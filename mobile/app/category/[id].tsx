@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORIES, PRODUCTS } from '@/constants/mocks';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function CategoryListingScreen() {
   const { id } = useLocalSearchParams();
@@ -14,17 +15,20 @@ export default function CategoryListingScreen() {
   const categoryProducts = PRODUCTS.filter(p => p.categoryId === id);
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper bg="bg-white">
        <Stack.Screen options={{ headerShown: false }} />
        
-       <SafeAreaView edges={['top']} className="px-6 pb-4 bg-white border-b border-stone-100 shadow-sm z-10">
-          <View className="flex-row items-center">
-             <TouchableOpacity onPress={() => router.back()} className="mr-4 p-2">
-                 <ThemedText variant="h3">←</ThemedText>
+       <SafeAreaView edges={['top']} className="px-6 pb-4 bg-white border-b border-gray-100 shadow-sm z-10">
+          <View className="flex-row items-center gap-4">
+             <TouchableOpacity 
+                onPress={() => router.back()} 
+                className="w-10 h-10 items-center justify-center bg-gray-50 rounded-full"
+             >
+                 <Ionicons name="arrow-back" size={24} color="#262A2B" />
              </TouchableOpacity>
              <View>
-                 <ThemedText variant="label" color="gray">Category</ThemedText>
-                 <ThemedText variant="h2" weight="bold">{category?.name || 'Unknown'}</ThemedText>
+                 <ThemedText variant="label" color="gray" className="text-xs uppercase tracking-wider">Category</ThemedText>
+                 <ThemedText variant="h2" weight="bold" className="text-xl capitalize">{category?.name || 'Unknown'}</ThemedText>
              </View>
           </View>
        </SafeAreaView>

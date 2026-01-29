@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { MotiView } from 'moti';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -14,21 +15,21 @@ const SLIDES = [
     title: 'Farm to Table',
     description: 'Fresh, organic produce delivered directly from local farmers to your doorstep.',
     image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop', // Stock organic food image
-    icon: '🌾'
+    iconName: 'leaf-outline'
   },
   {
     id: 2,
     title: '100% Organic',
     description: 'Certified organic quality you can trust. No pesticides, just pure nature.',
     image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=2680&auto=format&fit=crop',
-    icon: '🥗'
+    iconName: 'nutrition-outline'
   },
   {
     id: 3,
     title: 'Fast Delivery',
     description: 'Track your order in real-time and get fresh groceries in minutes.',
     image: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=2689&auto=format&fit=crop',
-    icon: '🚚'
+    iconName: 'bicycle-outline'
   }
 ];
 
@@ -73,7 +74,7 @@ export default function OnboardingScreen() {
                       resizeMode="cover"
                    />
                    <View className="absolute bg-white/90 p-3 rounded-full shadow-sm bottom-4 right-4">
-                      <ThemedText variant="h2">{SLIDES[currentIndex].icon}</ThemedText>
+                      <Ionicons name={SLIDES[currentIndex].iconName as any} size={28} color="#4A6741" />
                    </View>
               </View>
 
