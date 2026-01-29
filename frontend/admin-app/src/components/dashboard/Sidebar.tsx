@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, FileCheck, Settings, LogOut, Package, ShoppingCart, Percent, Store } from "lucide-react";
+import { LayoutDashboard, Users, FileCheck, Settings, LogOut, Package, ShoppingCart, Percent, Store, MessageSquare } from "lucide-react";
 import Image from "next/image";
 
 type SidebarItem = {
@@ -21,6 +21,7 @@ const adminItems: SidebarItem[] = [
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Vendors", href: "/admin/vendors", icon: Store },
   { label: "Products", href: "/admin/products", icon: Package },
+  { label: "Messaging", href: "/admin/messaging", icon: MessageSquare },
   { label: "Categories", href: "/admin/categories", icon: FileCheck },
   { label: "Banners", href: "/admin/banners", icon: FileCheck },
   { label: "Offers", href: "/admin/offers", icon: Percent },

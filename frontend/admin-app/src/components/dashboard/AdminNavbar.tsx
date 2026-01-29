@@ -1,14 +1,29 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, Bell, Calendar, User, LogOut, Settings, ChevronDown, Check } from "lucide-react";
+import { Search, Bell, Calendar, User, LogOut, Settings, ChevronDown, Check, ShoppingCart, Package } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { adminApi } from "@/lib/api";
+
+type Notification = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+  extra_data?: any;
+};
 
 export function AdminNavbar() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -18,30 +33,62 @@ export function AdminNavbar() {
   // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
-        setShowNotifications(false);
-      }
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setShowProfile(false);
-      }
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-        setShowCalendar(false);
-      }
+        if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+            setShowNotifications(false);
+        }
+        if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+            setShowProfile(false);
+        }
+        if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+            setShowCalendar(false);
+        }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    // Clear tokens logic here
-    router.push("/admin/login");
+  // Fetch notifications
+  const fetchNotifications = async () => {
+      try {
+          const data = await adminApi.getNotifications();
+          setNotifications(data as unknown as Notification[]); // Cast if needed, or update api.ts return type
+          const countData = await adminApi.getUnreadCount();
+          setUnreadCount(countData.unread_count);
+      } catch (e) {
+          console.error("Failed to fetch notifications", e);
+      }
   };
 
-  const notifications = [
-    { id: 1, title: "New Vendor Registration", time: "5m ago", unread: true },
-    { id: 2, title: "Order #1029 Received", time: "12m ago", unread: true },
-    { id: 3, title: "Server usage high", time: "1h ago", unread: false },
-  ];
+  useEffect(() => {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+      return () => clearInterval(interval);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_token"); // Clear token
+    router.push("/admin/login");
+  };
+  
+  const handleMarkRead = async (id: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      await adminApi.markRead(id);
+      fetchNotifications();
+  };
+  
+  const handleMarkAllRead = async () => {
+      await adminApi.markAllRead();
+      fetchNotifications();
+  };
+
+  const getIconForType = (type: string) => {
+      switch(type) {
+          case 'NEW_VENDOR': return <User size={16} className="text-blue-400" />;
+          case 'NEW_ORDER': return <ShoppingCart size={16} className="text-[#BEF264]" />;
+          case 'NEW_PRODUCT': return <Package size={16} className="text-purple-400" />;
+          default: return <Bell size={16} className="text-gray-400" />;
+      }
+  }
 
   return (
     <header className="h-20 border-b border-[#27272A] bg-[#18181B] px-8 flex items-center justify-between sticky top-0 z-40">
@@ -103,29 +150,55 @@ export function AdminNavbar() {
                     onClick={() => setShowNotifications(!showNotifications)}
                     className={`p-2 hover:text-white transition-colors relative ${showNotifications ? "text-[#BEF264]" : "text-[#A1A1AA]"}`}
                 >
-                    <div className="absolute top-2 right-2 w-2 h-2 bg-[#BEF264] rounded-full border border-[#18181B] animate-pulse" />
+                    {unreadCount > 0 && <div className="absolute top-2 right-2 w-2 h-2 bg-[#BEF264] rounded-full border border-[#18181B] animate-pulse" />}
                     <Bell size={20} />
                 </button>
 
                 {showNotifications && (
-                    <div className="absolute top-full right-0 mt-4 w-80 bg-[#18181B] border border-[#27272A] rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 origin-top-right">
+                    <div className="absolute top-full right-0 mt-4 w-96 bg-[#18181B] border border-[#27272A] rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 origin-top-right">
                         <div className="flex justify-between items-center p-4 border-b border-[#27272A]">
                             <h3 className="font-bold text-white">Notifications</h3>
-                            <button className="text-xs text-[#BEF264] hover:underline">Mark all read</button>
+                            <button onClick={handleMarkAllRead} className="text-xs text-[#BEF264] hover:underline">Mark all read</button>
                         </div>
-                        <div className="max-h-[300px] overflow-y-auto">
-                            {notifications.map((notif) => (
-                                <div key={notif.id} className="p-4 border-b border-[#27272A] last:border-0 hover:bg-[#27272A] transition-colors cursor-pointer group">
-                                    <div className="flex justify-between items-start mb-1">
-                                        <p className="text-sm text-white font-medium group-hover:text-[#BEF264] transition-colors">{notif.title}</p>
-                                        {notif.unread && <div className="w-2 h-2 bg-[#BEF264] rounded-full mt-1.5" />}
+                        <div className="max-h-[350px] overflow-y-auto">
+                            {notifications.length === 0 ? (
+                                <div className="p-8 text-center text-[#71717A] text-sm">No notifications</div>
+                            ) : (
+                                notifications.map((notif) => (
+                                    <div 
+                                        key={notif.id} 
+                                        className={`p-4 border-b border-[#27272A] last:border-0 hover:bg-[#27272A] transition-colors cursor-pointer group relative ${!notif.is_read ? 'bg-[#27272A]/30' : ''}`}
+                                    >
+                                        <div className="flex gap-3">
+                                            <div className="mt-1">
+                                                {getIconForType(notif.type)}
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <p className={`text-sm font-medium transition-colors ${!notif.is_read ? 'text-white' : 'text-[#A1A1AA]'}`}>
+                                                        {notif.title}
+                                                    </p>
+                                                    {!notif.is_read && (
+                                                        <button 
+                                                            onClick={(e) => handleMarkRead(notif.id, e)}
+                                                            className="text-[10px] text-[#BEF264] hover:underline ml-2 flex-shrink-0"
+                                                        >
+                                                            Mark read
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-[#71717A] mb-1 line-clamp-2">{notif.message}</p>
+                                                <p className="text-[10px] text-[#52525B]">
+                                                    {new Date(notif.created_at).toLocaleString()}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <p className="text-xs text-[#71717A]">{notif.time}</p>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
-                        <div className="p-3 bg-[#27272A]/50 text-center">
-                            <button className="text-xs text-[#A1A1AA] hover:text-white">View all history</button>
+                        <div className="p-3 bg-[#27272A]/50 text-center border-t border-[#27272A]">
+                            <Link href="/admin/notifications" className="text-xs text-[#A1A1AA] hover:text-white block w-full">View all history</Link>
                         </div>
                     </div>
                 )}

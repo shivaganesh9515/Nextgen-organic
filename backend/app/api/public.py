@@ -7,6 +7,8 @@ from app.models.vendor import Vendor, VendorStatus, SellerCategory
 from app.schemas.vendor import VendorResponse
 from app.services.drive import drive_service
 from app.services.drive import drive_service
+from app.models.notification import Notification, NotificationType
+from app.models.admin_notification import AdminNotification, AdminNotificationType
 import json
 import uuid
 
@@ -98,23 +100,35 @@ async def register_vendor(
     await db.commit()
     await db.refresh(new_vendor)
     
+    # Notify Admin
+    admin_notif = AdminNotification(
+        type=AdminNotificationType.NEW_VENDOR,
+        title="New Vendor Registration",
+        message=f"{business_name} has registered and is waiting for approval.",
+        extra_data={"vendor_id": str(new_vendor.id)}
+    )
+    db.add(admin_notif)
+    await db.commit()
+    
     return new_vendor
 
 @router.get("/vendors", response_model=List[dict])
 async def list_public_vendors(db: AsyncSession = Depends(get_db)):
     """
     Get all active vendors for the mobile app "Farms" view.
+    Only returns APPROVED vendors (excludes PENDING, REJECTED, SUSPENDED).
     """
-    # For now, return all vendors. In future, filter by status='ACTIVE'
-    result = await db.execute(select(Vendor))
+    result = await db.execute(
+        select(Vendor).where(Vendor.status == VendorStatus.APPROVED)
+    )
     vendors = result.scalars().all()
     
     return [
         {
             "id": str(v.id),
             "name": v.business_name,
-            "image": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=80", # Placeholder if no image column
-            "rating": 4.8, # Mock rating
+            "image": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=80",
+            "rating": 4.8,
             "location": f"{v.city}, {v.state}",
             "tags": [v.seller_category],
             "banner": "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80"
@@ -129,8 +143,16 @@ from sqlalchemy.orm import selectinload
 async def list_public_products(db: AsyncSession = Depends(get_db)):
     """
     Get all active products for the mobile app "Hub Store" view.
+    Only returns products from APPROVED vendors (excludes suspended vendor products).
     """
-    result = await db.execute(select(Product).options(selectinload(Product.vendor)))
+    # Join with vendor to filter by vendor status
+    result = await db.execute(
+        select(Product)
+        .options(selectinload(Product.vendor))
+        .join(Vendor)
+        .where(Vendor.status == VendorStatus.APPROVED)
+        .where(Product.is_active == True)
+    )
     products = result.scalars().all()
     
     return [
@@ -140,11 +162,14 @@ async def list_public_products(db: AsyncSession = Depends(get_db)):
             "name": p.name,
             "price": p.price,
             "image": p.image_url or "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80",
-            "category": p.category,
+            "category": p.category.name if p.category else "General",
+            "categoryId": p.category_id,
             "rating": 4.5,
             "reviews": 10,
-            "description": p.description,
-            "isOrganic": p.is_organic
+            "description": p.description or "",
+            "isOrganic": str(p.product_type) == "ProductType.ORGANIC" if p.product_type else True,
+            "stock": p.stock_quantity or 0,
+            "vendorName": p.vendor.business_name if p.vendor else "Unknown"
         }
         for p in products
     ]
@@ -182,11 +207,24 @@ async def create_public_order(order_data: OrderCreateSchema, db: AsyncSession = 
         valid_items = []
         
         for item in order_data.items:
-            # Check if product exists to avoid Foreign Key Error
-            result = await db.execute(select(Product).where(Product.id == item.product_id))
+            # Check if product exists and vendor is active
+            result = await db.execute(
+                select(Product)
+                .options(selectinload(Product.vendor))
+                .where(Product.id == item.product_id)
+            )
             product = result.scalars().first()
             
             if product:
+                # Check if vendor is approved (not suspended/rejected)
+                if product.vendor and product.vendor.status != VendorStatus.APPROVED:
+                    # Skip products from suspended/non-active vendors
+                    continue
+                    
+                # Check if product is active
+                if not product.is_active:
+                    continue
+                    
                 total_amount += product.price * item.quantity
                 valid_items.append({
                     "product_id": product.id,
@@ -195,11 +233,7 @@ async def create_public_order(order_data: OrderCreateSchema, db: AsyncSession = 
                     "vendor_id": product.vendor_id
                 })
             else:
-                # If product doesn't exist (e.g. Mobile is using Mocks but Backend is empty),
-                # We skip it to preventing crashing. 
-                # Ideally we returns 400, but for "Perfect Demo" flow we might fail silently 
-                # or create a "Generic Product" placeholder? 
-                # Let's Fail Gracefully for now if NO items are valid.
+                # If product doesn't exist, skip it
                 continue
 
         if not valid_items and order_data.items:
@@ -230,6 +264,30 @@ async def create_public_order(order_data: OrderCreateSchema, db: AsyncSession = 
                 vendor_id=item["vendor_id"]
             )
             db.add(order_item)
+        
+        # Notify Admin
+        admin_notif = AdminNotification(
+            type=AdminNotificationType.NEW_ORDER,
+            title="New Order Received",
+            message=f"Order #{str(new_order.id)[:8]} placed by {new_order.customer_name} for ₹{new_order.total_amount}",
+            extra_data={"order_id": str(new_order.id)}
+        )
+        db.add(admin_notif)
+
+        # Notify Vendors
+        notified_vendors = set()
+        for item in valid_items:
+            vendor_id = item["vendor_id"]
+            if vendor_id and vendor_id not in notified_vendors:
+                vendor_notif = Notification(
+                    vendor_id=vendor_id,
+                    type=NotificationType.SYSTEM,
+                    title="📦 New Order Received",
+                    message=f"You have received a new order #{str(new_order.id)[:8]}.",
+                    extra_data={"order_id": str(new_order.id)}
+                )
+                db.add(vendor_notif)
+                notified_vendors.add(vendor_id)
         
         await db.commit()
         

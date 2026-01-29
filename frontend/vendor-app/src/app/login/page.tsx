@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { authApi } from "@/lib/api"; // Updated import
 import Link from "next/link";
 import { Tractor, Loader2, AlertCircle } from "lucide-react";
 
@@ -19,16 +19,16 @@ export default function VendorLoginPage() {
     setError("");
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
+      // Use Local API instead of Supabase
+      const { access_token } = await authApi.login(email, password);
+      
+      // Store token
+      localStorage.setItem("vendor_token", access_token);
+      
       router.push("/vendor");
       
-    } catch (err: unknown) {
-      setError((err as Error).message || "Failed to login");
+    } catch (err: any) {
+      setError(err.message || "Failed to login");
     } finally {
       setLoading(false);
     }
@@ -56,6 +56,7 @@ export default function VendorLoginPage() {
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">Email Address</label>
             <input
+              suppressHydrationWarning
               type="email"
               required
               className="w-full bg-muted/50 text-foreground px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
@@ -71,6 +72,7 @@ export default function VendorLoginPage() {
                 <a href="#" className="text-xs text-primary font-medium hover:underline">Forgot password?</a>
              </div>
             <input
+              suppressHydrationWarning
               type="password"
               required
               className="w-full bg-muted/50 text-foreground px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
@@ -81,6 +83,7 @@ export default function VendorLoginPage() {
           </div>
 
           <button
+            suppressHydrationWarning
             type="submit"
             disabled={loading}
             className="w-full py-3.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none flex items-center justify-center gap-2"

@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import List
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.database import get_db
+from app.models.notification import NotificationType
+from app.api.notifications import notify_all_vendors
 
 router = APIRouter()
 
@@ -23,8 +27,22 @@ async def list_offers():
     return OFFERS
 
 @router.post("/")
-async def create_offer(offer: OfferCreate):
+async def create_offer(
+    offer: OfferCreate,
+    db: AsyncSession = Depends(get_db)
+):
     new_offer = offer.dict()
     new_offer["id"] = len(OFFERS) + 1
     OFFERS.append(new_offer)
+    
+    # Notify all vendors about new offer
+    await notify_all_vendors(
+        db,
+        NotificationType.PROMOTION,
+        title="New Offer Campaign",
+        message=f"A new offer '{offer.title}' ({offer.discount}) is now active. Code: {offer.code}.",
+        extra_data={"offer_id": new_offer["id"]}
+    )
+    await db.commit()
+    
     return new_offer

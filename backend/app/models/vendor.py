@@ -44,6 +44,7 @@ class Vendor(Base):
 
     # Relationships
     products = relationship("Product", back_populates="vendor") 
+    notifications = relationship("Notification", back_populates="vendor", cascade="all, delete-orphan") 
 
     # 4. NPOP Details (If applicable)
     npop_number = Column(String, nullable=True)

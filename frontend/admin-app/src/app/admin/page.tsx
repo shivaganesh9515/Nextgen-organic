@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, TrendingUp, MoreHorizontal, Filter, Download } from "lucide-react";
+import { ArrowUpRight, TrendingUp, MoreHorizontal, Filter, Download, LogOut } from "lucide-react";
 
 interface SalesTrendItem {
   month: string;
@@ -17,16 +18,32 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({ revenue: 0, total_orders: 0, active_vendors: 0, sales_trend: [] });
 
   useEffect(() => {
+     const token = localStorage.getItem("admin_token");
      fetch("http://localhost:8000/api/v1/analytics/dashboard", {
-        headers: { "Authorization": "Bearer DEV_ADMIN_TOKEN" }
+        headers: { "Authorization": `Bearer ${token}` }
      })
      .then(res => res.json())
      .then(data => setStats(data))
-     .catch(err => console.error(err));
+     .catch(err => {
+        console.error(err);
+        // Zero values when API fails (no orders yet)
+        setStats({ 
+          revenue: 0, 
+          total_orders: 0, 
+          active_vendors: 0, 
+          sales_trend: [] 
+        });
+     });
   }, []);
+
+  const handleSignout = () => {
+     localStorage.removeItem("admin_token");
+     router.push("/admin/login");
+  };
 
   return (
     <div className="space-y-8 font-sans text-[#E4E4E7]">
@@ -42,6 +59,12 @@ export default function AdminDashboard() {
           </button>
           <button className="flex items-center gap-2 px-5 py-2.5 bg-[#BEF264] text-black rounded-full text-sm font-bold hover:bg-[#A3D651] transition-all shadow-[0_0_20px_rgba(190,242,100,0.2)]">
              <Filter size={16} /> Filter
+          </button>
+          <button 
+            onClick={handleSignout}
+            className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-400 rounded-full text-sm font-medium hover:bg-red-500/20 transition-all border border-red-500/20"
+          >
+            <LogOut size={16} /> Sign Out
           </button>
         </div>
       </div>

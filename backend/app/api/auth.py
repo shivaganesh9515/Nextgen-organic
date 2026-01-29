@@ -33,10 +33,18 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
         role=user.role,
         phone_number=user.phone_number
     )
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    return new_user
+    
+    try:
+        db.add(new_user)
+        await db.commit()
+        await db.refresh(new_user)
+        return new_user
+    except Exception as e:
+        print(f"User Creation Error: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Database Error: {str(e)}"
+        )
 
 @router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):

@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { AdminNavbar } from "@/components/dashboard/AdminNavbar";
 
@@ -6,6 +10,36 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    // Skip check for login page
+    if (pathname === "/admin/login") return;
+
+    // Simple Client-Side Auth Check
+    const token = localStorage.getItem("admin_token");
+    if (!token) {
+      router.push("/admin/login");
+    } else {
+      setIsAuthorized(true);
+    }
+  }, [router, pathname]);
+
+  // Special Layout for Login (No Sidebar, Full Width)
+  if (pathname === "/admin/login") {
+      return <>{children}</>;
+  }
+
+  if (!isAuthorized) {
+    return (
+        <div className="min-h-screen bg-[#09090B] flex items-center justify-center text-white/50 font-mono text-sm">
+            Verifying Access...
+        </div>
+    );
+  }
+
   return (
     <>
       {/* Mobile Warning Overlay */}

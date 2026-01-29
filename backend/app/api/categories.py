@@ -5,6 +5,8 @@ from app.core.database import get_db
 from app.models.category import Category
 from app.api.deps import get_current_admin
 from pydantic import BaseModel
+from app.models.notification import NotificationType
+from app.api.notifications import notify_all_vendors
 from typing import List
 
 router = APIRouter()
@@ -43,6 +45,17 @@ async def create_category(
     new_category = Category(**category.dict())
     db.add(new_category)
     try:
+        await db.flush() # flush to get ID but not commit yet if we want to add notifs
+        
+        # Notify all vendors about new category
+        await notify_all_vendors(
+            db,
+            NotificationType.SYSTEM,
+            title="New Category Added",
+            message=f"A new category '{new_category.name}' has been added by admin. You can now list products in this category.",
+            extra_data={"category_id": new_category.id}
+        )
+        
         await db.commit()
         await db.refresh(new_category)
         return new_category

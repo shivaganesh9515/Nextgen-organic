@@ -1,12 +1,21 @@
 const API_URL = "http://localhost:8000/api/v1";
 
+function getToken(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem("vendor_token");
+  }
+  return null;
+}
+
 export async function apiRequest(endpoint: string, method: string = "GET", body?: any, token?: string) {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+  // Use provided token or get from localStorage
+  const authToken = token || getToken();
+  if (authToken) {
+    headers["Authorization"] = `Bearer ${authToken}`;
   }
 
   try {
@@ -57,17 +66,26 @@ export const authApi = {
 
 export const vendorApi = {
     getProducts: async () => {
-        // In real backend, this would filter by the logged-in vendor token
-        // For MVP, we might fetch all products and filter locally if backend doesn't filter
+        // Token is automatically included from localStorage via apiRequest
         return apiRequest("/products"); 
     },
-    addProduct: async (productData: any, token: string) => {
-        return apiRequest("/products", "POST", productData, token);
+    getProduct: async (id: string) => {
+        return apiRequest(`/products/${id}`);
+    },
+    addProduct: async (productData: any) => {
+        return apiRequest("/products", "POST", productData);
+    },
+    deleteProduct: async (id: string) => {
+        return apiRequest(`/products/${id}`, "DELETE");
     },
     getOrders: async () => {
         return apiRequest("/orders");
     },
-    updateOrderStatus: async (orderId: string, status: string, token: string) => {
-        return apiRequest(`/orders/${orderId}/status`, "PUT", { status }, token);
+    updateOrderStatus: async (orderId: string, status: string) => {
+        return apiRequest(`/orders/${orderId}/status`, "PUT", { status });
+    },
+    getProfile: async () => {
+        return apiRequest("/vendor/me/profile");
     }
 };
+

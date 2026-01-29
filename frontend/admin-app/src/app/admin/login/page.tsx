@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
       localStorage.setItem("admin_token", access_token);
       
       // Redirect
-      router.push("/admin/dashboard");
+      router.push("/admin");
       
     } catch (err: any) {
       setError(err.message || "Authentication Failed");

@@ -1,3 +1,5 @@
+"use client";
+
 import { Search, Filter, ArrowUpRight, CheckCircle, Clock, Truck } from "lucide-react";
 
 import { useState, useEffect } from "react";
