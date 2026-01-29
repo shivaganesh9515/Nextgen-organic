@@ -2,10 +2,12 @@ import { View, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-nat
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { PRODUCTS, VENDORS } from '@/constants/mocks';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
+import { api } from '@/services/api';
+import { Product, VENDORS, PRODUCTS as MOCK_PRODUCTS } from '@/constants/mocks';
+import { useEffect } from 'react';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -16,11 +18,49 @@ export default function ProductDetailsScreen() {
   const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
   
-  const product = PRODUCTS.find(p => p.id === productId);
+  // State for Product (Hybrid: Start with Mock if ID matches, else wait for API)
+  // Optimization: Check mocks first. If not found, it might be a real backend-only product.
+  const [product, setProduct] = useState<Product | undefined>(MOCK_PRODUCTS.find(p => p.id === productId));
+  const [vendor, setVendor] = useState(VENDORS.find(v => v.id === product?.vendorId));
+
+  useEffect(() => {
+    const loadRealData = async () => {
+        try {
+            // 1. Fetch Products
+            const allProducts = await api.fetchProducts();
+            const foundProduct = allProducts.find((p: Product) => String(p.id) === String(productId));
+            
+            if (foundProduct) {
+                setProduct(foundProduct);
+                
+                // 2. Fetch Vendor for this product
+                if (foundProduct.vendorId) {
+                     const allVendors = await api.fetchVendors();
+                     const foundVendor = allVendors.find((v: any) => String(v.id) === String(foundProduct.vendorId));
+                     if (foundVendor) setVendor(foundVendor);
+                }
+            }
+        } catch (e) {
+            console.warn("Failed to load product details from API, using Mocks");
+        }
+    };
+    loadRealData();
+  }, [productId]);
+
   
-  if (!product) return null; // Or loader
-  
-  const vendor = VENDORS.find(v => v.id === product.vendorId);
+  if (!product) return (
+    <View className="flex-1 items-center justify-center bg-white">
+        <ThemedText>Product not found</ThemedText>
+        <TouchableOpacity onPress={() => router.back()} className="mt-4"><ThemedText className="text-blue-500">Go Back</ThemedText></TouchableOpacity>
+    </View>
+  );
+
+  // Fallback vendor check if not set by API yet
+  if (!vendor && product.vendorId) {
+     // Try finding in static mocks as backup
+     const v = VENDORS.find(v => v.id === product.vendorId);
+     if (v && !vendor) setVendor(v);
+  }
 
   return (
     <View className="flex-1 bg-white">

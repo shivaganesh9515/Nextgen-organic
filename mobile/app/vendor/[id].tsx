@@ -3,7 +3,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { VENDORS, PRODUCTS } from '@/constants/mocks';
+import { VENDORS as MOCK_VENDORS, PRODUCTS as MOCK_PRODUCTS, Vendor, Product } from '@/constants/mocks';
+import { api } from '@/services/api';
+import { useState, useEffect } from 'react';
 import { ProductCard } from '@/components/ProductCard';
 import { StatusBar } from 'expo-status-bar';
 
@@ -13,8 +15,28 @@ export default function VendorDetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   
-  const vendor = VENDORS.find(v => v.id === id);
-  const vendorProducts = PRODUCTS.filter(p => p.vendorId === id);
+  const [vendor, setVendor] = useState<Vendor | undefined>(MOCK_VENDORS.find(v => v.id === id));
+  const [vendorProducts, setVendorProducts] = useState<Product[]>(MOCK_PRODUCTS.filter(p => p.vendorId === id));
+
+  useEffect(() => {
+    const loadRealData = async () => {
+        try {
+            // 1. Fetch Vendor
+            const allVendors = await api.fetchVendors();
+            const foundVendor = allVendors.find((v: Vendor) => String(v.id) === String(id));
+            if (foundVendor) setVendor(foundVendor);
+
+            // 2. Fetch Products for Vendor
+            const allProducts = await api.fetchProducts();
+            const foundProducts = allProducts.filter((p: Product) => String(p.vendorId) === String(id));
+            if (foundProducts.length > 0) setVendorProducts(foundProducts);
+
+        } catch (e) {
+            console.warn("Using Mock Vendor Data");
+        }
+    };
+    loadRealData();
+  }, [id]);
   
   if (!vendor) {
     return (
