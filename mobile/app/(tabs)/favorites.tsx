@@ -4,7 +4,7 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { ProductCard } from '@/components/ProductCard';
-import { PRODUCTS } from '@/constants/mocks';
+import { PRODUCTS, Product } from '@/constants/mocks';
 
 const { width } = Dimensions.get('window');
 const PADDING = 20;
@@ -12,7 +12,7 @@ const PADDING = 20;
 export default function FavoritesScreen() {
   const router = useRouter();
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderItem = ({ item }: { item: Product }) => (
     <ProductCard 
         product={item} 
         style={{ width: (width - (PADDING * 2) - 12) / 2, marginBottom: 16 }} 

@@ -37,8 +37,8 @@ class Product(Base):
     is_active = Column(Boolean, default=True)
     
     # Relationships
-    vendor = relationship("app.models.vendor.Vendor", backref="products")
-    category = relationship("app.models.category.Category", backref="products")
+    vendor = relationship("Vendor", back_populates="products")
+    category = relationship("Category", back_populates="products")
 
     def __repr__(self):
         return f"<Product {self.name}>"

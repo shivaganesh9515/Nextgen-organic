@@ -10,7 +10,7 @@ export default function NotFoundScreen() {
         <ThemedText variant="h2" weight="bold">This screen doesn't exist.</ThemedText>
 
         <Link href="/" className="mt-4 p-4">
-          <ThemedText type="link" color="primary">Go to home screen!</ThemedText>
+          <ThemedText color="primary">Go to home screen!</ThemedText>
         </Link>
       </View>
     </>

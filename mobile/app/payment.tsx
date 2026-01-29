@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
+import { api } from '@/services/api';
 
 const VOUCHERS = [
     { id: '1', title: '20% Off', code: 'ORGANIC20', type: 'percent', value: 20, valid: 'Valid till 30 May 2026' },
@@ -30,6 +31,47 @@ export default function PaymentScreen() {
       : 0;
   
   const finalTotal = Math.max(0, total + shippingCost - discountAmount);
+
+  const [loading, setLoading] = useState(false);
+  const { items, clearCart } = useCart(); 
+
+  const handlePay = async () => {
+      setLoading(true);
+      try {
+          const orderPayload = {
+              user_id: "ded8126b-6080-4595-bf89-40b38343e742", 
+              customer_name: "Mobile User",
+              customer_email: "mobile@nextgen.com",
+              shipping_address: {
+                  line1: "4th Block, Koramangala",
+                  city: "Bangalore",
+                  state: "KA",
+                  pincode: "560034"
+              },
+              items: items.map(i => ({
+                  product_id: parseInt(i.id) || 0,
+                  quantity: i.quantity,
+                  price: i.price
+              }))
+          };
+          
+          orderPayload.items = orderPayload.items.map(i => ({
+              ...i,
+              product_id: typeof i.product_id === 'string' && (i.product_id as string).startsWith('p') 
+                ? parseInt((i.product_id as string).substring(1)) 
+                : 1 
+          }));
+
+          await api.createOrder(orderPayload);
+          Alert.alert("Success", "Order placed successfully! Check Admin Dashboard.");
+          clearCart();
+          router.replace('/(tabs)');
+      } catch (error) {
+          Alert.alert("Error", "Failed to place order. Is backend running?");
+      } finally {
+          setLoading(false);
+      }
+  };
   
   return (
     <ScreenWrapper bg="bg-white">
@@ -167,12 +209,16 @@ export default function PaymentScreen() {
 
         {/* Footer Button */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-6 pt-6 pb-10 border-t border-gray-50 shadow-lg shadow-black/5 rounded-t-[32px]">
+
              <TouchableOpacity 
                 activeOpacity={0.9}
-                className="w-full bg-[#2D6A4F] h-16 rounded-[32px] items-center justify-center shadow-lg shadow-[#2D6A4F]/25"
-                onPress={() => Alert.alert("Payment Successful!", "Your order has been placed.")}
+                className={`w-full bg-[#2D6A4F] h-16 rounded-[32px] items-center justify-center shadow-lg shadow-[#2D6A4F]/25 ${loading ? 'opacity-70' : ''}`}
+                onPress={handlePay}
+                disabled={loading}
             >
-                <ThemedText color="white" weight="bold" className="text-lg">Pay ₹{finalTotal.toFixed(2)}</ThemedText>
+                <ThemedText color="white" weight="bold" className="text-lg">
+                    {loading ? "Processing..." : `Pay ₹${finalTotal.toFixed(2)}`}
+                </ThemedText>
             </TouchableOpacity>
         </View>
 

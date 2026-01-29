@@ -67,15 +67,21 @@ export function WhyNext360() {
   );
 }
 
-function FeatureRow({ icon: Icon, title, desc }: any) {
+interface FeatureRowProps {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+}
+
+function FeatureRow({ icon: Icon, title, desc }: FeatureRowProps) {
    return (
       <div className="flex gap-4">
-         <div className="w-12 h-12 rounded-xl bg-[#27272A] flex items-center justify-center text-[#BEF264] shrink-0 border border-white/5">
+         <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center text-primary shrink-0 border border-border">
             <Icon size={24} />
          </div>
          <div>
-            <h4 className="text-white font-bold text-lg mb-1">{title}</h4>
-            <p className="text-[#A1A1AA] text-sm leading-relaxed">{desc}</p>
+            <h4 className="text-foreground font-bold text-lg mb-1">{title}</h4>
+            <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
          </div>
       </div>
    );

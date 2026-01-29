@@ -1,91 +1,104 @@
-import { View, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
-import { ProductCard } from '@/components/ProductCard';
+import { View, Image, ScrollView, Dimensions, TouchableOpacity, FlatList } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
-import { PRODUCTS, VENDORS } from '@/constants/mocks';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, interpolate, useSharedValue } from 'react-native-reanimated';
-import { AnimatedPressable } from '@/components/AnimatedPressable';
 import { Ionicons } from '@expo/vector-icons';
+import { VENDORS, PRODUCTS } from '@/constants/mocks';
+import { ProductCard } from '@/components/ProductCard';
+import { StatusBar } from 'expo-status-bar';
 
-const IMG_HEIGHT = 200;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export default function VendorScreen() {
+export default function VendorDetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollY = useSharedValue(0);
   
   const vendor = VENDORS.find(v => v.id === id);
   const vendorProducts = PRODUCTS.filter(p => p.vendorId === id);
-
-  const scrollHandler = useAnimatedScrollHandler(event => {
-    scrollY.value = event.contentOffset.y;
-  });
-
-  const headerAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      height: interpolate(
-        scrollY.value,
-        [-IMG_HEIGHT, 0, IMG_HEIGHT],
-        [IMG_HEIGHT * 1.5, IMG_HEIGHT, IMG_HEIGHT * 0.8]
-      ),
-      transform: [
-        {
-          translateY: interpolate(
-            scrollY.value,
-            [-IMG_HEIGHT, 0],
-            [-IMG_HEIGHT / 2, 0],
-            'clamp' // Prevent moving up too much
-          ),
-        },
-      ],
-    };
-  });
-
-  if (!vendor) return <View className="flex-1 bg-white" />;
+  
+  if (!vendor) {
+    return (
+      <ScreenWrapper>
+        <View className="flex-1 items-center justify-center">
+          <ThemedText>Vendor not found</ThemedText>
+          <TouchableOpacity onPress={() => router.back()} className="mt-4 p-4">
+             <ThemedText className="text-blue-500">Go Back</ThemedText>
+          </TouchableOpacity>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
-    <View className="flex-1 bg-white">
-      <Stack.Screen options={{ headerShown: false }} />
+    <View className="flex-1 bg-[#FAFAFA]">
+      <StatusBar style="light" />
       
-      {/* Animated Header Background */}
-      <Animated.View className="absolute top-0 left-0 right-0 bg-primary z-0" style={headerAnimatedStyle}>
-           {/* Placeholder for vendor cover */}
-           <View className="absolute inset-0 bg-black/20" />
-      </Animated.View>
-
-      <SafeAreaView className="absolute top-0 left-0 right-0 p-4 z-50">
-           <AnimatedPressable onPress={() => router.back()} className="w-10 h-10 bg-white/20 rounded-full items-center justify-center backdrop-blur-md">
-              <Ionicons name="arrow-back" size={24} color="white" />
-           </AnimatedPressable>
-      </SafeAreaView>
-
-      <Animated.ScrollView 
-        ref={scrollRef}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        className="flex-1 pt-32" // Push content down to show initial header
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-      >
-          <View className="bg-white rounded-t-3xl px-6 pt-8 pb-10 min-h-screen shadow-lg">
-            <View className="flex-row items-center justify-between mb-2">
-                <ThemedText variant="h1" weight="bold">{vendor.name}</ThemedText>
-                <View className="bg-secondary/10 px-3 py-1 rounded-full">
-                    <ThemedText color="primary" weight="bold">★ {vendor.rating}</ThemedText>
-                </View>
+      {/* HEADER BANNER */}
+      <View className="h-48 w-full relative">
+         <Image source={{ uri: vendor.banner }} className="w-full h-full" resizeMode="cover" />
+         <View className="absolute inset-0 bg-black/30" />
+         
+         {/* Back Button */}
+         <TouchableOpacity 
+            onPress={() => router.back()}
+            className="absolute top-12 left-5 w-10 h-10 bg-black/40 rounded-full items-center justify-center"
+         >
+            <Ionicons name="arrow-back" size={24} color="white" />
+         </TouchableOpacity>
+         
+         <View className="absolute bottom-[-40px] left-5 flex-row items-end">
+             <View className="w-24 h-24 rounded-full border-4 border-white overflow-hidden shadow-lg bg-white">
+                <Image source={{ uri: vendor.image }} className="w-full h-full" />
+             </View>
+         </View>
+      </View>
+      
+      <ScrollView className="pt-12 px-5" showsVerticalScrollIndicator={false}>
+         
+         {/* INFO SECTION */}
+         <View className="mb-6">
+            <View className="flex-row justify-between items-start">
+               <View>
+                  <ThemedText weight="bold" className="text-2xl text-gray-900">{vendor.name}</ThemedText>
+                  <View className="flex-row items-center mt-1">
+                      <Ionicons name="location" size={16} color="#4B5563" />
+                      <ThemedText className="text-gray-600 ml-1">{vendor.location}</ThemedText>
+                  </View>
+               </View>
+               <View className="items-end">
+                   <View className="flex-row items-center bg-yellow-100 px-2 py-1 rounded-lg">
+                       <Ionicons name="star" size={14} color="#D97706" />
+                       <ThemedText weight="bold" className="text-yellow-700 ml-1 text-xs">{vendor.rating} (500+)</ThemedText>
+                   </View>
+               </View>
             </View>
-            <ThemedText color="gray" className="mb-6">📍 {vendor.location}</ThemedText>
             
-            <ThemedText variant="h3" weight="semibold" className="mb-4">Fresh from Farm</ThemedText>
-            <View className="flex-row flex-wrap justify-between">
-                {vendorProducts.map((prod) => (
-                    <ProductCard key={prod.id} product={prod} />
-                ))}
+            {/* Tags */}
+            <View className="flex-row gap-2 mt-4 flex-wrap">
+               {vendor.tags.map(tag => (
+                   <View key={tag} className="px-3 py-1 bg-gray-100 rounded-full border border-gray-200">
+                       <ThemedText className="text-xs text-gray-600">{tag}</ThemedText>
+                   </View>
+               ))}
             </View>
-          </View>
-      </Animated.ScrollView>
+         </View>
+         
+         {/* PRODUCTS HEADER */}
+         <View className="flex-row justify-between items-center mb-4 mt-4">
+             <ThemedText weight="bold" className="text-lg">All Products ({vendorProducts.length})</ThemedText>
+             <Ionicons name="filter-outline" size={20} color="black" />
+         </View>
+         
+         {/* PRODUCT GRID */}
+         <View className="flex-row flex-wrap justify-between pb-10">
+              {vendorProducts.map((item) => (
+                  <View key={item.id} style={{ width: (SCREEN_WIDTH - 50) / 2, marginBottom: 16 }}>
+                      <ProductCard product={item} />
+                  </View>
+              ))}
+         </View>
+
+      </ScrollView>
     </View>
   );
 }

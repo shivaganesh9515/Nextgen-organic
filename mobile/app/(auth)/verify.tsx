@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
@@ -22,7 +22,7 @@ export default function VerifyScreen() {
     // Handle backspace (move to previous) - Logic handled in onKeyPress
   };
 
-  const handleKeyPress = (e: any, index: number) => {
+  const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
     if (e.nativeEvent.key === 'Backspace' && code[index] === '' && index > 0) {
       inputs.current[index - 1]?.focus();
       const newCode = [...code];

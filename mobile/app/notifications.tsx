@@ -4,7 +4,14 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 
-const NEW_NOTIFICATIONS = [
+interface Notification {
+  id: number;
+  title: string;
+  subtitle: string;
+  image: string;
+}
+
+const NEW_NOTIFICATIONS: Notification[] = [
   { 
       id: 1, 
       title: 'Fresh Harvest Sale', 
@@ -19,7 +26,7 @@ const NEW_NOTIFICATIONS = [
   },
 ];
 
-const WEEK_NOTIFICATIONS = [
+const WEEK_NOTIFICATIONS: Notification[] = [
   { 
       id: 3, 
       title: 'Flash Deal: Honey', 
@@ -43,7 +50,7 @@ const WEEK_NOTIFICATIONS = [
 export default function NotificationsScreen() {
   const router = useRouter();
 
-  const renderItem = (item: any, index: number, isLast: boolean) => (
+  const renderItem = (item: Notification, index: number, isLast: boolean) => (
       <View key={item.id} className={`flex-row items-center py-4 ${!isLast ? 'border-b border-gray-50' : ''}`}>
           <View className="w-12 h-12 rounded-full border border-gray-100 items-center justify-center bg-white mr-4 p-2 shadow-sm">
              <Image source={{ uri: item.image }} className="w-full h-full" resizeMode="contain" />

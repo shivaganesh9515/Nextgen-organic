@@ -4,8 +4,20 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowUpRight, TrendingUp, MoreHorizontal, Filter, Download } from "lucide-react";
 
+interface SalesTrendItem {
+  month: string;
+  amount: number;
+}
+
+interface DashboardStats {
+  revenue: number;
+  total_orders: number;
+  active_vendors: number;
+  sales_trend: SalesTrendItem[];
+}
+
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ revenue: 0, total_orders: 0, active_vendors: 0, sales_trend: [] });
+  const [stats, setStats] = useState<DashboardStats>({ revenue: 0, total_orders: 0, active_vendors: 0, sales_trend: [] });
 
   useEffect(() => {
      fetch("http://localhost:8000/api/v1/analytics/dashboard", {
@@ -157,7 +169,7 @@ export default function AdminDashboard() {
                 
                 {/* Bars */}
                 {/* Fill remaining months with 0 if data is sparse for MVP */}
-                {stats.sales_trend.length > 0 ? stats.sales_trend.map((item: any, i: number) => {
+                {stats.sales_trend.length > 0 ? stats.sales_trend.map((item, i) => {
                    const heightPercentage = Math.min((item.amount / 50000) * 100, 100);
                    return (
                    <div key={i} className="flex flex-col items-center gap-4 z-10 w-full group relative h-full justify-end">

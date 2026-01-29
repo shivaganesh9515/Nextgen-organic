@@ -13,7 +13,10 @@ class Category(Base):
     parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     
     # Self-referential relationship for Nested Categories
-    subcategories = relationship("Category", backref=relationship("Category", remote_side=[id]))
+    parent = relationship("Category", remote_side=[id], backref="subcategories")
+    
+    # Relationships
+    products = relationship("Product", back_populates="category")
 
     def __repr__(self):
         return f"<Category {self.name}>"

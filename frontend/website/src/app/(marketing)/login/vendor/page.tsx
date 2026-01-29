@@ -23,8 +23,8 @@ export default function VendorLogin() {
       // In a real app, use HTTP-only cookies or a secure storage method
       localStorage.setItem("next360_token", access_token);
       router.push("/vendor");
-    } catch (err: any) {
-      setError(err.message || "Invalid credentials");
+    } catch (err: unknown) {
+      setError((err as Error).message || "Invalid credentials");
     } finally {
       setLoading(false);
     }

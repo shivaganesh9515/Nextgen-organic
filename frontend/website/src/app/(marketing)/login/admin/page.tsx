@@ -22,8 +22,8 @@ export default function AdminLogin() {
       const { access_token } = await authApi.login(email, password);
       localStorage.setItem("next360_token", access_token);
       router.push("/admin");
-    } catch (err: any) {
-      setError(err.message || "Access Denied");
+    } catch (err: unknown) {
+      setError((err as Error).message || "Access Denied");
     } finally {
       setLoading(false);
     }

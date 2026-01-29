@@ -10,9 +10,10 @@ import { Ionicons } from '@expo/vector-icons';
 export default function CategoryListingScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  const categoryId = Array.isArray(id) ? id[0] : id;
 
-  const category = CATEGORIES.find(c => c.id === id);
-  const categoryProducts = PRODUCTS.filter(p => p.categoryId === id);
+  const category = CATEGORIES.find(c => c.id === categoryId);
+  const categoryProducts = PRODUCTS.filter(p => p.category === category?.name);
 
   return (
     <ScreenWrapper bg="bg-white">

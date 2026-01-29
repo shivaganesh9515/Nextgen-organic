@@ -3,8 +3,23 @@
 import { useState, useEffect } from "react";
 import { Search, Filter, MoreHorizontal, ShoppingCart, Calendar, MapPin, Loader2 } from "lucide-react";
 
+interface OrderItem {
+  product: string;
+  quantity: number;
+  vendor: string;
+}
+
+interface Order {
+  id: string;
+  customer: string;
+  date: string;
+  status: "DELIVERED" | "PENDING" | string;
+  total: number;
+  items: OrderItem[];
+}
+
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
@@ -82,7 +97,7 @@ export default function AdminOrdersPage() {
 
                  <div className="border-t border-white/5 py-4 mb-4">
                      <div className="space-y-3">
-                         {order.items.map((item: any, idx: number) => (
+                         {order.items.map((item, idx) => (
                              <div key={idx} className="flex justify-between items-center text-sm">
                                  <div className="flex items-center gap-3">
                                      <div className="w-8 h-8 bg-[#27272A] rounded-lg"></div>

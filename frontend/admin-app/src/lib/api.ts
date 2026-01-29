@@ -1,6 +1,6 @@
 const API_URL = "http://localhost:8000/api/v1";
 
-export async function apiRequest(endpoint: string, method: string = "GET", body?: any, token?: string) {
+export async function apiRequest<T>(endpoint: string, method: string = "GET", body?: unknown, token?: string): Promise<T> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -22,8 +22,8 @@ export async function apiRequest(endpoint: string, method: string = "GET", body?
     }
 
     return await res.json();
-  } catch (error: any) {
-    throw new Error(error.message || "Network Error");
+  } catch (error: unknown) {
+    throw new Error((error as Error).message || "Network Error");
   }
 }
 
@@ -50,7 +50,7 @@ export const authApi = {
     return await res.json();
   },
   
-  signup: async (userData: any) => {
+  signup: async (userData: Record<string, unknown>) => {
       return apiRequest("/auth/signup", "POST", userData);
   }
 };

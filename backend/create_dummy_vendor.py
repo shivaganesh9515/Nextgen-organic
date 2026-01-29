@@ -4,7 +4,7 @@ def create_vendor():
     url = "http://localhost:8000/api/v1/public/register-vendor"
     data = {
         "business_name": "Organic Harvest Co.",
-        "contact_email": "demo.vendor@example.com",
+        "contact_email": "vendor.demo@nextgen.com",
         "phone_number": "+91 9988776655",
         "seller_category": "Farms",
         "business_address": "123 Green Valley, Nashik",

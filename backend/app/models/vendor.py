@@ -42,6 +42,9 @@ class Vendor(Base):
     # Stored as JSON: { "reg_cert": "url", "pan_card": "url", "cancelled_cheque": "url", "manufacturing_license": "url" }
     documents = Column(JSON, default={}) 
 
+    # Relationships
+    products = relationship("Product", back_populates="vendor") 
+
     # 4. NPOP Details (If applicable)
     npop_number = Column(String, nullable=True)
     npop_validity = Column(Date, nullable=True)

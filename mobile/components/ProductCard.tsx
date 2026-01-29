@@ -14,10 +14,10 @@ interface ProductCardProps extends ComponentProps<typeof AnimatedPressable> {
 
 export function ProductCard({ product, horizontal = false, className = "", ...props }: ProductCardProps) {
   const router = useRouter();
-  const { getItemQuantity, addItem, updateQuantity } = useCart();
+  const { getItemQuantity, addToCart, updateQuantity } = useCart();
   const quantity = getItemQuantity(product.id);
 
-  const handleAdd = () => addItem({
+  const handleAdd = () => addToCart({
     id: product.id,
     name: product.name,
     price: product.price,
@@ -28,7 +28,7 @@ export function ProductCard({ product, horizontal = false, className = "", ...pr
   const handleDecrease = () => updateQuantity(product.id, -1);
   
   const handlePressCard = () => {
-    router.push(`/product/${product.id}` as any);
+    router.push(`/product/${product.id}`);
   };
 
   const renderAddButton = (size: number, iconSize: number) => (
