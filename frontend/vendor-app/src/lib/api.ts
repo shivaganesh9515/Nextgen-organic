@@ -54,3 +54,20 @@ export const authApi = {
       return apiRequest("/auth/signup", "POST", userData);
   }
 };
+
+export const vendorApi = {
+    getProducts: async () => {
+        // In real backend, this would filter by the logged-in vendor token
+        // For MVP, we might fetch all products and filter locally if backend doesn't filter
+        return apiRequest("/products"); 
+    },
+    addProduct: async (productData: any, token: string) => {
+        return apiRequest("/products", "POST", productData, token);
+    },
+    getOrders: async () => {
+        return apiRequest("/orders");
+    },
+    updateOrderStatus: async (orderId: string, status: string, token: string) => {
+        return apiRequest(`/orders/${orderId}/status`, "PUT", { status }, token);
+    }
+};

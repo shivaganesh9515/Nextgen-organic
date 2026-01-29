@@ -1,6 +1,57 @@
 import { ArrowUpRight, Package, ShoppingCart, DollarSign, TrendingUp } from "lucide-react";
 
+import { useState, useEffect } from "react";
+import { vendorApi } from "@/lib/api";
+
 export default function VendorDashboard() {
+  const [stats, setStats] = useState({
+      earnings: 0,
+      activeProducts: 0,
+      pendingOrders: 0,
+      recentOrders: [] as any[]
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+      loadStats();
+  }, []);
+
+  const loadStats = async () => {
+      try {
+          const [products, orders] = await Promise.all([
+              vendorApi.getProducts(),
+              vendorApi.getOrders()
+          ]);
+
+          // Calculate Metrics
+          const activeProducts = products.length;
+          
+          // Filter Orders for this vendor (Mock: Assuming all orders returned are for this vendor for now)
+          const pendingOrders = orders.filter((o: any) => o.status === "Pending" || !o.status).length;
+          
+          // Calculate Earnings (Mock: Parsing "₹800" string)
+          const earnings = orders.reduce((acc: number, order: any) => {
+             if (order.price) {
+                 const val = parseInt(order.price.replace(/[^\d]/g, '')) || 0;
+                 return acc + val;
+             }
+             return acc;
+          }, 0);
+
+          setStats({
+              earnings,
+              activeProducts,
+              pendingOrders,
+              recentOrders: orders.slice(0, 5)
+          });
+
+      } catch (e) {
+          console.error("Failed to load dashboard stats");
+      } finally {
+          setLoading(false);
+      }
+  };
+
   return (
     <div className="space-y-8 font-sans text-[#E4E4E7]">
       <div className="flex justify-between items-center mb-4">
@@ -15,8 +66,8 @@ export default function VendorDashboard() {
           <div className="col-span-8 bg-gradient-to-br from-[#18181B] to-[#27272A] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden">
              <div className="flex justify-between items-start mb-8">
                 <div>
-                   <h2 className="text-[#A1A1AA] font-medium text-sm uppercase tracking-wider mb-2">Total Earnings</h2>
-                   <div className="text-5xl font-bold text-white">₹14.8L</div>
+                   <div className="text-[#A1A1AA] font-medium text-sm uppercase tracking-wider mb-2">Total Earnings</div>
+                   <div className="text-5xl font-bold text-white">₹{stats.earnings.toLocaleString()}</div>
                 </div>
                 <div className="px-4 py-2 bg-[#BEF264]/10 rounded-full flex items-center gap-2 text-sm font-bold text-[#BEF264] border border-[#BEF264]/20">
                    <TrendingUp size={16} /> +24% vs last harvest
@@ -40,7 +91,7 @@ export default function VendorDashboard() {
                    <div className="p-3 bg-[#27272A] rounded-2xl text-white group-hover:text-[#BEF264] transition-colors"><Package size={24}/></div>
                    <ArrowUpRight className="text-[#A1A1AA]" size={20} />
                 </div>
-                <div className="text-3xl font-bold text-white mb-1">128</div>
+                <div className="text-3xl font-bold text-white mb-1">{stats.activeProducts}</div>
                 <div className="text-[#A1A1AA] text-sm">Active Products Listed</div>
              </div>
              <div className="bg-[#18181B] border border-white/5 p-6 rounded-[2rem] hover:border-[#BEF264]/50 transition-colors group">
@@ -48,7 +99,7 @@ export default function VendorDashboard() {
                    <div className="p-3 bg-[#27272A] rounded-2xl text-white group-hover:text-[#BEF264] transition-colors"><ShoppingCart size={24}/></div>
                    <ArrowUpRight className="text-[#A1A1AA]" size={20} />
                 </div>
-                <div className="text-3xl font-bold text-white mb-1">12</div>
+                <div className="text-3xl font-bold text-white mb-1">{stats.pendingOrders}</div>
                 <div className="text-[#A1A1AA] text-sm">Pending Orders</div>
              </div>
           </div>
@@ -67,15 +118,15 @@ export default function VendorDashboard() {
                 </tr>
             </thead>
             <tbody className="text-sm">
-               {[1,2,3].map((_, i) => (
+               {stats.recentOrders.map((order, i) => (
                   <tr key={i} className="border-b border-white/5 last:border-0 group hover:bg-white/[0.02]">
-                     <td className="py-4 pl-2 font-mono text-[#A1A1AA]">#ORD-299{i}</td>
-                     <td className="py-4 text-white font-medium">Organic Tomatoes (20kg Batch)</td>
-                     <td className="py-4 text-[#A1A1AA]">Today, 10:23 AM</td>
+                     <td className="py-4 pl-2 font-mono text-[#A1A1AA]">{order.id || `#ORD-${i}`}</td>
+                     <td className="py-4 text-white font-medium">{order.item || "Unknown Item"}</td>
+                     <td className="py-4 text-[#A1A1AA]">{order.time || "Just now"}</td>
                      <td className="py-4">
-                        <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold border border-blue-500/20">Processing</span>
+                        <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold border border-blue-500/20">{order.status || "Pending"}</span>
                      </td>
-                     <td className="py-4 text-right pr-2 text-white font-bold">₹2,400</td>
+                     <td className="py-4 text-right pr-2 text-white font-bold">{order.price}</td>
                   </tr>
                ))}
             </tbody>

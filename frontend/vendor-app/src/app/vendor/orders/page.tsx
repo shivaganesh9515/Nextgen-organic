@@ -1,6 +1,32 @@
 import { Search, Filter, ArrowUpRight, CheckCircle, Clock, Truck } from "lucide-react";
 
+import { useState, useEffect } from "react";
+import { vendorApi } from "@/lib/api";
+
 export default function VendorOrdersPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+      loadOrders();
+  }, []);
+
+  const loadOrders = async () => {
+      try {
+          // In a real app, we'd filter by vendor ID here or in the backend
+          const data = await vendorApi.getOrders();
+          setOrders(data);
+      } catch (e) {
+          console.error("Failed to load orders");
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  // Helper to filter orders by status
+  const pendingOrders = orders.filter((o: any) => o.status === "Pending" || !o.status); // Default to pending if no status
+  const processingOrders = orders.filter((o: any) => o.status === "Processing" || o.status === "Confirmed");
+  const completedOrders = orders.filter((o: any) => o.status === "Completed" || o.status === "Delivered");
   return (
     <div className="space-y-8 font-sans text-[#E4E4E7]">
       {/* Header */}
@@ -29,11 +55,7 @@ export default function VendorOrdersPage() {
             </div>
             
             <div className="space-y-4 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-               {[
-                  { id: "ORD-921", item: "Organic Tomatoes", qty: "20kg", time: "10m ago", price: "₹800" },
-                  { id: "ORD-924", item: "Fresh Spinach", qty: "50 bundles", time: "45m ago", price: "₹750" },
-                  { id: "ORD-929", item: "Carrots (Ooty)", qty: "15kg", time: "2h ago", price: "₹920" },
-               ].map((order, i) => (
+               {pendingOrders.map((order, i) => (
                   <div key={i} className="bg-[#27272A]/50 border border-white/5 p-4 rounded-xl hover:border-[#BEF264]/30 cursor-pointer group transition-colors">
                      <div className="flex justify-between items-start mb-3">
                         <span className="text-xs font-mono text-[#71717A]">{order.id}</span>
@@ -63,10 +85,7 @@ export default function VendorOrdersPage() {
             </div>
             
             <div className="space-y-4 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-               {[
-                  { id: "ORD-918", item: "Green Chillies", qty: "5kg", time: "3h ago", price: "₹450" },
-                  { id: "ORD-915", item: "Potatoes", qty: "100kg", time: "5h ago", price: "₹3,200" },
-               ].map((order, i) => (
+               {processingOrders.map((order, i) => (
                   <div key={i} className="bg-[#27272A]/50 border border-white/5 p-4 rounded-xl hover:border-blue-500/30 cursor-pointer group transition-colors">
                      <div className="flex justify-between items-start mb-3">
                         <span className="text-xs font-mono text-[#71717A]">{order.id}</span>
@@ -95,10 +114,7 @@ export default function VendorOrdersPage() {
             </div>
             
             <div className="space-y-4 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-                {[
-                  { id: "ORD-890", item: "Onions", qty: "50kg", time: "Yesterday", price: "₹1,500" },
-                  { id: "ORD-885", item: "Curry Leaves", qty: "2kg", time: "Yesterday", price: "₹120" },
-               ].map((order, i) => (
+                {completedOrders.map((order, i) => (
                   <div key={i} className="bg-[#27272A]/30 border border-white/5 p-4 rounded-xl opacity-75 hover:opacity-100 transition-opacity">
                      <div className="flex justify-between items-start mb-2">
                         <span className="text-xs font-mono text-[#71717A]">{order.id}</span>

@@ -4,12 +4,27 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, Search, Filter, MoreHorizontal, Package } from "lucide-react";
 
+import { vendorApi } from "@/lib/api";
+import { useEffect } from "react";
+
 export default function VendorProductsPage() {
-  const [products, setProducts] = useState<any[]>([
-    // Mock Data for MVP
-    { id: 1, name: "Organic Tomatoes", price: "₹40/kg", stock: "120 kg", status: "Active" },
-    { id: 2, name: "Fresh Spinach", price: "₹25/bunch", stock: "60 bunches", status: "Low Stock" },
-  ]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+      try {
+          const data = await vendorApi.getProducts();
+          setProducts(data);
+      } catch (e) {
+          console.error("Failed to fetch products");
+      } finally {
+          setLoading(false);
+      }
+  };
 
   return (
     <div className="space-y-8">
