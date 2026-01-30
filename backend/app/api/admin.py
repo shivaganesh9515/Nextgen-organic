@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from app.core.database import get_db
 from app.models.vendor import Vendor, VendorStatus
 from app.models.notification import Notification, NotificationType
+from app.models.order import Order, OrderItem
 from app.api.deps import get_current_admin
 from app.core.config import settings
 import uuid
@@ -51,9 +53,6 @@ async def approve_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks
         # Use Service Role Key for Admin Actions
         supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
         
-        # Check if user already exists (optional, but good practice)
-        # For MVP, we attempt create directly
-        
         res = supabase.auth.admin.create_user({
             "email": vendor.contact_email,
             "password": temp_password,
@@ -67,16 +66,13 @@ async def approve_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks
         auth_user_id = res.user.id
         
     except Exception as e:
-        # Log error but don't crash if it's just a duplicate user (handle gracefully in prod)
         print(f"Supabase Auth Error: {e}")
-        # If user exists, we might want to fetch them or error out. 
-        # For robust MVP flow:
         raise HTTPException(status_code=500, detail=f"Failed to create Supabase User: {str(e)}")
     
     # 2. Update Vendor
     vendor.status = VendorStatus.APPROVED
     vendor.is_verified = True
-    vendor.auth_user_id = auth_user_id # Link the UUIDs
+    vendor.auth_user_id = auth_user_id
     
     await db.commit()
     
@@ -93,7 +89,6 @@ async def reject_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks,
         
     vendor.status = VendorStatus.REJECTED
     
-    # Create system notification
     notification = Notification(
         vendor_id=vendor.id,
         type=NotificationType.SYSTEM,
@@ -104,7 +99,6 @@ async def reject_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks,
     
     await db.commit()
     
-    # Send rejection email notification
     background_tasks.add_task(send_rejection_email, vendor.contact_email, vendor.business_name)
     
     return {"message": "Vendor rejected"}
@@ -112,7 +106,7 @@ async def reject_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks,
 
 @router.post("/vendors/{vendor_id}/suspend")
 async def suspend_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin=Depends(get_current_admin)):
-    """Suspend an approved vendor - they cannot login or sell products."""
+    """Suspend an approved vendor."""
     vendor = await db.get(Vendor, vendor_id)
     if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
@@ -123,7 +117,6 @@ async def suspend_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks
     vendor.status = VendorStatus.SUSPENDED
     vendor.is_verified = False
     
-    # Create system notification
     notification = Notification(
         vendor_id=vendor.id,
         type=NotificationType.SYSTEM,
@@ -134,7 +127,6 @@ async def suspend_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks
     
     await db.commit()
     
-    # Send suspension email notification
     background_tasks.add_task(send_suspension_email, vendor.contact_email, vendor.business_name)
     
     return {"message": f"Vendor '{vendor.business_name}' suspended successfully"}
@@ -153,7 +145,6 @@ async def reactivate_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTa
     vendor.status = VendorStatus.APPROVED
     vendor.is_verified = True
     
-    # Create system notification
     notification = Notification(
         vendor_id=vendor.id,
         type=NotificationType.SYSTEM,
@@ -164,7 +155,6 @@ async def reactivate_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTa
     
     await db.commit()
     
-    # Send reactivation email notification
     background_tasks.add_task(send_reactivation_email, vendor.contact_email, vendor.business_name)
     
     return {"message": f"Vendor '{vendor.business_name}' reactivated successfully"}
@@ -183,3 +173,35 @@ async def delete_vendor(vendor_id: uuid.UUID, db: AsyncSession = Depends(get_db)
     
     return {"message": f"Vendor '{business_name}' deleted permanently"}
 
+
+# ========== ORDERS SECTION ==========
+@router.get("/orders")
+async def list_admin_orders(db: AsyncSession = Depends(get_db), admin=Depends(get_current_admin)):
+    """Get all orders for Admin Dashboard."""
+    try:
+        query = select(Order).options(
+            selectinload(Order.items).selectinload(OrderItem.product),
+            selectinload(Order.items).selectinload(OrderItem.vendor)
+        ).order_by(Order.created_at.desc())
+        
+        result = await db.execute(query)
+        orders = result.scalars().all()
+        
+        formatted = []
+        for o in orders:
+            items_count = len(o.items) if o.items else 0
+            formatted.append({
+                "id": str(o.id),
+                "customer_name": o.customer_name or "Unknown",
+                "customer_email": o.customer_email or "",
+                "date": o.created_at.strftime("%Y-%m-%d %H:%M") if o.created_at else "Unknown",
+                "status": str(o.status.value) if hasattr(o.status, 'value') else str(o.status),
+                "total": float(o.total_amount),
+                "items_count": items_count
+            })
+        
+        return formatted
+        
+    except Exception as e:
+        print(f"Error listing admin orders: {e}")
+        return []

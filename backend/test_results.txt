@@ -1,0 +1,6 @@
+[OK] Products: 20 found
+[OK] Order: Demo Order placed! (Database was empty)
+[OK] Admin Login
+[OK] Admin Orders: 0 orders visible
+[WARN] Admin Notifications: 404
+[WARN] Vendor Login: 401
