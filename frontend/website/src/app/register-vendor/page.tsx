@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios from "axios";
-import { UploadCloud, CheckCircle, FileText, Factory, Award } from "lucide-react";
+import { UploadCloud, CheckCircle, FileText, Factory, Award, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 // --- Schema ---
 const MAX_FILE_SIZE = 10000000; // 10MB
@@ -112,86 +114,103 @@ export default function VendorRegistration() {
 
   if (isSuccess) {
       return (
-          <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-              <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <CheckCircle className="w-8 h-8 text-green-600" />
+          <div className="min-h-screen bg-[#F5F5F0] flex items-center justify-center p-4">
+              <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md text-center border border-[#4A6741]/10">
+                  <div className="w-20 h-20 bg-[#F0FDF4] rounded-full flex items-center justify-center mx-auto mb-6">
+                      <CheckCircle className="w-10 h-10 text-[#4A6741]" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Submitted!</h2>
-                  <p className="text-gray-600 mb-6">
-                      Your vendor application has been received. Our team will verify your documents and send an approval email to <b>{watch('contact_email')}</b>.
+                  <h2 className="font-heading font-bold text-3xl text-[#262A2B] mb-2">Application Received!</h2>
+                  <p className="text-[#262A2B]/70 mb-8 leading-relaxed">
+                      Thank you for applying. We will verify your documents and send an approval status to <b>{watch('contact_email')}</b> within 48 hours.
                   </p>
-                  <button onClick={() => window.location.href='/'} className="bg-green-700 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-800 transition">
+                  <Link href="/" className="block w-full bg-[#4A6741] text-white px-6 py-4 rounded-xl font-bold hover:bg-[#3D5536] transition-colors">
                       Return Home
-                  </button>
+                  </Link>
               </div>
           </div>
       );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">Partner with NextGen Organics</h1>
-          <p className="mt-2 text-gray-600">Join our network of verified organic producers. Complete the form to start.</p>
+    <div className="min-h-screen bg-[#F5F5F0] pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+      {/* Background Blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#4A6741]/5 rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#D4A373]/5 rounded-full blur-3xl opacity-50" />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="mb-8">
+           <Link href="/vendors" className="inline-flex items-center gap-2 text-[#262A2B]/60 hover:text-[#4A6741] transition-colors mb-4 font-medium">
+             <ArrowLeft size={16} /> Back to Benefits
+           </Link>
+           <h1 className="font-heading font-black text-4xl text-[#262A2B] mb-2">Vendor Application</h1>
+           <p className="text-[#262A2B]/60">Complete the details below to join our certified organic network.</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Progress Bar (Simple) */}
-          <div className="bg-gray-100 h-2 w-full">
-               <div className="bg-green-600 h-full transition-all duration-300" style={{ width: `${(step / 3) * 100}%` }} />
+        <div className="bg-white rounded-3xl shadow-xl shadow-[#262A2B]/5 border border-[#262A2B]/5 overflow-hidden">
+          {/* Progress Bar */}
+          <div className="bg-[#F5F5F0] h-1.5 w-full">
+               <motion.div 
+                 className="bg-[#4A6741] h-full" 
+                 initial={{ width: 0 }}
+                 animate={{ width: `${(step / 3) * 100}%` }}
+                 transition={{ duration: 0.5 }}
+               />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-10">
             
             {/* --- STEP 1: Company & Category --- */}
             {step === 1 && (
-                <div className="space-y-6">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                        <Factory className="w-5 h-5 text-green-600" /> Company Details
+                <div className="space-y-8">
+                    <h2 className="text-xl font-bold flex items-center gap-3 text-[#262A2B]">
+                        <div className="w-10 h-10 rounded-full bg-[#4A6741]/10 flex items-center justify-center text-[#4A6741]">
+                           <Factory size={20} /> 
+                        </div>
+                        Company Details
                     </h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Business / Farm Name</label>
-                            <input {...register("business_name")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="e.g. Green Valley Farms" />
-                            {errors.business_name && <p className="text-red-500 text-xs mt-1">{errors.business_name.message}</p>}
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-[#262A2B] uppercase tracking-wide">Business Name</label>
+                            <input {...register("business_name")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="e.g. Green Valley Farms" />
+                            {errors.business_name && <p className="text-[#E23744] text-xs font-medium">{errors.business_name.message}</p>}
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-                            <input {...register("contact_email")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
-                            {errors.contact_email && <p className="text-red-500 text-xs mt-1">{errors.contact_email.message}</p>}
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-[#262A2B] uppercase tracking-wide">Contact Email</label>
+                            <input {...register("contact_email")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="you@company.com" />
+                            {errors.contact_email && <p className="text-[#E23744] text-xs font-medium">{errors.contact_email.message}</p>}
                         </div>
-                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input {...register("phone_number")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
-                            {errors.phone_number && <p className="text-red-500 text-xs mt-1">{errors.phone_number.message}</p>}
+                         <div className="space-y-2">
+                            <label className="text-sm font-bold text-[#262A2B] uppercase tracking-wide">Phone Number</label>
+                            <input {...register("phone_number")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="+91" />
+                            {errors.phone_number && <p className="text-[#E23744] text-xs font-medium">{errors.phone_number.message}</p>}
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Establishment Year</label>
-                            <input {...register("year_establishment")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="YYYY" />
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-[#262A2B] uppercase tracking-wide">Est. Year</label>
+                            <input {...register("year_establishment")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="YYYY" />
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <label className="block text-sm font-medium text-gray-700">Registered Address</label>
-                        <input {...register("address_line")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="Street Address" />
+                        <label className="text-sm font-bold text-[#262A2B] uppercase tracking-wide">Registered Address</label>
+                        <input {...register("address_line")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="Street Address" />
                         <div className="grid grid-cols-3 gap-4">
-                            <input {...register("city")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="City" />
-                            <input {...register("state")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="State" />
-                            <input {...register("pincode")} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="PIN Code" />
+                            <input {...register("city")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="City" />
+                            <input {...register("state")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="State" />
+                            <input {...register("pincode")} className="w-full px-4 py-3 border border-[#E5E5E0] rounded-xl focus:outline-none focus:border-[#4A6741] focus:ring-1 focus:ring-[#4A6741] bg-[#F9F9F7]" placeholder="PIN Code" />
                         </div>
                     </div>
 
-                    <div className="pt-4 border-t">
-                        <h3 className="block text-sm font-medium text-gray-700 mb-3">Seller Category</h3>
+                    <div className="pt-6 border-t border-[#E5E5E0]">
+                        <h3 className="block text-sm font-bold text-[#262A2B] uppercase tracking-wide mb-4">Seller Category</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {['NPOP_ORGANIC', 'NATURAL', 'ECO_FRIENDLY'].map((cat) => (
-                                <label key={cat} className={`border p-4 rounded-xl cursor-pointer hover:border-green-500 transition flex flex-col items-center gap-2 ${sellerCategory === cat ? 'bg-green-50 border-green-600' : 'border-gray-200'}`}>
+                                <label key={cat} className={`border p-4 rounded-xl cursor-pointer transition-all flex flex-col items-center gap-2 text-center ${sellerCategory === cat ? 'bg-[#4A6741]/10 border-[#4A6741]' : 'border-[#E5E5E0] hover:border-[#4A6741]/50'}`}>
                                     <input type="radio" value={cat} {...register("seller_category")} className="sr-only" />
-                                    <span className="font-medium text-sm text-gray-900">{cat.replace('_', ' ')}</span>
-                                    {cat === 'NPOP_ORGANIC' && <span className="text-[10px] bg-green-200 text-green-800 px-2 py-0.5 rounded-full">Certificate Required</span>}
+                                    <span className="font-bold text-sm text-[#262A2B]">{cat.replace('_', ' ')}</span>
+                                    {cat === 'NPOP_ORGANIC' && <span className="text-[10px] bg-[#F0FDF4] text-[#4A6741] px-2 py-0.5 rounded-full font-bold">Cert. Required</span>}
                                 </label>
                             ))}
                         </div>
@@ -201,61 +220,64 @@ export default function VendorRegistration() {
 
             {/* --- STEP 2: Compliance (FSSAI & NPOP) --- */}
             {step === 2 && (
-                <div className="space-y-6">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                        <Award className="w-5 h-5 text-green-600" /> Compliance & Licenses
+                <div className="space-y-8">
+                    <h2 className="text-xl font-bold flex items-center gap-3 text-[#262A2B]">
+                        <div className="w-10 h-10 rounded-full bg-[#4A6741]/10 flex items-center justify-center text-[#4A6741]">
+                            <Award size={20} /> 
+                        </div>
+                        Compliance & Licenses
                     </h2>
 
                     {/* FSSAI Section */}
-                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h3 className="text-md font-medium text-gray-900 mb-4">FSSAI License (Mandatory)</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">License Number</label>
-                                <input {...register("fssai_number")} className="w-full p-2 border border-gray-300 rounded-lg" />
-                                {errors.fssai_number && <p className="text-red-500 text-xs mt-1">{errors.fssai_number.message}</p>}
+                    <div className="bg-[#F9F9F7] p-6 rounded-2xl border border-[#E5E5E0]">
+                        <h3 className="text-md font-bold text-[#262A2B] mb-6 border-b border-[#262A2B]/10 pb-2">FSSAI License (Mandatory)</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-[#262A2B]/60 uppercase">License Number</label>
+                                <input {...register("fssai_number")} className="w-full px-4 py-2 border border-[#E5E5E0] rounded-xl bg-white focus:outline-none focus:border-[#4A6741]" />
+                                {errors.fssai_number && <p className="text-[#E23744] text-xs font-medium">{errors.fssai_number.message}</p>}
                             </div>
-                            <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">Validity Date</label>
-                                <input {...register("fssai_validity")} type="date" className="w-full p-2 border border-gray-300 rounded-lg" />
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-[#262A2B]/60 uppercase">Validity Date</label>
+                                <input {...register("fssai_validity")} type="date" className="w-full px-4 py-2 border border-[#E5E5E0] rounded-xl bg-white focus:outline-none focus:border-[#4A6741]" />
                             </div>
-                            <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">License Type</label>
-                                <select {...register("fssai_type")} className="w-full p-2 border border-gray-300 rounded-lg bg-white">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-[#262A2B]/60 uppercase">License Type</label>
+                                <select {...register("fssai_type")} className="w-full px-4 py-2 border border-[#E5E5E0] rounded-xl bg-white focus:outline-none focus:border-[#4A6741]">
                                     <option value="">Select Type</option>
                                     <option value="Manufacturer">Manufacturer</option>
                                     <option value="Trader">Trader</option>
                                     <option value="Marketer">Marketer</option>
                                 </select>
                             </div>
-                            <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">Upload Certificate</label>
-                                <input type="file" {...register("doc_fssai_cert")} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
-                                {errors.doc_fssai_cert && <p className="text-red-500 text-xs mt-1">{errors.doc_fssai_cert.message}</p>}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-[#262A2B]/60 uppercase">Upload Certificate</label>
+                                <input type="file" {...register("doc_fssai_cert")} className="w-full text-xs text-[#262A2B] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#4A6741]/10 file:text-[#4A6741] hover:file:bg-[#4A6741]/20" />
+                                {errors.doc_fssai_cert && <p className="text-[#E23744] text-xs font-medium">{errors.doc_fssai_cert.message}</p>}
                             </div>
                         </div>
                     </div>
 
                     {/* NPOP Section (Conditional) */}
                     {isOrganic && (
-                        <div className="bg-green-50 p-6 rounded-xl border border-green-200">
-                            <h3 className="text-md font-medium text-green-900 mb-4">NPOP Organic Certification</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-green-800 mb-1">Certificate Number</label>
-                                    <input {...register("npop_number")} className="w-full p-2 border border-green-300 rounded-lg focus:ring-green-500" />
+                        <div className="bg-[#4A6741]/5 p-6 rounded-2xl border border-[#4A6741]/20">
+                            <h3 className="text-md font-bold text-[#4A6741] mb-6 border-b border-[#4A6741]/10 pb-2">NPOP Organic Certification</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-[#4A6741]/80 uppercase">Certificate Number</label>
+                                    <input {...register("npop_number")} className="w-full px-4 py-2 border border-[#4A6741]/20 rounded-xl bg-white focus:outline-none focus:border-[#4A6741]" />
                                 </div>
-                                <div className="">
-                                     <label className="block text-xs font-medium text-green-800 mb-1">Certification Body</label>
-                                     <input {...register("npop_scope")} className="w-full p-2 border border-green-300 rounded-lg" placeholder="e.g. Aditi Organic Certifications" />
+                                <div className="space-y-2">
+                                     <label className="text-xs font-bold text-[#4A6741]/80 uppercase">Certification Body</label>
+                                     <input {...register("npop_scope")} className="w-full px-4 py-2 border border-[#4A6741]/20 rounded-xl bg-white focus:outline-none focus:border-[#4A6741]" placeholder="e.g. Aditi Organic Certifications" />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-green-800 mb-1">Validity Date</label>
-                                    <input {...register("npop_validity")} type="date" className="w-full p-2 border border-green-300 rounded-lg" />
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-[#4A6741]/80 uppercase">Validity Date</label>
+                                    <input {...register("npop_validity")} type="date" className="w-full px-4 py-2 border border-[#4A6741]/20 rounded-xl bg-white focus:outline-none focus:border-[#4A6741]" />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-green-800 mb-1">Upload NPOP Certificate</label>
-                                    <input type="file" {...register("doc_npop_cert")} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white file:text-green-700 hover:file:bg-green-100" />
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-[#4A6741]/80 uppercase">Upload NPOP Certificate</label>
+                                    <input type="file" {...register("doc_npop_cert")} className="w-full text-xs text-[#4A6741] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#4A6741] file:text-white hover:file:bg-[#3D5536]" />
                                 </div>
                             </div>
                         </div>
@@ -265,35 +287,38 @@ export default function VendorRegistration() {
 
             {/* --- STEP 3: Legal Documents --- */}
             {step === 3 && (
-                <div className="space-y-6">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-green-600" /> Business Documents
+                <div className="space-y-8">
+                    <h2 className="text-xl font-bold flex items-center gap-3 text-[#262A2B]">
+                        <div className="w-10 h-10 rounded-full bg-[#4A6741]/10 flex items-center justify-center text-[#4A6741]">
+                            <FileText size={20} />
+                        </div>
+                        Business Documents
                     </h2>
-                    <p className="text-sm text-gray-500">Please upload clear scans (PDF/JPG/PNG, Max 10MB each).</p>
+                    <p className="text-sm text-[#262A2B]/60">Please upload clear scans (PDF/JPG/PNG, Max 10MB each).</p>
 
-                    <div className="space-y-4">
-                        <div className="border border-dashed border-gray-300 p-6 rounded-xl text-center hover:bg-gray-50 transition">
-                            <UploadCloud className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-                            <label className="block font-medium text-gray-900 mb-1">Company Registration / Partnership Deed</label>
-                            <input type="file" {...register("doc_company_reg")} className="block w-full text-sm text-gray-500 file:mx-auto file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" />
-                            {errors.doc_company_reg && <p className="text-red-500 text-xs mt-1">{errors.doc_company_reg.message}</p>}
+                    <div className="space-y-6">
+                        <div className="border-2 border-dashed border-[#E5E5E0] p-8 rounded-2xl text-center hover:border-[#4A6741] hover:bg-[#4A6741]/5 transition active:scale-[0.99]">
+                            <UploadCloud className="w-10 h-10 text-[#4A6741]/40 mx-auto mb-3" />
+                            <label className="block font-bold text-[#262A2B] mb-1">Company Registration / Partnership Deed</label>
+                            <input type="file" {...register("doc_company_reg")} className="block w-full text-sm text-[#262A2B]/60 file:mx-auto file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#262A2B] file:text-white hover:file:bg-[#4A6741] cursor-pointer" />
+                            {errors.doc_company_reg && <p className="text-[#E23744] text-xs font-medium mt-2">{errors.doc_company_reg.message}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="border border-dashed border-gray-300 p-4 rounded-xl">
-                                <label className="block font-medium text-sm text-gray-700 mb-2">PAN Card (Entity/Individual)</label>
+                             <div className="border border-dashed border-[#E5E5E0] p-6 rounded-2xl bg-[#F9F9F7]">
+                                <label className="block font-bold text-sm text-[#262A2B] mb-3">PAN Card (Entity/Individual)</label>
                                 <input type="file" {...register("doc_pan_card")} className="w-full text-xs" />
-                                {errors.doc_pan_card && <p className="text-red-500 text-xs mt-1">{errors.doc_pan_card.message}</p>}
+                                {errors.doc_pan_card && <p className="text-[#E23744] text-xs font-medium mt-1">{errors.doc_pan_card.message}</p>}
                              </div>
                              
-                             <div className="border border-dashed border-gray-300 p-4 rounded-xl">
-                                <label className="block font-medium text-sm text-gray-700 mb-2">Cancelled Cheque / Bank Proof</label>
+                             <div className="border border-dashed border-[#E5E5E0] p-6 rounded-2xl bg-[#F9F9F7]">
+                                <label className="block font-bold text-sm text-[#262A2B] mb-3">Cancelled Cheque / Bank Proof</label>
                                 <input type="file" {...register("doc_bank_proof")} className="w-full text-xs" />
-                                {errors.doc_bank_proof && <p className="text-red-500 text-xs mt-1">{errors.doc_bank_proof.message}</p>}
+                                {errors.doc_bank_proof && <p className="text-[#E23744] text-xs font-medium mt-1">{errors.doc_bank_proof.message}</p>}
                              </div>
 
-                             <div className="border border-dashed border-gray-300 p-4 rounded-xl">
-                                <label className="block font-medium text-sm text-gray-700 mb-2">Manufacturing License (Optional)</label>
+                             <div className="border border-dashed border-[#E5E5E0] p-6 rounded-2xl bg-[#F9F9F7] md:col-span-2">
+                                <label className="block font-bold text-sm text-[#262A2B] mb-3">Manufacturing License (Optional)</label>
                                 <input type="file" {...register("doc_manufacturing_license")} className="w-full text-xs" />
                              </div>
                         </div>
@@ -302,19 +327,19 @@ export default function VendorRegistration() {
             )}
 
             {/* Navigation Buttons */}
-            <div className="mt-10 flex justify-between pt-6 border-t border-gray-100">
+            <div className="mt-12 flex justify-between pt-8 border-t border-[#E5E5E0]">
                 {step > 1 ? (
-                    <button type="button" onClick={() => setStep(s => s - 1)} className="px-6 py-2 text-gray-600 font-medium hover:text-gray-900">
+                    <button type="button" onClick={() => setStep(s => s - 1)} className="px-6 py-3 text-[#262A2B]/60 font-bold hover:text-[#262A2B] transition-colors">
                         Back
                     </button>
                 ) : <div />}
                 
                 {step < 3 ? (
-                    <button type="button" onClick={() => setStep(s => s + 1)} className="px-6 py-2 bg-green-700 text-white rounded-lg font-medium hover:bg-green-800 transition">
+                    <button type="button" onClick={() => setStep(s => s + 1)} className="px-8 py-3 bg-[#262A2B] text-white rounded-xl font-bold hover:bg-[#4A6741] transition-all shadow-lg hover:shadow-xl">
                         Next Step
                     </button>
                 ) : (
-                    <button type="submit" disabled={isSubmitting} className="px-8 py-2 bg-green-700 text-white rounded-lg font-bold hover:bg-green-800 transition shadow-lg disabled:opacity-70 disabled:cursor-not-allowed">
+                    <button type="submit" disabled={isSubmitting} className="px-8 py-3 bg-[#4A6741] text-white rounded-xl font-bold hover:bg-[#3D5536] transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed">
                         {isSubmitting ? "Submitting..." : "Submit Application"}
                     </button>
                 )}

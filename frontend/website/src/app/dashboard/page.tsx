@@ -11,8 +11,12 @@ export default function Dashboard() {
       <aside className="w-64 bg-white border-r border-[#E5E5E0] fixed inset-y-0 hidden md:flex flex-col p-6 z-20">
         <div className="flex items-center gap-3 mb-12">
             <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[#4A6741]/20">
-                <Image src="/logo.png" alt="Logo" fill className="object-cover" />
-            </div>
+                <Image
+              src="/final-logo.png"
+              alt="Logo"
+              fill
+              className="object-cover scale-[1.75]"
+            /></div>
             <span className="font-heading font-bold text-lg text-[#262A2B]">Next360</span>
         </div>
 

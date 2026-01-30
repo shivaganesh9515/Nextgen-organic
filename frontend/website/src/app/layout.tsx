@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Next360 Organics | Farm to Hub Ecosystem",
   description: "Connecting organic farmers directly to local hubs and customers. Fresh, trusted, and organic.",
   icons: {
-    icon: "/logo.png",
+    icon: "/final-logo.png",
   },
 };
 

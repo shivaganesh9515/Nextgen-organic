@@ -37,64 +37,64 @@ export function Navbar() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
-          isScrolled
-            ? "bg-[#F5F5F0]/80 backdrop-blur-md border-[#E5E5E0] py-4 shadow-sm"
-            : "bg-transparent py-6"
+          "fixed top-6 left-0 right-0 z-50 transition-all duration-300 flex justify-center px-4",
+          isScrolled ? "pointer-events-none" : ""
         )}
       >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div 
+           className={cn(
+             "w-full max-w-7xl mx-auto flex items-center justify-between transition-all duration-500",
+             isScrolled 
+               ? "bg-[#262A2B]/90 backdrop-blur-xl border border-white/10 rounded-full py-3 px-6 shadow-2xl pointer-events-auto max-w-5xl" 
+               : "bg-transparent py-4 px-0"
+           )}
+        >
           {/* Logo Area */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden group-hover:scale-105 transition-transform duration-500 border-2 border-transparent group-hover:border-[#4A6741]/20">
+          {/* Logo Area */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className={cn(
+               "relative transition-all duration-500 flex items-center justify-center rounded-full overflow-hidden shadow-md",
+               isScrolled ? "h-16 w-16" : "h-24 w-24"
+            )}>
                <Image 
-                 src="/logo.png" 
+                 src="/final-logo.png" 
                  alt="Next360 Logo" 
-                 fill 
-                 className="object-cover" 
+                 fill
+                 className="object-cover scale-[1.75]" 
                  priority
+                 unoptimized
                />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-bold text-xl leading-none tracking-tight text-[#262A2B]">
-                Next360
-              </span>
-              <span className="text-[10px] uppercase tracking-widest text-[#4A6741] font-medium">
-                Organics
-              </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors duration-300 relative",
+                  "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 relative group overflow-hidden",
                   pathname === link.href
-                    ? "text-[#4A6741]"
-                    : "text-[#262A2B]/80 hover:text-[#4A6741]"
+                    ? (isScrolled ? "text-[#4A6741] bg-white" : "text-[#4A6741] bg-[#4A6741]/10")
+                    : (isScrolled ? "text-[#F5F5F0] hover:bg-white/10" : "text-[#262A2B]/80 hover:bg-[#262A2B]/5")
                 )}
               >
-                {link.name}
-                {pathname === link.href && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#4A6741]"
-                  />
-                )}
+                <span className="relative z-10">{link.name}</span>
               </Link>
             ))}
           </div>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-
             <Link
-              href="/"
-              className="px-5 py-2.5 bg-[#4A6741] text-white text-sm font-medium rounded-full shadow-lg hover:bg-[#3D5536] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+              href="/coming-soon"
+              className={cn(
+                 "px-5 py-2.5 text-sm font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300",
+                 isScrolled 
+                   ? "bg-[#E23744] text-white hover:bg-[#D12D39]" 
+                   : "bg-[#262A2B] text-white hover:bg-[#4A6741]"
+              )}
             >
               Get the App
             </Link>
@@ -103,7 +103,10 @@ export function Navbar() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-[#262A2B] hover:text-[#4A6741] transition-colors"
+            className={cn(
+               "md:hidden p-2 transition-colors rounded-full",
+               isScrolled ? "text-[#F5F5F0] hover:bg-white/10" : "text-[#262A2B] hover:bg-black/5"
+            )}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -140,7 +143,7 @@ export function Navbar() {
               <div className="h-px bg-[#E5E5E0] my-2" />
 
               <Link
-                href="/"
+                href="/coming-soon"
                 className="w-full py-4 bg-[#4A6741] text-white text-center font-bold rounded-xl shadow-lg"
               >
                 Get the App

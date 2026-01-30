@@ -11,20 +11,19 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-white/10 pb-12">
           {/* Brand */}
           <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/5 p-0.5">
-                <Image 
-                  src="/logo.png" 
-                  alt="Next360 Logo" 
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-heading font-bold text-lg leading-none">Next360</span>
-                <span className="text-[10px] uppercase tracking-widest text-[#4A6741] font-medium">Organics</span>
-              </div>
-            </div>
+              <Link href="/" className="flex items-center gap-2 group mb-6">
+                <div className="relative w-10 h-10 flex items-center justify-center rounded-full overflow-hidden shadow-sm">
+                  <Image 
+                    src="/final-logo.png" 
+                    alt="Next360 Logo" 
+                    fill
+                    className="object-cover scale-[1.75]"
+                  />
+                </div>
+                <span className="text-2xl font-heading font-bold text-[#262A2B]">
+                  Next360
+                </span>
+              </Link>
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
               Connecting organic farmers directly to local communities. 
               Fresh, transparent, and built on trust.
@@ -68,11 +67,11 @@ export function Footer() {
           <div>
             <h4 className="font-heading font-semibold text-lg mb-6">Contact</h4>
             <ul className="space-y-4 text-sm text-white/60">
-              <li>support@next360organics.com</li>
-              <li>+1 (555) 123-4567</li>
+              <li>hello@next360organics.in</li>
+              <li>+91 40-1234-5678</li>
               <li className="pt-2">
-                 123 Organic Way,<br />
-                 Green Valley, CA 94000
+                 Hitech City, Madhapur,<br />
+                 Hyderabad, Telangana 500081
               </li>
             </ul>
           </div>

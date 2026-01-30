@@ -21,7 +21,7 @@ const TICKER_ITEMS = [
 
 export function LiveTicker() {
   return (
-    <div className="w-full bg-primary text-primary-foreground py-3 overflow-hidden whitespace-nowrap relative z-50">
+    <div className="w-full bg-[#4A6741] text-[#F5F5F0] py-3 overflow-hidden whitespace-nowrap relative z-50 border-y border-[#3D5536]">
       <div className="inline-block animate-marquee">
         {TICKER_ITEMS.map((item, i) => (
           <span key={i} className="mx-4 text-xs font-bold uppercase tracking-widest">

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
+import Link from "next/link";
 
 const stories = [
   {
@@ -36,7 +37,7 @@ const stories = [
 
 export function FarmerStories() {
   return (
-    <section className="py-24 bg-white overflow-hidden">
+    <section id="farmer-stories" className="py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
            <div>
@@ -47,9 +48,12 @@ export function FarmerStories() {
                 Real videos from the fields. See how your food is grown, harvested, and packed with love.
               </p>
            </div>
-           <button className="hidden md:block text-[#E23744] font-bold hover:underline transition-all">
+           <Link 
+             href="/stories"
+             className="hidden md:block text-[#E23744] font-bold hover:underline transition-all"
+           >
              Watch all stories &rarr;
-           </button>
+           </Link>
         </div>
 
         {/* Carousel (Simulated) */}
