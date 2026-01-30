@@ -5,12 +5,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 
-const SUGGESTIONS = [
-  { id: '1', title: 'Bancangan, Sambit', subtitle: 'Etan Telkom Mbibis' },
-  { id: '2', title: 'Bancar, Bungkal', subtitle: 'St. Louis, MO, USA' },
-  { id: '3', title: 'Bandung City', subtitle: 'West Java, Indonesia' },
-  { id: '4', title: 'Bank of America', subtitle: 'New York, NY' },
-];
+// Zero State: Empty Array
+const SUGGESTIONS: any[] = [];
 
 export default function LocationScreen() {
   const router = useRouter();
@@ -88,6 +84,11 @@ export default function LocationScreen() {
                             </View>
                         </TouchableOpacity>
                     )}
+                    ListEmptyComponent={
+                        <View className="items-center py-10 opacity-50">
+                            <ThemedText className="text-gray-400">No locations found</ThemedText>
+                        </View>
+                    }
                 />
             ) : null}
 

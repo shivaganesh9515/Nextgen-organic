@@ -1,16 +1,11 @@
-import { View, Image, TouchableOpacity, ScrollView, Modal, Dimensions, Switch, Alert } from 'react-native';
+import { View, Image, TouchableOpacity, ScrollView, Modal, Dimensions, Switch, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { api } from '@/services/api';
-
-const VOUCHERS = [
-    { id: '1', title: '20% Off', code: 'ORGANIC20', type: 'percent', value: 20, valid: 'Valid till 30 May 2026' },
-    { id: '2', title: '₹100 Off', code: 'SAVE100', type: 'fixed', value: 100, valid: 'Valid till 30 May 2026' },
-];
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -19,12 +14,46 @@ export default function PaymentScreen() {
   const [showAddCard, setShowAddCard] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<'Card' | 'UPI' | 'COD'>('Card');
   const [isDefault, setIsDefault] = useState(false);
-  const [selectedVoucher, setSelectedVoucher] = useState<typeof VOUCHERS[0] | null>(null);
+  
+  // Dynamic Vouchers State
+  const [vouchers, setVouchers] = useState<any[]>([]);
+  const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
+  const [loadingVouchers, setLoadingVouchers] = useState(false);
   
   const { height } = Dimensions.get('window');
   
   const { total } = useCart();
   const shippingCost = 40.00; 
+
+  // Load Vouchers
+  useEffect(() => {
+     const loadVouchers = async () => {
+         setLoadingVouchers(true);
+         try {
+             const fetchedOffers = await api.fetchOffers();
+             if (fetchedOffers && fetchedOffers.length > 0) {
+                 const mappedVouchers = fetchedOffers.map((o: any) => ({
+                     id: o.id.toString(),
+                     title: o.title,
+                     code: o.code,
+                     // Parse discount type (simple heuristic)
+                     type: o.discount.includes('%') ? 'percent' : 'fixed',
+                     value: parseFloat(o.discount.replace(/[^0-9.]/g, '')),
+                     valid: o.expires_at ? `Valid till ${new Date(o.expires_at).toLocaleDateString()}` : 'Limited Time'
+                 }));
+                 setVouchers(mappedVouchers);
+             } else {
+                 setVouchers([]);
+             }
+         } catch (e) {
+             console.log("Error fetching vouchers:", e);
+             setVouchers([]);
+         } finally {
+             setLoadingVouchers(false);
+         }
+     };
+     loadVouchers();
+  }, []);
 
   const discountAmount = selectedVoucher 
       ? (selectedVoucher.type === 'percent' ? (total * selectedVoucher.value / 100) : selectedVoucher.value)
@@ -66,8 +95,8 @@ export default function PaymentScreen() {
           Alert.alert("Success", "Order placed successfully! Check Admin Dashboard.");
           clearCart();
           router.replace('/(tabs)');
-      } catch (error) {
-          Alert.alert("Error", "Failed to place order. Is backend running?");
+      } catch (error: any) {
+          Alert.alert("Error", error.message || "Failed to place order.");
       } finally {
           setLoading(false);
       }
@@ -237,36 +266,50 @@ export default function PaymentScreen() {
                             <ThemedText weight="bold" className="text-[#FF5A5F]">Cancel</ThemedText>
                         </TouchableOpacity>
                     </View>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View className="gap-4">
-                            {VOUCHERS.map((voucher) => {
-                                const isSelected = selectedVoucher?.id === voucher.id;
-                                return (
-                                <View key={voucher.id} className={`flex-row items-center p-4 border rounded-[24px] bg-white shadow-sm relative overflow-hidden ${isSelected ? 'border-[#FF5A5F]' : 'border-gray-100'}`}>
-                                     <View className="w-12 h-12 bg-orange-50 rounded-xl items-center justify-center mr-4">
-                                          <Ionicons name="ticket" size={24} color="#FFD180" />
-                                     </View>
-                                     <View className="flex-1">
-                                          <ThemedText weight="bold" color="dark" className="text-base mb-1">{voucher.title}</ThemedText>
-                                          <ThemedText variant="caption" color="gray" className="opacity-60">{voucher.valid}</ThemedText>
-                                          <ThemedText className="text-xs text-gray-400 mt-1">Code: {voucher.code}</ThemedText>
-                                     </View>
-                                     <TouchableOpacity 
-                                        className={`px-4 py-2 rounded-xl ${isSelected ? 'bg-gray-100' : 'bg-[#FF5A5F]'}`}
-                                        onPress={() => {
-                                            if (isSelected) setSelectedVoucher(null); // Toggle off
-                                            else setSelectedVoucher(voucher);
-                                            setShowVouchers(false);
-                                        }}
-                                     >
-                                          <ThemedText color={isSelected ? 'gray' : 'white'} weight="bold" className="text-sm">
-                                            {isSelected ? 'Remove' : 'Apply'}
-                                          </ThemedText>
-                                     </TouchableOpacity>
-                                </View>
-                            )})}
+                    
+                    {loadingVouchers ? (
+                        <View className="flex-1 items-center justify-center">
+                            <ActivityIndicator color="#2D6A4F" />
                         </View>
-                    </ScrollView>
+                    ) : (
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View className="gap-4">
+                                {vouchers.length === 0 ? (
+                                    <View className="items-center py-6">
+                                        <Ionicons name="ticket-outline" size={48} color="#E5E7EB" />
+                                        <ThemedText className="text-gray-400 mt-2">No active vouchers</ThemedText>
+                                    </View>
+                                ) : (
+                                    vouchers.map((voucher) => {
+                                        const isSelected = selectedVoucher?.id === voucher.id;
+                                        return (
+                                        <View key={voucher.id} className={`flex-row items-center p-4 border rounded-[24px] bg-white shadow-sm relative overflow-hidden ${isSelected ? 'border-[#FF5A5F]' : 'border-gray-100'}`}>
+                                             <View className="w-12 h-12 bg-orange-50 rounded-xl items-center justify-center mr-4">
+                                                  <Ionicons name="ticket" size={24} color="#FFD180" />
+                                             </View>
+                                             <View className="flex-1">
+                                                  <ThemedText weight="bold" color="dark" className="text-base mb-1">{voucher.title}</ThemedText>
+                                                  <ThemedText variant="caption" color="gray" className="opacity-60">{voucher.valid}</ThemedText>
+                                                  <ThemedText className="text-xs text-gray-400 mt-1">Code: {voucher.code}</ThemedText>
+                                             </View>
+                                             <TouchableOpacity 
+                                                className={`px-4 py-2 rounded-xl ${isSelected ? 'bg-gray-100' : 'bg-[#FF5A5F]'}`}
+                                                onPress={() => {
+                                                    if (isSelected) setSelectedVoucher(null); // Toggle off
+                                                    else setSelectedVoucher(voucher);
+                                                    setShowVouchers(false);
+                                                }}
+                                             >
+                                                  <ThemedText color={isSelected ? 'gray' : 'white'} weight="bold" className="text-sm">
+                                                    {isSelected ? 'Remove' : 'Apply'}
+                                                  </ThemedText>
+                                             </TouchableOpacity>
+                                        </View>
+                                    )})
+                                )}
+                            </View>
+                        </ScrollView>
+                    )}
                 </View>
             </View>
         )}

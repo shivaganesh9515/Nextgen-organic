@@ -34,9 +34,10 @@ export default function CategoryListingScreen() {
           </View>
        </SafeAreaView>
 
-      <ScrollView className="flex-1 px-6 pt-6" contentContainerStyle={{ paddingBottom: 20 }}>
+      <ScrollView className="flex-1 px-5 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
          {categoryProducts.length > 0 ? (
-            <View className="flex-row flex-wrap justify-between">
+            // Updated Grid Logic: justify-between with 48% cards
+            <View className="flex-row flex-wrap justify-between pb-8">
                 {categoryProducts.map((prod) => (
                     <ProductCard key={prod.id} product={prod} />
                 ))}

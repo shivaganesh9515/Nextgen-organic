@@ -73,8 +73,9 @@ export default function CollectionScreen() {
          data={filteredProducts}
          keyExtractor={item => item.id}
          numColumns={2}
-         contentContainerStyle={{ padding: 20, paddingBottom: 100, gap: 16 }}
-         columnWrapperStyle={{ gap: 16 }} 
+         // Removed 'gap-16' from columnWrapperStyle to allow 'justify-between' to handle 48% width cards
+         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+         columnWrapperStyle={{ justifyContent: 'space-between' }} 
          renderItem={({ item }) => (
              <ProductCard product={item} />
          )}

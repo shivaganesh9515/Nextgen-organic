@@ -11,41 +11,9 @@ interface Notification {
   image: string;
 }
 
-const NEW_NOTIFICATIONS: Notification[] = [
-  { 
-      id: 1, 
-      title: 'Fresh Harvest Sale', 
-      subtitle: '50% Off Organic Tomatoes - Valid till 20 May', 
-      image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=200' 
-  },
-  { 
-      id: 2, 
-      title: 'New Stock Alert', 
-      subtitle: 'Alphonso Mangoes are back!', 
-      image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=200' 
-  },
-];
-
-const WEEK_NOTIFICATIONS: Notification[] = [
-  { 
-      id: 3, 
-      title: 'Flash Deal: Honey', 
-      subtitle: '20% Off Wild Honey - Today Only', 
-      image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=200' 
-  },
-  { 
-      id: 4, 
-      title: 'Weekend Special', 
-      subtitle: 'Buy 2 Get 1 Free on Spinach', 
-      image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=200' 
-  },
-  { 
-      id: 5, 
-      title: 'Restock: Brown Rice', 
-      subtitle: 'Premium Sona Masoori Rice available', 
-      image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200' 
-  },
-];
+// Zero State: Empty Arrays
+const NEW_NOTIFICATIONS: Notification[] = [];
+const WEEK_NOTIFICATIONS: Notification[] = [];
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -75,18 +43,32 @@ export default function NotificationsScreen() {
             <View className="w-8" />
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-            {/* New Notification Section */}
-            <View className="mb-6">
-                <ThemedText weight="bold" color="gray" className="text-base mb-2 opacity-80">New Notification</ThemedText>
-                {NEW_NOTIFICATIONS.map((item, index) => renderItem(item, index, index === NEW_NOTIFICATIONS.length - 1))}
-            </View>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+            {/* Empty State Check */}
+            {NEW_NOTIFICATIONS.length === 0 && WEEK_NOTIFICATIONS.length === 0 ? (
+                <View className="flex-1 items-center justify-center py-20 opacity-50">
+                    <Ionicons name="notifications-off-outline" size={64} color="gray" />
+                    <ThemedText className="mt-4 text-center text-gray-500">No notifications yet</ThemedText>
+                </View>
+            ) : (
+                <>
+                    {/* New Notification Section */}
+                    {NEW_NOTIFICATIONS.length > 0 && (
+                        <View className="mb-6">
+                            <ThemedText weight="bold" color="gray" className="text-base mb-2 opacity-80">New Notification</ThemedText>
+                            {NEW_NOTIFICATIONS.map((item, index) => renderItem(item, index, index === NEW_NOTIFICATIONS.length - 1))}
+                        </View>
+                    )}
 
-            {/* This Week Section */}
-            <View className="mb-10">
-                <ThemedText weight="bold" color="gray" className="text-base mb-2 opacity-80">This week</ThemedText>
-                {WEEK_NOTIFICATIONS.map((item, index) => renderItem(item, index, index === WEEK_NOTIFICATIONS.length - 1))}
-            </View>
+                    {/* This Week Section */}
+                    {WEEK_NOTIFICATIONS.length > 0 && (
+                        <View className="mb-10">
+                            <ThemedText weight="bold" color="gray" className="text-base mb-2 opacity-80">This week</ThemedText>
+                            {WEEK_NOTIFICATIONS.map((item, index) => renderItem(item, index, index === WEEK_NOTIFICATIONS.length - 1))}
+                        </View>
+                    )}
+                </>
+            )}
         </ScrollView>
         
       </View>

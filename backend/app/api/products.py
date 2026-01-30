@@ -8,7 +8,11 @@ from app.models.product import Product, ProductApprovalStatus
 from app.api.deps import get_current_vendor, get_current_admin
 from typing import List
 import uuid
+import traceback
 from app.models.admin_notification import AdminNotification, AdminNotificationType
+import logging
+
+logger = logging.getLogger("uvicorn.error")
 
 router = APIRouter()
 
@@ -18,27 +22,32 @@ async def list_all_products(db: AsyncSession = Depends(get_db), admin = Depends(
     """
     Admin Endpoint: Get all products across all vendors.
     """
-    result = await db.execute(
-        select(Product).options(selectinload(Product.vendor), selectinload(Product.category))
-    )
-    products = result.scalars().all()
-    
-    return [
-        {
-            "id": str(p.id),
-            "name": p.name,
-            "description": p.description or "",
-            "vendor": p.vendor.business_name if p.vendor else "Unknown",
-            "vendor_id": str(p.vendor_id),
-            "category": p.category.name if p.category else "General",
-            "price": float(p.price),
-            "stock": p.stock_quantity or 0,
-            "status": str(p.approval_status.value) if p.approval_status else "DRAFT",
-            "image_url": p.image_url or "",
-            "is_active": p.is_active
-        }
-        for p in products
-    ]
+    try:
+        result = await db.execute(
+            select(Product).options(selectinload(Product.vendor), selectinload(Product.category))
+        )
+        products = result.scalars().all()
+        
+        return [
+            {
+                "id": str(p.id),
+                "name": p.name,
+                "description": p.description or "",
+                "vendor": p.vendor.business_name if p.vendor else "Unknown",
+                "vendor_id": str(p.vendor_id),
+                "category": p.category.name if p.category else "General",
+                "price": float(p.price),
+                "stock": p.stock_quantity or 0,
+                "status": str(p.approval_status.value) if p.approval_status else "DRAFT",
+                "image_url": p.image_url or "",
+                "is_active": p.is_active
+            }
+            for p in products
+        ]
+    except Exception as e:
+        logger.error("ERROR IN LIST ALL PRODUCTS:")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/")
@@ -47,27 +56,70 @@ async def list_vendor_products(db: AsyncSession = Depends(get_db), vendor: Vendo
     Get all products for the authenticated vendor.
     Returns products belonging to the logged-in vendor.
     """
-    result = await db.execute(
-        select(Product)
-        .where(Product.vendor_id == vendor.id)
-        .options(selectinload(Product.category))
-    )
-    products = result.scalars().all()
-    
-    return [
-        {
-            "id": str(p.id),
-            "name": p.name,
-            "description": p.description or "",
-            "category": p.category.name if p.category else "General",
-            "price": float(p.price),
-            "stock": p.stock_quantity or 0,
-            "status": str(p.approval_status.value) if p.approval_status else "DRAFT",
-            "image_url": p.image_url or "",
-            "is_active": p.is_active
-        }
-        for p in products
-    ]
+    try:
+        result = await db.execute(
+            select(Product)
+            .where(Product.vendor_id == vendor.id)
+            .options(selectinload(Product.category))
+        )
+        products = result.scalars().all()
+        
+        return [
+            {
+                "id": str(p.id),
+                "name": p.name,
+                "description": p.description or "",
+                "category": p.category.name if p.category else "General",
+                "price": float(p.price),
+                "stock": p.stock_quantity or 0,
+                "status": str(p.approval_status.value) if p.approval_status else "DRAFT",
+                "image_url": p.image_url or "",
+                "is_active": p.is_active
+            }
+            for p in products
+        ]
+    except Exception as e:
+        logger.error("ERROR IN LIST VENDOR PRODUCTS:")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/public/products")
+async def list_public_products(db: AsyncSession = Depends(get_db)):
+    """
+    Public Endpoint: Get all active products for the mobile app.
+    """
+    logger.info("Entering public products endpoint")
+    try:
+        # Load vendors to get name/business_name
+        result = await db.execute(
+            select(Product)
+            .where(Product.is_active == True)
+            .options(selectinload(Product.vendor), selectinload(Product.category))
+        )
+        products = result.scalars().all()
+        logger.info(f"Found {len(products)} products")
+        
+        return [
+            {
+                "id": str(p.id),
+                "name": p.name,
+                "description": p.description or "",
+                "vendor": p.vendor.business_name if p.vendor else "Unknown",
+                "vendor_id": str(p.vendor_id),
+                "category": p.category.name if p.category else "General",
+                "price": float(p.price),
+                "stock": p.stock_quantity or 0,
+                "status": str(p.approval_status.value) if p.approval_status else "DRAFT",
+                "image_url": p.image_url or "",
+                "is_active": p.is_active
+            }
+            for p in products
+        ]
+    except Exception as e:
+        logger.error("ERROR IN PUBLIC PRODUCTS:")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{product_id}")
@@ -182,4 +234,3 @@ async def delete_product(product_id: str, db: AsyncSession = Depends(get_db), ve
     await db.commit()
     
     return {"message": "Product deleted successfully"}
-

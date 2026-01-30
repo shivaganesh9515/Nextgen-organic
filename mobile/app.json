@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "NextGen Organic",
+    "slug": "nextgen-organic-mobile",
     "scheme": "next360",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,13 +14,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nextgenorganic.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.nextgenorganic.app",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },

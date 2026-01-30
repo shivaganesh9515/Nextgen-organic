@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { CartProvider } from '@/context/CartContext';
+import { FavoritesProvider } from '@/context/FavoritesContext';
 
 // Prevent auto-hiding splash screen
 SplashScreen.preventAutoHideAsync();
@@ -30,35 +31,37 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <CartProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="product/[id]" />
-          <Stack.Screen name="category/[id]" />
-          <Stack.Screen name="vendor/[id]" />
-          <Stack.Screen name="categories" />
-          <Stack.Screen name="payment" />
-          
-          {/* Modals */}
-          <Stack.Screen 
-            name="location" 
-            options={{ presentation: 'modal' }} 
-          />
-          <Stack.Screen 
-            name="notifications" 
-            options={{ presentation: 'modal' }} 
-          />
-           <Stack.Screen 
-            name="search" 
-            options={{ presentation: 'modal' }} 
-          />
-          
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="dark" />
-      </CartProvider>
+      <FavoritesProvider>
+        <CartProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="product/[id]" />
+            <Stack.Screen name="category/[id]" />
+            <Stack.Screen name="vendor/[id]" />
+            <Stack.Screen name="categories" />
+            <Stack.Screen name="payment" />
+            
+            {/* Modals */}
+            <Stack.Screen 
+                name="location" 
+                options={{ presentation: 'modal' }} 
+            />
+            <Stack.Screen 
+                name="notifications" 
+                options={{ presentation: 'modal' }} 
+            />
+            <Stack.Screen 
+                name="search" 
+                options={{ presentation: 'modal' }} 
+            />
+            
+            <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="dark" />
+        </CartProvider>
+      </FavoritesProvider>
     </GestureHandlerRootView>
   );
 }

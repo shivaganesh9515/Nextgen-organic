@@ -1,4 +1,4 @@
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { AnimatedPressable } from './AnimatedPressable';
 import { useRouter } from 'expo-router';
 import { Product } from '../constants/mocks';
@@ -6,6 +6,14 @@ import { ThemedText } from './ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
 import { useCart } from '@/context/CartContext';
+import { useFavorites } from '@/context/FavoritesContext';
+
+// Force 2 Columns Calculation
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const PADDING = 40; // Total horizontal padding (px-5 left + px-5 right) = 20 + 20
+const GAP = 16; // Desired gap between columns
+// Each card width = (Screen - Padding - Gap) / 2
+const CARD_WIDTH = (SCREEN_WIDTH - PADDING - GAP) / 2;
 
 interface ProductCardProps extends ComponentProps<typeof AnimatedPressable> {
   product: Product;
@@ -15,6 +23,7 @@ interface ProductCardProps extends ComponentProps<typeof AnimatedPressable> {
 export function ProductCard({ product, horizontal = false, className = "", ...props }: ProductCardProps) {
   const router = useRouter();
   const { getItemQuantity, addToCart, updateQuantity } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const quantity = getItemQuantity(product.id);
 
   const handleAdd = () => addToCart({
@@ -55,13 +64,13 @@ export function ProductCard({ product, horizontal = false, className = "", ...pr
   );
 
   // ========================================
-  // UNIFIED CARD DESIGN (Horizontal & Vertical)
+  // UNIFIED CARD DESIGN
+  //Key Change: Using strict CARD_WIDTH for vertical mode
   // ========================================
   
-  // Dimensions & Styles for Vertical vs Horizontal
   const containerStyle = horizontal 
     ? { width: 150, marginRight: 16 } 
-    : { width: '48%', marginBottom: 16 };
+    : { width: Math.floor(CARD_WIDTH), marginBottom: 16 }; // Use floor to avoid subpixel rounding issues
 
   return (
       <AnimatedPressable 
@@ -80,8 +89,8 @@ export function ProductCard({ product, horizontal = false, className = "", ...pr
         }}
         {...props}
       >
-        {/* Image Section */}
-        <View className="relative w-full h-32 bg-gray-50">
+        {/* Image Section - increased to h-36 for better proportion */}
+        <View className="relative w-full h-36 bg-gray-50">
            <Image 
              source={{ uri: product.image }} 
              className="w-full h-full"
@@ -89,10 +98,24 @@ export function ProductCard({ product, horizontal = false, className = "", ...pr
            />
            
            {/* Rating Badge */}
-           <View className="absolute top-2 left-2 bg-white/90 px-1.5 py-0.5 rounded-full flex-row items-center shadow-sm">
+           <View className="absolute top-2 left-2 bg-white/90 px-1.5 py-0.5 rounded-full flex-row items-center shadow-sm z-10">
               <Ionicons name="star" size={10} color="#F59E0B" />
               <ThemedText className="text-[10px] font-bold text-gray-800 ml-1">{product.rating}</ThemedText>
            </View>
+
+            {/* Favorite Button */}
+            <TouchableOpacity 
+              onPress={() => toggleFavorite(product)}
+              className="absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full items-center justify-center shadow-sm z-10 border border-gray-100"
+              activeOpacity={0.7}
+           >
+              <Ionicons 
+                name={isFavorite(product.id) ? "heart" : "heart-outline"} 
+                size={16} 
+                color={isFavorite(product.id) ? "#FF5A5F" : "#9CA3AF"} 
+              />
+           </TouchableOpacity>
+
         </View>
 
         {/* Content Section */}

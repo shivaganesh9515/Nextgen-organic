@@ -15,6 +15,7 @@ from app.models import order as order_model
 from app.models import category as category_model
 from app.models import notification as notification_model
 from app.models import admin_notification as admin_notification_model
+from app.models import offer as offer_model
 
 app = FastAPI(
     title="Next360 Organics API",

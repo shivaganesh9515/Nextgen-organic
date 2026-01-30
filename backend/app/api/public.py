@@ -148,7 +148,7 @@ async def list_public_products(db: AsyncSession = Depends(get_db)):
     # Join with vendor to filter by vendor status
     result = await db.execute(
         select(Product)
-        .options(selectinload(Product.vendor))
+        .options(selectinload(Product.vendor), selectinload(Product.category)) # Added category load
         .join(Vendor)
         .where(Vendor.status == VendorStatus.APPROVED)
         .where(Product.is_active == True)

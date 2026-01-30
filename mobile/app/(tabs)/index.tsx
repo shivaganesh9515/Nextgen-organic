@@ -1,20 +1,14 @@
-import { View, Image, TouchableOpacity, ScrollView, Dimensions, StatusBar } from 'react-native';
+import { View, Image, TouchableOpacity, ScrollView, Dimensions, StatusBar, RefreshControl, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CATEGORIES, PRODUCTS as MOCK_PRODUCTS, VENDORS as MOCK_VENDORS, Product, Vendor } from '@/constants/mocks';
 import { ProductCard } from '@/components/ProductCard';
 import { api } from '@/services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-/* Mock Banners (Fallback) */
-const MOCK_BANNERS = [
-  { id: 1, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800', title: 'Farm Fresh', subtitle: 'Daily harvest deals' },
-  { id: 2, image: 'https://images.unsplash.com/photo-1615484477778-ca3b77940c25?w=800', title: '100% Organic', subtitle: 'Pure & certified' },
-];
 
 /* Quick Categories - Circular with Images */
 const QUICK_CATEGORIES = [
@@ -31,36 +25,51 @@ export default function HomeScreen() {
   const [activeMode, setActiveMode] = useState<'Hub' | 'Farms'>('Hub');
   const [products, setProducts] = useState(MOCK_PRODUCTS);
   const [vendors, setVendors] = useState(MOCK_VENDORS);
-  const [banners, setBanners] = useState(MOCK_BANNERS);
+  const [banners, setBanners] = useState<any[]>([]); 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadData = useCallback(async () => {
+    try {
+      const fetchedProducts = await api.fetchProducts();
+      if (fetchedProducts && fetchedProducts.length > 0) setProducts(fetchedProducts);
+      
+      const fetchedVendors = await api.fetchVendors();
+      if (fetchedVendors && fetchedVendors.length > 0) setVendors(fetchedVendors);
+
+      const fetchedBanners = await api.fetchBanners();
+      if (fetchedBanners && fetchedBanners.length > 0) {
+         const mappedBanners = fetchedBanners.map((b: any) => ({
+              id: b.id,
+              title: b.title,
+              subtitle: b.location || 'Special Offer',
+              image: b.image_url
+          }));
+         setBanners(mappedBanners);
+      } else {
+          setBanners([]); 
+      }
+    } catch (e) {
+      console.log("Using Mock Data due to error:", e);
+    }
+  }, []);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const fetchedProducts = await api.fetchProducts();
-        if (fetchedProducts && fetchedProducts.length > 0) setProducts(fetchedProducts);
-        
-        const fetchedVendors = await api.fetchVendors();
-        if (fetchedVendors && fetchedVendors.length > 0) setVendors(fetchedVendors);
-
-        // Ideally fetch banners here if API supports. 
-        // For now, we simulate check or assume API might have banners endpoint
-        // const fetchedBanners = await api.fetchBanners();
-        // if (fetchedBanners && fetchedBanners.length > 0) setBanners(fetchedBanners);
-      } catch (e) {
-        console.log("Using Mock Data due to error:", e);
-      }
-    };
     loadData();
-  }, []);
+  }, [loadData]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  }, [loadData]);
 
   // Filter products for Hub View
   const bestOffers = products.slice(0, 6);
   const trendingProducts = products.slice(6, 12);
-  const hubProducts = products; // All products for Hub Grid
+  const hubProducts = products; 
 
   const renderHubProducts = () => (
     <View className="px-5 pb-24">
-      {/* Grid wrapper without explicit gap to assume justify-between works with 48% cards */}
       <View className="flex-row flex-wrap justify-between" style={{ rowGap: 16 }}>
         {hubProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
@@ -72,12 +81,10 @@ export default function HomeScreen() {
   const renderFarmsView = () => (
     <View className="pt-2 pb-24">
       {vendors.map((vendor: Vendor) => {
-         // Filter products for this specific vendor
          const vendorProducts = products.filter((p: Product) => String(p.vendorId) === String(vendor.id)).slice(0, 5);
-         
          return (
           <View key={vendor.id} className="bg-white mb-4 pb-4 border-b border-gray-100">
-            {/* Vendor Header Card */}
+             {/* Vendor Header Card */}
             <View className="px-5 mb-4">
                <View className="relative h-32 rounded-2xl overflow-hidden mb-[-24px] z-0">
                   <Image source={{ uri: vendor.banner }} className="w-full h-full opacity-90" resizeMode="cover" />
@@ -85,7 +92,6 @@ export default function HomeScreen() {
                </View>
                
                <View className="flex-row justify-between items-end pl-2 pr-1 z-10">
-                   {/* Logo & Info */}
                    <View className="flex-row items-end">
                       <Image 
                         source={{ uri: vendor.image }} 
@@ -102,7 +108,6 @@ export default function HomeScreen() {
                       </View>
                    </View>
 
-                   {/* CTA */}
                    <TouchableOpacity 
                       onPress={() => router.push(`/vendor/${vendor.id}`)}
                       className="bg-[#2D6A4F] px-4 py-2 rounded-xl mb-1 shadow-sm shadow-emerald-700/20"
@@ -112,7 +117,6 @@ export default function HomeScreen() {
                </View>
             </View>
             
-            {/* Horizontal Product Scroll */}
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false} 
@@ -142,14 +146,16 @@ export default function HomeScreen() {
       <ScrollView 
         contentContainerStyle={{ paddingBottom: 40 }} 
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#2D6A4F']} />
+        }
       >
         
         {/* ============================================ */}
-        {/* NEW HEADER: Search | Notification | Profile */}
+        {/* HEADER */}
         {/* ============================================ */}
         <View className="px-5 pt-4 pb-4">
            <View className="flex-row items-center gap-3">
-              {/* Search Bar Input */}
               <TouchableOpacity 
                  onPress={() => router.push('/search')}
                  className="flex-1 h-12 flex-row items-center bg-white px-4 rounded-full border border-gray-200 shadow-sm"
@@ -158,17 +164,14 @@ export default function HomeScreen() {
                   <ThemedText className="ml-2 text-gray-400 text-sm">Search products...</ThemedText>
               </TouchableOpacity>
 
-              {/* Notification Bell */}
               <TouchableOpacity 
                  onPress={() => router.push('/notifications')}
                  className="w-12 h-12 items-center justify-center bg-white rounded-full border border-gray-200 shadow-sm"
               >
                  <Ionicons name="notifications-outline" size={24} color="#2D6A4F" />
-                 {/* Badge */}
                  <View className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border border-white" />
               </TouchableOpacity>
 
-              {/* Profile Avatar */}
               <TouchableOpacity 
                  onPress={() => router.push('/(tabs)/profile')}
                  className="w-12 h-12 items-center justify-center bg-gray-100 rounded-full border border-white shadow-sm overflow-hidden"
@@ -182,46 +185,58 @@ export default function HomeScreen() {
         </View>
 
         {/* ============================================ */}
-        {/* HERO BANNER - Dynamic */}
+        {/* HERO BANNER */}
         {/* ============================================ */}
-        <View className="px-5 mb-5">
-          <ScrollView 
-            horizontal 
-            pagingEnabled 
-            showsHorizontalScrollIndicator={false}
-            decelerationRate="fast"
-          >
-            {banners.map((banner) => (
-              <View 
-                key={banner.id} 
-                className="relative rounded-3xl overflow-hidden mr-4" 
-                style={{ width: SCREEN_WIDTH - 40, height: 180 }}
+        {banners.length > 0 && (
+            <View className="px-5 mb-5">
+              <ScrollView 
+                horizontal 
+                pagingEnabled 
+                showsHorizontalScrollIndicator={false}
+                decelerationRate="fast"
               >
-                <Image source={{ uri: banner.image }} className="w-full h-full" resizeMode="cover" />
-                <View className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <View className="absolute bottom-5 left-5 right-5">
-                  <ThemedText weight="bold" className="text-2xl text-white mb-1">{banner.title}</ThemedText>
-                  <ThemedText className="text-white/90 font-medium">{banner.subtitle}</ThemedText>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
+                {banners.map((banner) => (
+                  <View 
+                    key={banner.id} 
+                    className="relative rounded-3xl overflow-hidden mr-4" 
+                    style={{ width: SCREEN_WIDTH - 40, height: 180 }}
+                  >
+                    <Image source={{ uri: banner.image }} className="w-full h-full" resizeMode="cover" />
+                    <View className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <View className="absolute bottom-5 left-5 right-5">
+                      <ThemedText weight="bold" className="text-2xl text-white mb-1">{banner.title}</ThemedText>
+                      <ThemedText className="text-white/90 font-medium">{banner.subtitle}</ThemedText>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+        )}
 
         {/* ============================================ */}
-        {/* INFO TAGS (Universal Toggles) */}
+        {/* QUALITY "TOGGLE" (Styled as Hub/Farm Toggle) */}
         {/* ============================================ */}
-        <View className="px-5 mb-6 flex-row justify-between items-center bg-gray-50 p-2 rounded-2xl border border-gray-100">
-            {['Natural', 'Chemical-free', 'Eco-friendly'].map((tag, index) => (
-                <TouchableOpacity 
-                   key={index}
-                   onPress={() => router.push(`/collection/${tag}`)}
-                   className="flex-row items-center bg-white px-3 py-2 rounded-xl shadow-sm border border-gray-100"
-                >
-                    <Ionicons name="leaf" size={14} color="#2D6A4F" />
-                    <ThemedText weight="medium" className="text-[10px] text-gray-700 ml-1.5 uppercase tracking-wide">{tag}</ThemedText>
-                </TouchableOpacity>
-            ))}
+        <View className="px-5 mb-8">
+            <View className="flex-row bg-white p-1 rounded-full border border-gray-200 shadow-sm">
+                {[
+                    { label: 'Natural', icon: 'leaf' },
+                    { label: 'Chemical-free', icon: 'flask' },
+                    { label: 'Eco-friendly', icon: 'earth' }
+                ].map((tag, index) => (
+                    <TouchableOpacity 
+                    key={index}
+                    onPress={() => router.push(`/collection/${tag.label}`)}
+                    className="flex-1 flex-row items-center justify-center py-2.5 rounded-full bg-[#f3f4f6]"
+                    style={{ marginHorizontal: 2 }}
+                    activeOpacity={0.7}
+                    >
+                        <Ionicons name={tag.icon as any} size={13} color="#374151" className="mr-1.5" />
+                        <ThemedText weight="medium" className="text-[10px] text-gray-700 uppercase tracking-wide">
+                            {tag.label.replace('Chemical-free', 'No-Chem')}
+                        </ThemedText>
+                    </TouchableOpacity>
+                ))}
+            </View>
         </View>
 
         {/* ============================================ */}
@@ -306,20 +321,28 @@ export default function HomeScreen() {
         </View>
 
         {/* ============================================ */}
-        {/* TOGGLE - Hub vs Farms */}
+        {/* TOGGLE - Hub vs Farms (Improved Design) */}
         {/* ============================================ */}
         <View className="px-5 pb-6">
-          <View className="flex-row bg-white p-1 rounded-full border border-gray-100 shadow-sm">
+          <View className="flex-row bg-white p-1.5 rounded-full border border-gray-200 shadow-sm">
             <TouchableOpacity 
               onPress={() => setActiveMode('Hub')}
-              className={`flex-1 py-3 rounded-full items-center flex-row justify-center gap-2 ${activeMode === 'Hub' ? 'bg-[#2D6A4F]' : ''}`}
+              className={`flex-1 py-3 rounded-full items-center flex-row justify-center gap-2 ${
+                  activeMode === 'Hub' 
+                  ? 'bg-[#2D6A4F] shadow-md shadow-emerald-900/20' 
+                  : 'bg-transparent'
+              }`}
             >
                <Ionicons name="storefront" size={18} color={activeMode === 'Hub' ? 'white' : '#6B7280'} />
                <ThemedText weight="bold" className={activeMode === 'Hub' ? 'text-white' : 'text-gray-500'}>Hub Store</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity 
               onPress={() => setActiveMode('Farms')}
-              className={`flex-1 py-3 rounded-full items-center flex-row justify-center gap-2 ${activeMode === 'Farms' ? 'bg-[#2D6A4F]' : ''}`}
+              className={`flex-1 py-3 rounded-full items-center flex-row justify-center gap-2 ${
+                  activeMode === 'Farms' 
+                  ? 'bg-[#2D6A4F] shadow-md shadow-emerald-900/20' 
+                  : 'bg-transparent'
+              }`}
             >
                <Ionicons name="leaf" size={18} color={activeMode === 'Farms' ? 'white' : '#6B7280'} />
                <ThemedText weight="bold" className={activeMode === 'Farms' ? 'text-white' : 'text-gray-500'}>Farms</ThemedText>
@@ -328,7 +351,7 @@ export default function HomeScreen() {
         </View>
 
         {/* ============================================ */}
-        {/* MAIN CONTENT AREA (Hub Grid OR Farm List) */}
+        {/* MAIN CONTENT AREA */}
         {/* ============================================ */}
         <View>
            {activeMode === 'Hub' ? renderHubProducts() : renderFarmsView()}

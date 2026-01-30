@@ -1,19 +1,33 @@
-import { View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, TouchableOpacity, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { api } from '@/services/api';
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    // Mock login logic
-    router.push('/verify');
+  const handleLogin = async () => {
+    if (!email || !password) {
+        Alert.alert("Error", "Please enter email and password");
+        return;
+    }
+    
+    setIsLoading(true);
+    try {
+        await api.login(email, password);
+        router.replace('/(tabs)');
+    } catch (error: any) {
+        Alert.alert("Login Failed", error.message || "Invalid credentials. Please try again.");
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -80,9 +94,14 @@ export default function LoginScreen() {
         <TouchableOpacity 
            onPress={handleLogin}
            activeOpacity={0.8}
-           className="w-full bg-primary h-14 rounded-2xl items-center justify-center shadow-lg shadow-primary/25 mb-8"
+           disabled={isLoading}
+           className={`w-full bg-primary h-14 rounded-2xl items-center justify-center shadow-lg shadow-primary/25 mb-8 ${isLoading ? 'opacity-70' : ''}`}
         >
-           <ThemedText color="white" weight="bold" variant="body" className="text-lg">Sign In</ThemedText>
+           {isLoading ? (
+               <ActivityIndicator color="white" />
+           ) : (
+               <ThemedText color="white" weight="bold" variant="body" className="text-lg">Sign In</ThemedText>
+           )}
         </TouchableOpacity>
 
         {/* Divider */}
@@ -121,4 +140,3 @@ export default function LoginScreen() {
     </ScreenWrapper>
   );
 }
-
