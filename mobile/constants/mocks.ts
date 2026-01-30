@@ -20,6 +20,7 @@ export interface Product {
   reviews: number;
   description: string;
   isOrganic?: boolean;
+  tags?: string[];
 }
 
 export interface Category {
@@ -99,79 +100,93 @@ export const PRODUCTS: Product[] = [
   {
     id: 'p1', vendorId: 'v1', name: 'Fresh Organic Tomatoes', price: 60, oldPrice: 80,
     image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80', category: 'Vegetables',
-    rating: 4.8, reviews: 124, description: 'Juicy, farm-fresh red tomatoes grown without pesticides.', isOrganic: true
+    rating: 4.8, reviews: 124, description: 'Juicy, farm-fresh red tomatoes grown without pesticides.', isOrganic: true,
+    tags: ['Natural', 'Eco-friendly']
   },
   {
     id: 'p2', vendorId: 'v1', name: 'Crunchy Spinach Bunch', price: 40, 
     image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&q=80', category: 'Vegetables',
-    rating: 4.7, reviews: 89, description: 'Iron-rich, dark green spinach leaves harvested this morning.', isOrganic: true
+    rating: 4.7, reviews: 89, description: 'Iron-rich, dark green spinach leaves harvested this morning.', isOrganic: true,
+    tags: ['Chemical-free', 'Natural']
   },
   {
     id: 'p3', vendorId: 'v1', name: 'Orange Carrots (500g)', price: 55, 
     image: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500&q=80', category: 'Vegetables',
-    rating: 4.9, reviews: 201, description: 'Sweet and crunchy organic carrots.', isOrganic: true
+    rating: 4.9, reviews: 201, description: 'Sweet and crunchy organic carrots.', isOrganic: true,
+    tags: ['Natural', 'Eco-friendly']
   },
   {
     id: 'p4', vendorId: 'v1', name: 'Bell Peppers Trio', price: 120, oldPrice: 150,
     image: 'https://images.unsplash.com/photo-1563565375-f3fdf5efa23f?w=500&q=80', category: 'Vegetables',
-    rating: 4.6, reviews: 56, description: 'Yellow, Red, and Green Capsicums pack.', isOrganic: true
+    rating: 4.6, reviews: 56, description: 'Yellow, Red, and Green Capsicums pack.', isOrganic: true,
+    tags: ['Chemical-free']
   },
 
   // --- V2: Pure Earth (Dairy) ---
   {
     id: 'p5', vendorId: 'v2', name: 'A2 Gir Cow Milk (1L)', price: 95, 
     image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&q=80', category: 'Dairy',
-    rating: 4.9, reviews: 340, description: 'Pure A2 milk from free-grazing Gir cows. Delivered in glass bottles.', isOrganic: true
+    rating: 4.9, reviews: 340, description: 'Pure A2 milk from free-grazing Gir cows. Delivered in glass bottles.', isOrganic: true,
+    tags: ['Natural', 'Eco-friendly', 'Chemical-free']
   },
   {
     id: 'p6', vendorId: 'v2', name: 'Traditional Ghee (500ml)', price: 650, oldPrice: 700,
     image: 'https://images.unsplash.com/photo-1631451095765-2c91616fc987?w=500&q=80', category: 'Dairy',
-    rating: 5.0, reviews: 112, description: 'Hand-churned bilona method ghee. Golden goodness.', isOrganic: true
+    rating: 5.0, reviews: 112, description: 'Hand-churned bilona method ghee. Golden goodness.', isOrganic: true,
+    tags: ['Natural']
   },
   {
     id: 'p7', vendorId: 'v2', name: 'Farm Fresh Paneer', price: 120, 
     image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=80', category: 'Dairy', // Generic dairy image placeholder
-    rating: 4.7, reviews: 98, description: 'Soft and fresh paneer made from organic milk.', isOrganic: true
+    rating: 4.7, reviews: 98, description: 'Soft and fresh paneer made from organic milk.', isOrganic: true,
+    tags: ['Natural', 'Chemical-free']
   },
 
   // --- V3: Himalayan (Fruits) ---
   {
     id: 'p8', vendorId: 'v3', name: 'Shimla Apples (1kg)', price: 240, oldPrice: 280,
     image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&q=80', category: 'Fruits',
-    rating: 4.8, reviews: 210, description: 'Crisp and sweet apples directly from Himalayan orchards.', isOrganic: true
+    rating: 4.8, reviews: 210, description: 'Crisp and sweet apples directly from Himalayan orchards.', isOrganic: true,
+    tags: ['Natural', 'Eco-friendly']
   },
   {
     id: 'p9', vendorId: 'v3', name: 'Peach Box', price: 180, 
     image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=500&q=80', category: 'Fruits',
-    rating: 4.6, reviews: 45, description: 'Juicy yellow peaches.', isOrganic: true
+    rating: 4.6, reviews: 45, description: 'Juicy yellow peaches.', isOrganic: true,
+    tags: ['Natural']
   },
 
   // --- V4: Sunrise (Spices/Tea) ---
   {
     id: 'p10', vendorId: 'v4', name: 'Organic Cardamom', price: 350, 
     image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500&q=80', category: 'Aromatic',
-    rating: 4.9, reviews: 67, description: 'Bold and aromatic whole cardamom pods.', isOrganic: true
+    rating: 4.9, reviews: 67, description: 'Bold and aromatic whole cardamom pods.', isOrganic: true,
+    tags: ['Natural', 'Eco-friendly']
   },
   {
     id: 'p11', vendorId: 'v4', name: 'Assam Gold Tea', price: 450, 
     image: 'https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?w=500&q=80', category: 'Beverages',
-    rating: 4.7, reviews: 156, description: 'Strong and malty CTC tea blend.', isOrganic: true
+    rating: 4.7, reviews: 156, description: 'Strong and malty CTC tea blend.', isOrganic: true,
+    tags: ['Natural']
   },
 
   // --- V5: Urban Roots (Hydroponics) ---
   {
     id: 'p12', vendorId: 'v5', name: 'Butterhead Lettuce', price: 80, 
     image: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=500&q=80', category: 'Greens',
-    rating: 5.0, reviews: 88, description: 'Residue-free hydroponically grown lettuce.', isOrganic: true
+    rating: 5.0, reviews: 88, description: 'Residue-free hydroponically grown lettuce.', isOrganic: true,
+    tags: ['Chemical-free', 'Eco-friendly']
   },
   {
     id: 'p13', vendorId: 'v5', name: 'Italian Basil', price: 40, 
     image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=500&q=80', category: 'Aromatic',
-    rating: 4.8, reviews: 54, description: 'Fresh aromatic basil for your pasta and pizza.', isOrganic: true
+    rating: 4.8, reviews: 54, description: 'Fresh aromatic basil for your pasta and pizza.', isOrganic: true,
+    tags: ['Chemical-free', 'Eco-friendly', 'Natural']
   },
   {
     id: 'p14', vendorId: 'v5', name: 'Cherry Tomatoes', price: 90, 
     image: 'https://images.unsplash.com/photo-1561136594-7f68413baa99?w=500&q=80', category: 'Vegetables',
-    rating: 4.9, reviews: 112, description: 'Sweet snacking tomatoes.', isOrganic: true
+    rating: 4.9, reviews: 112, description: 'Sweet snacking tomatoes.', isOrganic: true,
+    tags: ['Natural', 'Eco-friendly']
   },
 ];

@@ -34,7 +34,8 @@ export function ProductCard({ product, horizontal = false, className = "", ...pr
   const renderAddButton = (size: number, iconSize: number) => (
     <TouchableOpacity 
         onPress={handleAdd}
-        style={{ width: size, height: size, borderRadius: size/2, backgroundColor: '#2D6A4F', alignItems: 'center', justifyContent: 'center' }}
+        className="items-center justify-center bg-[#2D6A4F] rounded-full shadow-sm shadow-green-900/20 active:bg-green-800"
+        style={{ width: size, height: size }}
         activeOpacity={0.8}
     >
         <Ionicons name="add" size={iconSize} color="white" />
@@ -42,166 +43,86 @@ export function ProductCard({ product, horizontal = false, className = "", ...pr
   );
 
   const renderQuantityControls = (height: number, iconSize: number, fontSize: string) => (
-      <View className="flex-row items-center bg-[#2D6A4F] rounded-full px-1" style={{ height }}>
-          <TouchableOpacity onPress={handleDecrease} className="px-1.5 h-full justify-center items-center">
+      <View className="flex-row items-center bg-[#2D6A4F] rounded-full px-1 shadow-sm" style={{ height }}>
+          <TouchableOpacity onPress={handleDecrease} className="px-2 h-full justify-center items-center">
               <Ionicons name="remove" size={iconSize} color="white" />
           </TouchableOpacity>
-          <ThemedText weight="bold" className={`text-white px-1 ${fontSize}`}>{quantity}</ThemedText>
-          <TouchableOpacity onPress={handleIncrease} className="px-1.5 h-full justify-center items-center">
+          <ThemedText weight="bold" className={`text-white px-1 ${fontSize} min-w-[20px] text-center`}>{quantity}</ThemedText>
+          <TouchableOpacity onPress={handleIncrease} className="px-2 h-full justify-center items-center">
               <Ionicons name="add" size={iconSize} color="white" />
           </TouchableOpacity>
       </View>
   );
+
+  // ========================================
+  // UNIFIED CARD DESIGN (Horizontal & Vertical)
+  // ========================================
   
-  if (horizontal) {
-    // ========================================
-    // HORIZONTAL CARD - Compact & Rounded
-    // ========================================
-    return (
-      <AnimatedPressable 
-          onPress={handlePressCard}
-          className={`overflow-hidden ${className}`}
-          style={{ 
-            width: 140,
-            marginRight: 14,
-            borderRadius: 24,
-            backgroundColor: '#fff',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.15,
-            shadowRadius: 14,
-            elevation: 8,
-          }}
-          {...props}
-        >
-          {/* Image */}
-          <Image 
-            source={{ uri: product.image }} 
-            style={{ 
-              width: 140, 
-              height: 120, 
-              borderTopLeftRadius: 24, 
-              borderTopRightRadius: 24,
-              backgroundColor: '#f3f4f6'
-            }}
-            resizeMode="cover"
-          />
-          
-          {/* Rating Badge */}
-          <View 
-            className="absolute flex-row items-center bg-white px-2 py-1"
-            style={{ top: 8, left: 8, borderRadius: 12 }}
-          >
-            <Ionicons name="star" size={10} color="#FFB800" />
-            <ThemedText className="text-[10px] font-bold text-gray-800 ml-1">{product.rating}</ThemedText>
-          </View>
-          
-          {/* Favorite */}
-          <TouchableOpacity 
-            className="absolute bg-white items-center justify-center"
-            style={{ top: 8, right: 8, width: 28, height: 28, borderRadius: 14 }}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="heart-outline" size={14} color="#FF5A5F" />
-          </TouchableOpacity>
+  // Dimensions & Styles for Vertical vs Horizontal
+  const containerStyle = horizontal 
+    ? { width: 150, marginRight: 16 } 
+    : { width: '48%', marginBottom: 16 };
 
-          {/* Content */}
-          <View style={{ padding: 10 }}>
-            <ThemedText 
-              weight="semibold" 
-              numberOfLines={2} 
-              className="text-[13px] text-gray-900 leading-4 mb-2"
-              style={{ height: 32 }}
-            >
-              {product.name}
-            </ThemedText>
-            
-            <View className="flex-row items-center justify-between">
-              <ThemedText weight="bold" className="text-base text-[#2D6A4F]">
-                ₹{product.price.toFixed(2)}
-              </ThemedText>
-              
-              {quantity > 0 
-                ? renderQuantityControls(28, 16, 'text-xs') 
-                : renderAddButton(28, 18)
-              }
-            </View>
-          </View>
-        </AnimatedPressable>
-    );
-  }
-
-  // ========================================
-  // VERTICAL CARD - Compact Grid
-  // ========================================
   return (
       <AnimatedPressable 
         onPress={handlePressCard}
-        className={`overflow-hidden ${className}`}
+        className={`overflow-hidden bg-white ${className}`}
         style={{
-          width: '46%',
-          marginBottom: 16,
-          borderRadius: 20,
-          backgroundColor: '#fff',
+          ...containerStyle,
+          borderRadius: 16,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.12,
-          shadowRadius: 12,
-          elevation: 6,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 8,
+          elevation: 3,
+          borderWidth: 1,
+          borderColor: '#F3F4F6',
         }}
         {...props}
       >
-        {/* Image */}
-        <Image 
-          source={{ uri: product.image }} 
-          style={{ 
-            width: '100%', 
-            height: 110, 
-            borderTopLeftRadius: 20, 
-            borderTopRightRadius: 20,
-            backgroundColor: '#f3f4f6'
-          }}
-          resizeMode="cover"
-        />
-        
-        {/* Rating Badge */}
-        <View 
-          className="absolute flex-row items-center bg-white px-1.5 py-0.5"
-          style={{ top: 6, left: 6, borderRadius: 10 }}
-        >
-          <Ionicons name="star" size={9} color="#FFB800" />
-          <ThemedText className="text-[9px] font-bold text-gray-800 ml-0.5">{product.rating}</ThemedText>
+        {/* Image Section */}
+        <View className="relative w-full h-32 bg-gray-50">
+           <Image 
+             source={{ uri: product.image }} 
+             className="w-full h-full"
+             resizeMode="cover"
+           />
+           
+           {/* Rating Badge */}
+           <View className="absolute top-2 left-2 bg-white/90 px-1.5 py-0.5 rounded-full flex-row items-center shadow-sm">
+              <Ionicons name="star" size={10} color="#F59E0B" />
+              <ThemedText className="text-[10px] font-bold text-gray-800 ml-1">{product.rating}</ThemedText>
+           </View>
         </View>
-        
-        {/* Favorite */}
-        <TouchableOpacity 
-          className="absolute bg-white items-center justify-center"
-          style={{ top: 6, right: 6, width: 24, height: 24, borderRadius: 12 }}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="heart-outline" size={12} color="#FF5A5F" />
-        </TouchableOpacity>
 
-        {/* Content */}
-        <View style={{ padding: 8 }}>
+        {/* Content Section */}
+        <View className="p-3">
+          {/* Product Name */}
           <ThemedText 
-            weight="semibold" 
+            weight="medium" 
             numberOfLines={2} 
-            className="text-xs text-gray-900 leading-4 mb-1.5"
-            style={{ height: 28 }}
+            className="text-xs text-gray-800 mb-1 h-8 leading-4"
           >
             {product.name}
           </ThemedText>
           
-          <View className="flex-row items-center justify-between">
-            <ThemedText weight="bold" className="text-sm text-[#2D6A4F]">
-              ₹{product.price.toFixed(2)}
-            </ThemedText>
+          {/* Price & Action */}
+          <View className="flex-row items-center justify-between mt-1 h-8">
+            <View>
+              {product.oldPrice && (
+                  <ThemedText className="text-[10px] text-gray-400 line-through">₹{product.oldPrice}</ThemedText>
+              )}
+              <ThemedText weight="bold" className="text-sm text-[#2D6A4F]">
+                ₹{product.price}
+              </ThemedText>
+            </View>
             
-            {quantity > 0 
-                ? renderQuantityControls(24, 14, 'text-[10px]') 
-                : renderAddButton(24, 16)
-            }
+            <View>
+                {quantity > 0 
+                    ? renderQuantityControls(28, 14, 'text-xs') 
+                    : renderAddButton(28, 16)
+                }
+            </View>
           </View>
         </View>
       </AnimatedPressable>
