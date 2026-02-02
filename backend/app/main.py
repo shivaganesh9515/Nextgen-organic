@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import API routers
-from app.api import auth, public, admin, products, categories, banners, offers, orders, customers, analytics, notifications
+from app.api import auth, public, admin, products, categories, banners, offers, orders, customers, analytics, notifications, admin_onboarding
 from app.api import vendor as vendor_api  # Aliased to avoid collision with model
 
 from app.core.database import engine
@@ -43,6 +43,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(public.router, prefix="/api/v1/public", tags=["Public"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
+app.include_router(admin_onboarding.router, prefix="/api/v1/admin", tags=["Admin Onboarding"])
 app.include_router(vendor_api.router, prefix="/api/v1/vendor", tags=["Vendor"])
 app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
 app.include_router(categories.router, prefix="/api/v1/categories", tags=["Categories"])

@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Next360 Organics | Farm to Hub Ecosystem",
@@ -27,8 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
+      </head>
       <body
-        className={`${inter.variable} ${outfit.variable} antialiased bg-[#F5F5F0] text-[#262A2B] font-sans overflow-x-hidden`}
+        className="antialiased bg-[#F5F5F0] text-[#262A2B] font-sans overflow-x-hidden"
       >
         {children}
       </body>

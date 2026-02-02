@@ -32,24 +32,38 @@ async def list_my_products(db: AsyncSession = Depends(get_db), vendor: Vendor = 
     result = await db.execute(select(Product).where(Product.vendor_id == vendor.id))
     return result.scalars().all()
 
+from app.models.product import Product, ProductType, ApprovalStatus
+from pydantic import BaseModel
+from typing import Optional
+
+class ProductCreateSchema(BaseModel):
+    name: str
+    description: str = ""
+    price: float
+    stock_quantity: int
+    category_id: int
+    product_type: ProductType
+    image_url: Optional[str] = None
+
 @router.post("/products")
 async def create_product(
-    name: str, 
-    price: float, 
-    description: str = "", 
-    category_id: int = None,
+    product_data: ProductCreateSchema,
     db: AsyncSession = Depends(get_db), 
     vendor: Vendor = Depends(get_current_vendor)
 ):
-    # Basic creation logic
-    # Real implementation would use Pydantic schema
     product = Product(
         vendor_id=vendor.id,
-        name=name,
-        description=description,
-        price=price,
-        category_id=category_id,
-        approval_status="DRAFT" # Auto-draft
+        name=product_data.name,
+        description=product_data.description,
+        price=product_data.price,
+        stock_quantity=product_data.stock_quantity,
+        category_id=product_data.category_id,
+        product_type=product_data.product_type,
+        image_url=product_data.image_url,
+        
+        # Auto-Publish for Immediate Mobile Sync
+        is_active=True,
+        approval_status=ApprovalStatus.PUBLISHED
     )
     db.add(product)
     await db.commit()

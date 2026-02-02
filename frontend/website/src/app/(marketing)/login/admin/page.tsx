@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authApi } from "@/lib/api";
+import { auth } from "@/lib/auth";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -19,9 +19,11 @@ export default function AdminLogin() {
     setError("");
 
     try {
-      const { access_token } = await authApi.login(email, password);
-      localStorage.setItem("next360_token", access_token);
-      router.push("/admin");
+      const { session } = await auth.login(email, password);
+      if (session) {
+         localStorage.setItem("next360_token", session.access_token);
+         router.push("/admin");
+      }
     } catch (err: unknown) {
       setError((err as Error).message || "Access Denied");
     } finally {

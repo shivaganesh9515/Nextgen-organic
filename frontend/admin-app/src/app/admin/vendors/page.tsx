@@ -12,71 +12,44 @@ interface Vendor {
   status: string;
   city?: string;
   is_verified?: boolean;
+  documents?: Record<string, string>; // Added documents field
 }
 
-export default function VendorsPage() {
-  const [activeTab, setActiveTab] = useState<"all" | "pending">("all");
-  const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const filteredVendors = vendors.filter(v => 
-      activeTab === "all" ? true : v.status === "PENDING"
-  );
-
-  useEffect(() => {
-    fetchVendors();
-  }, []);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setActiveDropdown(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const fetchVendors = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("admin_token");
-      const res = await fetch("http://localhost:8000/api/v1/admin/vendors", {
-          headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (res.ok) {
-          const data = await res.json();
-          setVendors(Array.isArray(data) ? data : []);
-      }
-    } catch (error) {
-      console.error("Failed to fetch vendors", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (id: string, businessName: string) => {
+      if (!confirm(`Generate credentials and approve ${businessName}?`)) return;
+      
       try {
            const token = localStorage.getItem("admin_token");
-           const res = await fetch(`http://localhost:8000/api/v1/admin/vendors/${id}/approve`, {
+           // Call the new Onboarding API
+           const res = await fetch(`http://localhost:8000/api/v1/admin/vendors/${id}/approve-onboard`, {
               method: "POST",
                headers: { "Authorization": `Bearer ${token}` }
           });
           const data = await res.json();
+          
           if (res.ok) {
               fetchVendors();
-              if(data.temp_credentials) {
-                  prompt("Vendor Approved! Copy the temporary password:", data.temp_credentials.password);
-              } else {
-                  alert("Vendor Approved!");
-              }
+              
+              const { email, password } = data.credentials;
+              const draftId = data.email_draft_id;
+              
+              // Show Credentials Modal (For MVP using alert/prompt sequence or custom UI)
+              // Ideally this should be a nice modal. 
+              // We will show an alert with the info for now.
+              alert(`
+VENDOR APPROVED SUCCESSFULLY!
+-----------------------------
+System Email: ${email}
+Temp Password: ${password}
+-----------------------------
+(Email Draft Created: ID ${draftId})
+              `);
+              
           } else {
-              alert("Error: " + data.message);
+              alert("Error: " + (data.detail || data.message));
           }
       } catch (e) {
+          console.error(e);
           alert("Error approving vendor");
       }
   };
@@ -213,6 +186,7 @@ export default function VendorsPage() {
                    <th className="py-5 px-6 font-medium text-xs text-[#71717A] uppercase tracking-wider">Business Name</th>
                    <th className="py-5 px-6 font-medium text-xs text-[#71717A] uppercase tracking-wider">Contact</th>
                    <th className="py-5 px-6 font-medium text-xs text-[#71717A] uppercase tracking-wider">Category</th>
+                  <th className="py-5 px-6 font-medium text-xs text-[#71717A] uppercase tracking-wider">Documents</th>   
                    <th className="py-5 px-6 font-medium text-xs text-[#71717A] uppercase tracking-wider">Status</th>
                    <th className="py-5 px-6 font-medium text-xs text-[#71717A] uppercase tracking-wider text-right">Actions</th>
                 </tr>
@@ -220,12 +194,12 @@ export default function VendorsPage() {
             <tbody className="divide-y divide-white/5">
                 {loading && (
                   <tr>
-                    <td colSpan={5} className="py-20 text-center text-[#71717A]">Loading vendors...</td>
+                    <td colSpan={6} className="py-20 text-center text-[#71717A]">Loading vendors...</td>
                   </tr>
                 )}
                 {!loading && filteredVendors.length === 0 && (
                     <tr>
-                        <td colSpan={5} className="py-20 text-center text-[#71717A]">
+                        <td colSpan={6} className="py-20 text-center text-[#71717A]">
                             <div className="flex flex-col items-center gap-3">
                                 <ShieldCheck size={48} className="text-[#27272A]" />
                                 <p>{activeTab === "pending" ? "No pending approvals" : "No vendors found"}</p>
@@ -255,13 +229,26 @@ export default function VendorsPage() {
                           <div className="text-xs">{vendor.phone_number}</div>
                       </td>
                       <td className="py-5 px-6 text-[#A1A1AA] text-sm">{vendor.seller_category.replace(/_/g, " ")}</td>
+                      <td className="py-5 px-6 text-sm">
+                          {vendor.documents && Object.keys(vendor.documents).length > 0 ? (
+                            <div className="flex flex-col gap-1">
+                                {Object.entries(vendor.documents).map(([key, url]) => (
+                                    <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#BEF264] hover:underline text-xs">
+                                        <Download size={12} /> {key}
+                                    </a>
+                                ))}
+                            </div>
+                          ) : (
+                                <span className="text-[#71717A] text-xs">No docs</span>
+                          )}
+                      </td>
                       <td className="py-5 px-6">
                          <StatusBadge status={vendor.status} />
                       </td>
                       <td className="py-5 px-6 text-right relative">
                          {vendor.status === "PENDING" ? (
                              <div className="flex justify-end gap-2">
-                                <button onClick={() => handleApprove(vendor.id)} className="flex items-center gap-1 px-3 py-1.5 bg-[#BEF264]/10 text-[#BEF264] hover:bg-[#BEF264]/20 rounded-lg text-xs font-medium transition cursor-pointer">
+                                <button onClick={() => handleApprove(vendor.id, vendor.business_name)} className="flex items-center gap-1 px-3 py-1.5 bg-[#BEF264]/10 text-[#BEF264] hover:bg-[#BEF264]/20 rounded-lg text-xs font-medium transition cursor-pointer">
                                     <Check size={14} /> Approve
                                 </button>
                                 <button onClick={() => handleReject(vendor.id)} className="flex items-center gap-1 px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg text-xs font-medium transition cursor-pointer">

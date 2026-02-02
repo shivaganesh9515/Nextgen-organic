@@ -1,10 +1,14 @@
 "use client";
 
-import { Leaf, DollarSign, Package, TrendingUp, Bell, Search, MapPin } from "lucide-react";
+import { Leaf, DollarSign, Package, TrendingUp, Bell, Search, MapPin, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import AddProductModal from "@/components/dashboard/AddProductModal";
 
 export default function Dashboard() {
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#F5F5F0] flex">
       {/* Sidebar */}
@@ -53,19 +57,28 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64 p-6 md:p-10">
+      <main className="flex-1 md:ml-64 p-6 md:p-10 relative">
         {/* Header */}
         <header className="flex justify-between items-center mb-10">
            <div>
              <h1 className="font-heading font-bold text-3xl text-[#262A2B]">Dashboard</h1>
-             <p className="text-[#262A2B]/60">Welcome back, Rajesh! Here's what's happening today.</p>
+             <p className="text-[#262A2B]/60">Manage your farm inventory and orders.</p>
            </div>
            
            <div className="flex items-center gap-4">
-              <button className="p-3 bg-white rounded-full text-[#262A2B]/60 hover:text-[#4A6741] shadow-sm"><Search size={20}/></button>
+              <button 
+                onClick={() => setIsAddProductOpen(true)}
+                className="bg-[#4A6741] hover:bg-[#3A5233] text-white px-5 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              >
+                  <Plus size={18} /> Add Product
+              </button>
               <button className="p-3 bg-white rounded-full text-[#262A2B]/60 hover:text-[#4A6741] shadow-sm"><Bell size={20}/></button>
            </div>
         </header>
+
+        {isAddProductOpen && (
+            <AddProductModal onClose={() => setIsAddProductOpen(false)} onSuccess={() => alert("Product Published Successfully!")} />
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authApi } from "@/lib/api";
+import { auth } from "@/lib/auth";
 
 export default function VendorLogin() {
   const router = useRouter();
@@ -19,10 +19,12 @@ export default function VendorLogin() {
     setError("");
 
     try {
-      const { access_token } = await authApi.login(email, password);
+      const { session } = await auth.login(email, password);
       // In a real app, use HTTP-only cookies or a secure storage method
-      localStorage.setItem("next360_token", access_token);
-      router.push("/vendor");
+      if (session) {
+         localStorage.setItem("vendor_token", session.access_token);
+         router.push("/vendor");
+      }
     } catch (err: unknown) {
       setError((err as Error).message || "Invalid credentials");
     } finally {
@@ -85,7 +87,7 @@ export default function VendorLogin() {
 
             <div className="mt-8 text-center">
                <span className="text-[#52525B] text-sm">Don't have an account? </span>
-               <Link href="/contact" className="text-[#BEF264] text-sm hover:underline">Register as a Partner</Link>
+               <Link href="/register" className="text-[#BEF264] text-sm hover:underline">Register as a Partner</Link>
             </div>
          </div>
       </div>

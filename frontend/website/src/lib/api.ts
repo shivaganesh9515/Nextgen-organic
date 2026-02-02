@@ -1,56 +1,120 @@
-const API_URL = "http://localhost:8000/api/v1";
+import { supabase } from './supabaseClient';
 
-export async function apiRequest<T>(endpoint: string, method: string = "GET", body?: unknown, token?: string): Promise<T> {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  try {
-    const res = await fetch(`${API_URL}${endpoint}`, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.detail || "API Request Failed");
-    }
-
-    return await res.json();
-  } catch (error: unknown) {
-    throw new Error((error as Error).message || "Network Error");
+// Helper to handle Supabase responses
+async function handleSupabaseError(error: any) {
+  if (error) {
+    throw new Error(error.message || "An unexpected error occurred");
   }
 }
 
-export const authApi = {
-  login: async (username: string, password: string): Promise<{ access_token: string }> => {
-    // FastAPI expects form-data for OAuth2PasswordRequestForm
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
+export const api = {
+  vendors: {
+    register: async (vendorData: any) => {
+       const res = await fetch("http://localhost:8000/api/v1/vendors/register", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify(vendorData)
+       });
+       
+       if (!res.ok) {
+           const err = await res.json();
+           throw new Error(err.detail || "Registration failed");
+       }
+       return await res.json();
+    },
 
-    const res = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData,
-    });
+    addProduct: async (productData: any) => {
+        // Retrieve token
+        const token = localStorage.getItem("vendor_token"); 
+        // NOTE: Vendor Onboarding Flow generates credentials but frontend login logic 
+        // needs to store this token. Assuming /login/vendor page stores 'vendor_token'.
+        // If not, I'll need to check login implementation. 
+        // For now, I'll use 'vendor_token'.
+        
+        const res = await fetch("http://localhost:8000/api/v1/vendor/products", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` 
+            },
+            body: JSON.stringify(productData)
+        });
+        
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "Failed to add product");
+        }
+        return await res.json();
+    },
 
-    if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.detail || "Login Failed");
-    }
+    create: async (vendorData: any) => {
+      const { data, error } = await supabase
+        .from('vendors')
+        .insert([vendorData])
+        .select()
+        .single();
+      
+      if (error) await handleSupabaseError(error);
+      return data;
+    },
     
-    return await res.json();
+    get: async (id: string) => {
+      const { data, error } = await supabase
+        .from('vendors')
+        .select('*')
+        .eq('id', id)
+        .single();
+        
+      if (error) await handleSupabaseError(error);
+      return data;
+    },
+    
+    update: async (id: string, updates: any) => {
+       const { data, error } = await supabase
+        .from('vendors')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+        
+       if (error) await handleSupabaseError(error);
+       return data;
+    }
+  },
+
+  products: {
+    list: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*, vendors(business_name)')
+        .eq('is_active', true)
+        .eq('approval_status', 'PUBLISHED');
+
+      if (error) await handleSupabaseError(error);
+      return data;
+    },
+    
+    get: async (slug: string) => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*, vendors(*)')
+        .eq('slug', slug)
+        .single();
+
+      if (error) await handleSupabaseError(error);
+      return data;
+    }
   },
   
-  signup: async (userData: Record<string, unknown>) => {
-      return apiRequest("/auth/signup", "POST", userData);
+  categories: {
+    list: async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*');
+        
+      if (error) await handleSupabaseError(error);
+      return data;
+    }
   }
 };
+

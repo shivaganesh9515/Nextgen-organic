@@ -4,16 +4,17 @@ import { Check, Info } from "lucide-react";
 
 const classifications = [
   {
-    title: "Regular",
-    subtitle: "Daily Essentials",
-    color: "bg-blue-50 border-blue-100",
-    textColor: "text-blue-800",
-    badgeColor: "bg-blue-100 text-blue-800",
+    title: "Organic",
+    subtitle: "Certified Premium",
+    color: "bg-[#D4A373]/10 border-[#D4A373]/30",
+    textColor: "text-[#8a6b4c]",
+    badgeColor: "bg-[#D4A373] text-white",
+    popular: true,
     features: [
-      "Standard food safety compliance",
-      "Most affordable option",
-      "Sourced from trusted markets",
-      "Fresh & Hygienic"
+      "100% Certified Organic",
+      "Full traceability documentation",
+      "Premium quality assurance",
+      "Strict regulatory compliance"
     ]
   },
   {
@@ -22,7 +23,6 @@ const classifications = [
     color: "bg-[#E8F0E5] border-[#4A6741]/20",
     textColor: "text-[#4A6741]",
     badgeColor: "bg-[#4A6741] text-white",
-    popular: true,
     features: [
       "Zero chemical residues",
       "Traditional farming methods",
@@ -31,16 +31,16 @@ const classifications = [
     ]
   },
   {
-    title: "Organic",
-    subtitle: "Certified Premium",
-    color: "bg-[#D4A373]/10 border-[#D4A373]/30",
-    textColor: "text-[#8a6b4c]",
-    badgeColor: "bg-[#D4A373] text-white",
+    title: "Eco Friendly",
+    subtitle: "Sustainable Choice",
+    color: "bg-teal-50 border-teal-100",
+    textColor: "text-teal-800",
+    badgeColor: "bg-teal-600 text-white",
     features: [
-      "100% Certified Organic",
-      "Full traceability documentation",
-      "Premium quality assurance",
-      "Strict regulatory compliance"
+      "Environmentally conscious farming",
+      "Sustainably sourced",
+      "Minimal carbon footprint",
+      "Fresh & Responsible"
     ]
   }
 ];
