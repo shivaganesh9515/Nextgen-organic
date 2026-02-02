@@ -16,7 +16,7 @@ export function VendorCTA() {
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
            <Link
-             href="/register-vendor"
+             href="/register"
              className="px-8 py-4 bg-[#4A6741] text-white rounded-full text-lg font-medium shadow-lg hover:bg-[#3D5536] transition-all"
            >
              Register as Vendor
