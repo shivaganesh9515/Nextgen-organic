@@ -1,33 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
-
-const testimonials = [
-  {
-    role: "Local Farmer",
-    name: "Rajesh Kumar",
-    location: "Organic Roots Farm, Nashik",
-    quote: "Finally, a platform that respects our hard work. Next360 handles the logistics so I can focus on growing pure food.",
-    rating: 5
-  },
-  {
-    role: "Hub Store Owner",
-    name: "Sarah Jenkins",
-    location: "Green Valley Community Hub",
-    quote: "My store has become the neighborhood favorite. The produce quality is unmatched, and customers love the transparency.",
-    rating: 5
-  },
-  {
-    role: "Customer",
-    name: "Priya Sharma",
-    location: "Health Conscious Mom",
-    quote: "I visited the farm where my spinach was grown through the app. That level of trust means everything to my family.",
-    rating: 5
-  }
-];
+import { api } from "@/lib/api";
 
 export function Testimonials() {
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      try {
+        const data = await api.testimonials.list();
+        if (data) setTestimonials(data);
+      } catch (e) {
+        console.error("Failed to fetch testimonials:", e);
+      }
+    }
+    fetchTestimonials();
+  }, []);
+
+  if (testimonials.length === 0) return null;
+
   return (
     <section className="py-24 bg-[#F5F5F0] overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">

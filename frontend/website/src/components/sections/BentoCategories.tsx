@@ -1,13 +1,67 @@
-"use client";
-
+import { useEffect, useState } from "react";
 import Image from "next/image";
-
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { api } from "@/lib/api";
 
-const bentoItems: any[] = [];
+// Style mappings for specific categories to maintain design
+const STYLE_MAP: Record<string, any> = {
+  vegetables: {
+    className: "md:col-span-2 md:row-span-2 bg-[#F0FDF4]",
+    textColor: "text-green-800",
+    accentColor: "text-green-600",
+    subtitle: "Harvested Daily"
+  },
+  fruits: {
+    className: "md:col-span-1 md:row-span-1 bg-[#FFF7ED]",
+    textColor: "text-orange-800",
+    accentColor: "text-orange-600",
+    subtitle: "Naturally Ripened"
+  },
+  bakery: {
+    className: "md:col-span-1 md:row-span-1 bg-[#FEFCE8]",
+    textColor: "text-yellow-800",
+    accentColor: "text-yellow-600",
+    subtitle: "Gluten Free"
+  },
+  essentials: {
+    className: "md:col-span-2 md:row-span-1 bg-[#FAFAF9]",
+    textColor: "text-stone-800",
+    accentColor: "text-stone-600",
+    subtitle: "Spices, Honey, & More"
+  }
+};
 
 export function BentoCategories() {
+  const [bentoItems, setBentoItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const data = await api.categories.list();
+        if (data) {
+          // Filter only the ones we have styles for (or all if we add default)
+          const validItems = data
+            .filter((cat: any) => STYLE_MAP[cat.slug])
+            .map((cat: any) => ({
+              id: cat.id,
+              title: cat.name,
+              // Fallback image if not in DB, though seed script puts it there
+              image: cat.image_url || "/icons/3d/carrot.png", 
+              link: `/collections/${cat.slug}`,
+              ...STYLE_MAP[cat.slug]
+            }));
+          setBentoItems(validItems);
+        }
+      } catch (e) {
+        console.error("Failed to fetch categories:", e);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  if (bentoItems.length === 0) return null; // Or return a skeleton
+
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">

@@ -116,6 +116,18 @@ export const api = {
       if (error) await handleSupabaseError(error);
       return data;
     }
+  },
+
+  testimonials: {
+    list: async () => {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('is_featured', true);
+        
+      if (error) await handleSupabaseError(error);
+      return data;
+    }
   }
 };
 

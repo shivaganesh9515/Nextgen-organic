@@ -18,6 +18,7 @@ export default function HomeScreen() {
   const [activeMode, setActiveMode] = useState<'Hub' | 'Farms'>('Hub');
   const [products, setProducts] = useState<Product[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [categories, setCategories] = useState<any[]>([]); // New state for quick categories
   const [banners, setBanners] = useState<any[]>([]); 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -28,6 +29,16 @@ export default function HomeScreen() {
       
       const fetchedVendors = await api.fetchVendors();
       if (fetchedVendors && fetchedVendors.length > 0) setVendors(fetchedVendors);
+
+      // Fetch Categories
+      const fetchedCategories = await api.fetchCategories();
+      if (fetchedCategories && fetchedCategories.length > 0) {
+        setCategories(fetchedCategories.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          image: c.image_url || 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=200'
+        })));
+      }
 
       const fetchedBanners = await api.fetchBanners();
       if (fetchedBanners && fetchedBanners.length > 0) {
@@ -247,7 +258,7 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={{ paddingLeft: 20, paddingRight: 10 }}
           >
-            {QUICK_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <TouchableOpacity 
                 key={cat.id} 
                 onPress={() => router.push('/categories')}

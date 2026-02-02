@@ -1,11 +1,47 @@
-"use client";
-
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { api } from "@/lib/api";
 
-const categories: any[] = [];
+const STYLE_MAP: Record<string, any> = {
+  vegetables: { color: "from-[#FFE0B2] to-[#FFCC80]", shadow: "shadow-orange-500/20", scale: 1.25, y: -15, rotate: 10 },
+  fruits: { color: "from-[#E1BEE7] to-[#CE93D8]", shadow: "shadow-purple-500/20", scale: 1.15, y: -8, rotate: -5 },
+  bakery: { color: "from-[#FFF9C4] to-[#FFF59D]", shadow: "shadow-yellow-500/20", scale: 1.25, y: -10, rotate: 15 },
+  essentials: { color: "from-[#D7CCC8] to-[#BCAAA4]", shadow: "shadow-stone-500/20", scale: 1.15, y: 0, rotate: -10 },
+  snacks: { color: "from-[#FFCCBC] to-[#FFAB91]", shadow: "shadow-red-500/20", scale: 1.2, y: -8, rotate: 5 },
+  dairy: { color: "from-[#E3F2FD] to-[#BBDEFB]", shadow: "shadow-blue-500/20", scale: 1.15, y: -5, rotate: 0 },
+  juices: { color: "from-[#F8BBD0] to-[#F48FB1]", shadow: "shadow-pink-500/20", scale: 1.2, y: -8, rotate: 8 },
+};
 
 export function Categories() {
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const data = await api.categories.list();
+        if (data) {
+           const mapped = data.map((cat: any) => {
+             const style = STYLE_MAP[cat.slug] || { color: "from-gray-100 to-gray-200", shadow: "shadow-gray-500/20", scale: 1, y: 0, rotate: 0 };
+             return {
+               name: cat.name,
+               // Items list is cosmetic, could be dynamic or omitted
+               items: "Explore Collection", 
+               image: cat.image_url || "/icons/3d/carrot.png",
+               ...style
+             };
+           });
+           setCategories(mapped);
+        }
+      } catch (e) {
+        console.error("Failed to fetch categories:", e);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  if (categories.length === 0) return null;
+
   return (
     <section className="py-32 bg-white relative overflow-hidden">
       {/* Background Blobs */}

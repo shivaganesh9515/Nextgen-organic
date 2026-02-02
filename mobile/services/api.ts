@@ -145,6 +145,18 @@ export const api = {
       }
   },
 
+  // Public Endpoints
+  fetchCategories: async () => {
+    try {
+      const res = await fetchWithTimeout(`${API_URL}/public/categories`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      return await res.json();
+    } catch (error) {
+      console.warn("API Error fetching categories:", error);
+      return [];
+    }
+  },
+
   fetchBanners: async () => {
     try {
         const res = await fetchWithTimeout(`${API_URL}/banners`);
