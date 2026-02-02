@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Leaf, Instagram, Twitter, Linkedin, Facebook } from "lucide-react";
+import { Instagram, Twitter, Linkedin, Facebook } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();

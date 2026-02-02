@@ -59,7 +59,7 @@ export function Testimonials() {
               </div>
               
               <p className="text-[#262A2B]/80 text-lg leading-relaxed mb-8 font-medium">
-                "{item.quote}"
+                &quot;{item.quote}&quot;
               </p>
               
               <div className="pt-6 border-t border-[#F5F5F0]">

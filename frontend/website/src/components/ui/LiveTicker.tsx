@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+
 
 const TICKER_ITEMS = [
   "100% Organic Certified",

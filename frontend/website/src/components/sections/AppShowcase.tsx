@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Smartphone, Mail, ArrowRight, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
+import { Mail, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export function AppShowcase() {
   const [email, setEmail] = useState("");

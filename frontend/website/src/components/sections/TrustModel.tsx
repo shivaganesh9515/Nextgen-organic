@@ -14,7 +14,7 @@ export function TrustModel() {
                <span className="text-[#4A6741]">A Gatekeeper.</span>
              </h2>
              <p className="text-white/70 text-lg mb-10 leading-relaxed">
-               Unlike open marketplaces, we don't let just anyone sell. Every vendor goes through a strict manual vetting process before they can list a single tomato.
+               Unlike open marketplaces, we don&apos;t let just anyone sell. Every vendor goes through a strict manual vetting process before they can list a single tomato.
              </p>
              
              <div className="space-y-8">
@@ -34,7 +34,7 @@ export function TrustModel() {
                   </div>
                   <div>
                     <h3 className="font-bold text-xl mb-2 text-white">Certification Check</h3>
-                    <p className="text-white/60 text-sm">Selling as "Organic"? We verify your NPOP/USDA certificates. No documents, no "Organic" tag.</p>
+                    <p className="text-white/60 text-sm">Selling as &quot;Organic&quot;? We verify your NPOP/USDA certificates. No documents, no &quot;Organic&quot; tag.</p>
                   </div>
                </div>
 
@@ -44,7 +44,7 @@ export function TrustModel() {
                   </div>
                   <div>
                     <h3 className="font-bold text-xl mb-2 text-white">No Fake Claims</h3>
-                    <p className="text-white/60 text-sm">It's better to sell honest "Natural" food than fake "Organic" food. We heavily penalize mislabeling.</p>
+                    <p className="text-white/60 text-sm">It&apos;s better to sell honest &quot;Natural&quot; food than fake &quot;Organic&quot; food. We heavily penalize mislabeling.</p>
                   </div>
                </div>
              </div>

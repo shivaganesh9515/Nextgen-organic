@@ -10,7 +10,7 @@ export default function ContactPage() {
          <div>
             <span className="text-[#4A6741] font-bold tracking-widest text-sm uppercase mb-4 block">Get in Touch</span>
             <h1 className="font-heading font-black text-5xl md:text-6xl text-[#262A2B] mb-8">
-               We'd love to hear from you.
+               We&apos;d love to hear from you.
             </h1>
             <p className="text-xl text-[#262A2B]/60 mb-12">
                Have a question about our farms? Want to become a partner? Just want to say hi? Drop us a line.

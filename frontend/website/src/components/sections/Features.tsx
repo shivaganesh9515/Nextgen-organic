@@ -39,7 +39,7 @@ export function Features() {
             Whole Ecosystem coverage
           </h2>
           <p className="text-[#262A2B]/60 max-w-2xl mx-auto">
-            We don't just sell vegetables. We've built a complete trusted ecosystem connecting verified growers with conscious consumers.
+            We don&apos;t just sell vegetables. We&apos;ve built a complete trusted ecosystem connecting verified growers with conscious consumers.
           </p>
         </div>
 

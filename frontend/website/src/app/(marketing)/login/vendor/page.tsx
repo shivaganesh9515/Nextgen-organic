@@ -86,7 +86,7 @@ export default function VendorLogin() {
             </form>
 
             <div className="mt-8 text-center">
-               <span className="text-[#52525B] text-sm">Don't have an account? </span>
+               <span className="text-[#52525B] text-sm">Don&apos;t have an account? </span>
                <Link href="/register" className="text-[#BEF264] text-sm hover:underline">Register as a Partner</Link>
             </div>
          </div>
@@ -94,6 +94,7 @@ export default function VendorLogin() {
 
       {/* Right Side - Image */}
       <div className="hidden lg:block w-1/2 relative">
+         {/* eslint-disable-next-line @next/next/no-img-element */}
          <img 
             src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1200&auto=format&fit=crop" 
             alt="Farming" 
@@ -101,7 +102,7 @@ export default function VendorLogin() {
          />
          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
          <div className="absolute bottom-16 left-16 max-w-md text-white">
-            <blockquote className="text-2xl font-bold mb-4">"NextGen has transformed how we sell. No more middlemen, just fair prices."</blockquote>
+            <blockquote className="text-2xl font-bold mb-4">&quot;NextGen has transformed how we sell. No more middlemen, just fair prices.&quot;</blockquote>
             <cite className="not-italic text-[#BEF264] font-medium">— Ramesh Kumar, Prakruthi Farms</cite>
          </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { User, Store, ShoppingBag, ArrowRight } from "lucide-react";
+import { User, Store, ShoppingBag } from "lucide-react";
 
 const steps = [
   {
@@ -36,7 +36,7 @@ export function HowItWorks() {
               How It Works
             </h2>
             <p className="text-lg text-[#262A2B]/70 mb-8 leading-relaxed">
-              We've simplified the supply chain to ensure transparency and freshness. No hidden warehouses, just farm to hub to you.
+              We&apos;ve simplified the supply chain to ensure transparency and freshness. No hidden warehouses, just farm to hub to you.
             </p>
             
             <div className="space-y-8">

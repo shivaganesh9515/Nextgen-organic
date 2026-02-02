@@ -14,7 +14,7 @@ export function WhyUs() {
                 Why choose <span className="text-[#4A6741]">Next360?</span>
               </h2>
               <p className="text-white/70 text-lg mb-8 leading-relaxed">
-                We are reclaiming the word "Organic". No greenwashing, no hidden preservatives. Just honest food from honest farmers.
+                We are reclaiming the word &quot;Organic&quot;. No greenwashing, no hidden preservatives. Just honest food from honest farmers.
               </p>
               
               <ul className="space-y-4">

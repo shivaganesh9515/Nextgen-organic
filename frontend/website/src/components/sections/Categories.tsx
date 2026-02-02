@@ -24,7 +24,7 @@ export function Categories() {
         <div className="text-center mb-16">
            <span className="text-[#4A6741] font-bold tracking-widest text-sm uppercase mb-3 block">Fresh Collections</span>
            <h2 className="font-heading font-bold text-4xl md:text-6xl text-[#262A2B]">
-             What's in the Store?
+             What&apos;s in the Store?
            </h2>
         </div>
 

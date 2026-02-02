@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, FileCheck, Settings, LogOut, Package, ShoppingCart } from "lucide-react";
-import Image from "next/image";
+
 
 type SidebarItem = {
   label: string;

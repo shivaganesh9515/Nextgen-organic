@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Info } from "lucide-react";
+import { Check } from "lucide-react";
 
 const classifications = [
   {
@@ -53,7 +53,7 @@ export function FoodTypes() {
            <span className="text-[#4A6741] font-bold tracking-widest text-sm uppercase mb-2 block">Know What You Eat</span>
            <h2 className="font-heading font-bold text-3xl md:text-5xl text-[#262A2B] mb-6"> Three Ways to Buy </h2>
            <p className="max-w-2xl mx-auto text-[#262A2B]/60 text-lg">
-             We believe in total transparency. Whether you want affordable essentials or certified premium organic, we tell you exactly what you're getting.
+             We believe in total transparency. Whether you want affordable essentials or certified premium organic, we tell you exactly what you&apos;re getting.
            </p>
         </div>
 

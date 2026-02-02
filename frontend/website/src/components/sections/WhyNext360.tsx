@@ -1,4 +1,4 @@
-import { ShieldCheck, Zap, Users, Leaf } from "lucide-react";
+import { ShieldCheck, Users, Leaf } from "lucide-react";
 
 export function WhyNext360() {
   return (
@@ -20,7 +20,7 @@ export function WhyNext360() {
                  <span className="text-[#BEF264]">NextGen Organic.</span>
               </h2>
               <p className="text-[#A1A1AA] text-lg mb-8 leading-relaxed">
-                 We don't just aggregate produce; we verify it. Our proprietary traceability engine ensures every bite you take is cleaner, safer, and supports a real farming family.
+                 We don&apos;t just aggregate produce; we verify it. Our proprietary traceability engine ensures every bite you take is cleaner, safer, and supports a real farming family.
               </p>
               
               <div className="space-y-6">
@@ -44,6 +44,7 @@ export function WhyNext360() {
 
            <div className="relative">
               <div className="aspect-square rounded-[3rem] overflow-hidden border border-white/10 relative group">
+                 {/* eslint-disable-next-line @next/next/no-img-element */}
                  <img 
                    src="https://images.unsplash.com/photo-1615485500704-8e99099928b3?q=80&w=1200&auto=format&fit=crop" 
                    alt="Fresh Vegetables" 

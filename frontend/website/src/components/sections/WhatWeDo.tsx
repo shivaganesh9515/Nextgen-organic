@@ -30,7 +30,7 @@ export function WhatWeDo() {
         <div className="text-center max-w-2xl mx-auto mb-16">
            <h2 className="text-sm font-bold text-[#65A30D] uppercase tracking-wider mb-3">Our Ecosystem</h2>
            <h3 className="text-4xl font-bold text-[#1a1c1e] mb-4">From Soil to Soul</h3>
-           <p className="text-[#64748B] text-lg">We've reimagined the food supply chain to be transparent, fair, and incredibly fast.</p>
+           <p className="text-[#64748B] text-lg">We&apos;ve reimagined the food supply chain to be transparent, fair, and incredibly fast.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Loader2, UploadCloud } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/auth";
+
 import { api } from "@/lib/api";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -35,7 +35,7 @@ export default function Register() {
       if (file) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('vendor-docs')
           .upload(fileName, file);
 
@@ -152,6 +152,7 @@ export default function Register() {
 
       {/* Right Side - Image */}
       <div className="hidden lg:block w-1/2 relative bg-[#262A2B]">
+         {/* eslint-disable-next-line @next/next/no-img-element */}
          <img 
             src="https://images.unsplash.com/photo-1595855709940-5776ee4a4a1f?q=80&w=1200&auto=format&fit=crop" 
             alt="Organic Farming" 

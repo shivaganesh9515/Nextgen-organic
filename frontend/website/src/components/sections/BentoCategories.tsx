@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -64,7 +64,7 @@ export function BentoCategories() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px]">
-          {bentoItems.map((item, idx) => (
+          {bentoItems.map((item) => (
             <Link key={item.id} href={item.link} className={`${item.className} group relative rounded-[2rem] overflow-hidden p-8 transition-all duration-500 hover:shadow-xl hover:shadow-black/5 flex flex-col justify-between border border-black/5`}>
                
                {/* Content */}

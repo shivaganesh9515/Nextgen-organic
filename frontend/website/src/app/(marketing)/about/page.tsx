@@ -53,14 +53,14 @@ export default function AboutPage() {
             <div>
                <h2 className="font-heading font-bold text-4xl text-[#262A2B] mb-6">
                   It started with a simple question: <br/>
-                  <span className="text-[#4A6741]">"Where does this come from?"</span>
+                  <span className="text-[#4A6741]">&quot;Where does this come from?&quot;</span>
                </h2>
                <div className="space-y-6 text-[#262A2B]/70 text-lg leading-relaxed">
                   <p>
-                    In a world of mass production, "organic" became just another label. We wanted to bring back the connection. The handshake between the grower and the eater.
+                    In a world of mass production, &quot;organic&quot; became just another label. We wanted to bring back the connection. The handshake between the grower and the eater.
                   </p>
                   <p>
-                    NextGen Organics isn't just a store. It's an ecosystem. We empower small-scale farmers with technology and give you transparency you can actually verify.
+                    NextGen Organics isn&apos;t just a store. It&apos;s an ecosystem. We empower small-scale farmers with technology and give you transparency you can actually verify.
                   </p>
                </div>
             </div>

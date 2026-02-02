@@ -1,7 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
 import { FoodTypes } from "@/components/sections/FoodTypes";
 import { TrustModel } from "@/components/sections/TrustModel";
-import { Categories } from "@/components/sections/Categories";
+
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { AppShowcase } from "@/components/sections/AppShowcase";

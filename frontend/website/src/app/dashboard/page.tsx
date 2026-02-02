@@ -1,6 +1,6 @@
 "use client";
 
-import { Leaf, DollarSign, Package, TrendingUp, Bell, Search, MapPin, Plus } from "lucide-react";
+import { Leaf, DollarSign, Package, TrendingUp, Bell, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";

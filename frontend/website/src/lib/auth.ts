@@ -14,7 +14,7 @@ export const auth = {
     return data;
   },
 
-  signup: async (email: string, password: string, metadata?: Record<string, any>) => {
+  signup: async (email: string, password: string, metadata?: Record<string, any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const { data, error } = await supabase.auth.signUp({
       email,
       password,

@@ -62,8 +62,8 @@ export function ComingSoonView() {
              animate={{ opacity: 1, scale: 1 }}
              className="bg-[#4A6741]/10 border border-[#4A6741]/20 rounded-2xl p-6 text-[#4A6741]"
            >
-              <div className="font-bold text-lg mb-1">You're on the list! 🎉</div>
-              <p>We'll notify you the moment we launch.</p>
+              <div className="font-bold text-lg mb-1">You&apos;re on the list! 🎊</div>
+              <p>We&apos;ll notify you the moment we launch.</p>
            </motion.div>
         ) : (
           <motion.form 

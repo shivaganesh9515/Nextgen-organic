@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Check, ArrowRight } from "lucide-react";
+
+import { Check } from "lucide-react";
 import Link from "next/link";
 
 export default function VendorsPage() {
