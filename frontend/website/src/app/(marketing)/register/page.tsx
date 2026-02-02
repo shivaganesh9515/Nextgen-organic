@@ -1,64 +1,96 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Loader2, UploadCloud } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { api } from "@/lib/api";
-import { supabase } from "@/lib/supabaseClient";
+import { VendorDocumentRow } from "@/components/forms/VendorDocumentRow";
+
+// Type Options
+const VENDOR_TYPES = [
+  { id: "Manufacturer", label: "Manufacturer", desc: "You grow or process food items directly." },
+  { id: "Trader", label: "Trader / Aggregator", desc: "You source from farmers and sell in bulk." },
+  { id: "Marketer", label: "Marketer / Brand", desc: "You sell under your own brand name." }
+];
+
+// Initial Data
+const INITIAL_DOCS = {
+  npop: { available: true },
+  fssai: { available: true },
+  manufacturing_license: { available: true },
+  gst: { available: true },
+  udyam: { available: true },
+  pan: { available: true }
+};
 
 export default function Register() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [step, setStep] = useState(1); // Optional: Could use strict steps, but single page scroll is also fine. Let's do sections.
+  
   const [formData, setFormData] = useState({
     businessName: "",
     email: "",
-    // password removed
     phone: "",
     address: "",
     city: "",
     state: "",
-    pincode: ""
+    pincode: "",
+    vendorTypes: [] as string[],
+    documents: INITIAL_DOCS as Record<string, any>,
+    agreed: false
   });
-  const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const updateDoc = (key: string, data: any) => {
+    setFormData(prev => ({
+      ...prev,
+      documents: { ...prev.documents, [key]: data }
+    }));
+  };
+
+  const toggleVendorType = (type: string) => {
+    setFormData(prev => {
+      const types = prev.vendorTypes.includes(type)
+        ? prev.vendorTypes.filter(t => t !== type)
+        : [...prev.vendorTypes, type];
+      return { ...prev, vendorTypes: types };
+    });
+  };
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
+    // Validation
+    if (!formData.agreed) {
+      setError("You must agree to the terms and declaration.");
+      setLoading(false);
+      return;
+    }
+    if (formData.vendorTypes.length === 0) {
+      setError("Please select at least one Vendor Type.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // 1. Upload Document if exists
-      let documentUrl = "";
-      if (file) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('vendor-docs')
-          .upload(fileName, file);
-
-        if (uploadError) throw uploadError;
-        
-        // Get Public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('vendor-docs')
-          .getPublicUrl(fileName);
-          
-        documentUrl = publicUrl;
-      }
-
-      // 2. Submit Application (Backend only, no Auth User creation yet)
+      // API Call
       await api.vendors.register({
         business_name: formData.businessName,
         contact_email: formData.email,
         phone_number: formData.phone,
-        documents: { reg_cert: documentUrl }, 
         address_line: formData.address,
         city: formData.city,
         state: formData.state,
-        pincode: formData.pincode
+        pincode: formData.pincode,
+        seller_category: "NPOP_ORGANIC", // Default for now, or map from Types
+        documents: {
+          ...formData.documents, // Stores the detailed doc objects
+          vendor_types: formData.vendorTypes
+        }
       });
 
       router.push("/login/vendor?registered=true");
@@ -71,98 +103,151 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F0] flex relative overflow-hidden">
-      {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center p-8 lg:p-12 relative z-10 overflow-y-auto max-h-screen">
-         <Link href="/login/vendor" className="text-[#4A6741] hover:text-[#262A2B] flex items-center gap-2 text-sm font-medium transition-colors mb-8">
-            <ArrowLeft size={16} /> Back to Login
-         </Link>
+    <div className="min-h-screen bg-[#F5F5F0]">
+       {/* Simple Header */}
+       <header className="bg-white border-b border-[#262A2B]/5 sticky top-0 z-40">
+          <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+             <Link href="/login/vendor" className="text-[#4A6741] font-medium flex items-center gap-2 hover:text-[#262A2B] transition-colors">
+                <ArrowLeft size={18} /> Back to Login
+             </Link>
+             <span className="text-[#262A2B]/40 font-mono text-xs">VENDOR REGISTRATION</span>
+          </div>
+       </header>
 
-         <div className="max-w-md w-full mx-auto">
-            <div className="mb-8">
-               <h1 className="text-3xl font-bold text-[#262A2B] mb-2">Partner with NextGen</h1>
-               <p className="text-[#262A2B]/60">Join our network of sustainable organic farmers.</p>
-            </div>
+       <main className="max-w-4xl mx-auto px-6 py-12">
+          
+          <div className="text-center mb-12">
+             <h1 className="font-heading font-black text-4xl text-[#262A2B] mb-4">Partner Application</h1>
+             <p className="text-[#262A2B]/60 text-lg max-w-2xl mx-auto">
+                Join NextGen Organics to reach premium customers. Please ensure all details are accurate for quick verification.
+             </p>
+          </div>
 
-            <form onSubmit={handleRegister} className="space-y-4">
-               {error && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 text-sm font-medium">
-                     {error}
-                  </div>
-               )}
-               
-               <div>
-                  <label className="block text-sm font-bold text-[#262A2B] mb-1">Business / Farm Name</label>
-                  <input required type="text" value={formData.businessName} onChange={e => setFormData({...formData, businessName: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="Prakruthi Farms" />
+          <form onSubmit={handleRegister} className="space-y-12">
+            
+            {/* 1. Business Details */}
+            <section className="bg-white p-8 rounded-3xl shadow-sm border border-[#262A2B]/5">
+               <div className="flex items-center gap-3 mb-8">
+                  <div className="w-8 h-8 rounded-full bg-[#4A6741] text-white flex items-center justify-center font-bold">1</div>
+                  <h2 className="text-2xl font-bold text-[#262A2B]">Business Details</h2>
                </div>
 
-               <div className="grid grid-cols-2 gap-4">
-                   <div>
-                      <label className="block text-sm font-bold text-[#262A2B] mb-1">Email</label>
-                      <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="contact@farm.com" />
-                   </div>
-                   <div>
-                      <label className="block text-sm font-bold text-[#262A2B] mb-1">Phone</label>
-                      <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="+91 98765 43210" />
-                   </div>
-               </div>
-
-               {/* Password field removed - Credentials generated by Admin on approval */}
-
-               <hr className="border-[#262A2B]/10 my-4"/>
-               
-               <div className="space-y-4">
+               <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-bold text-[#262A2B] mb-1">Address</label>
-                    <input required type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="Plot No. 123, Green Valley" />
+                    <label className="block text-sm font-bold text-[#262A2B] mb-2">Registered Business Name <span className="text-red-500">*</span></label>
+                    <input required type="text" value={formData.businessName} onChange={e => setFormData({...formData, businessName: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] font-medium outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all" placeholder="e.g. Prakruthi Organic Farms Pvt Ltd" />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                     <input required type="text" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="City" />
-                     <input required type="text" value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="State" />
-                     <input required type="text" value={formData.pincode} onChange={e => setFormData({...formData, pincode: e.target.value})} className="w-full bg-white border border-[#262A2B]/10 rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:border-[#4A6741]" placeholder="PIN" />
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                     <div>
+                        <label className="block text-sm font-bold text-[#262A2B] mb-2">Business Email <span className="text-red-500">*</span></label>
+                        <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] font-medium outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all" placeholder="accounts@farm.com" />
+                     </div>
+                     <div>
+                        <label className="block text-sm font-bold text-[#262A2B] mb-2">Primary Contact Number <span className="text-red-500">*</span></label>
+                        <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] font-medium outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all" placeholder="+91 98765 43210" />
+                     </div>
+                  </div>
+
+                  <div>
+                     <label className="block text-sm font-bold text-[#262A2B] mb-2">Registered Address <span className="text-red-500">*</span></label>
+                     <input required type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] font-medium outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all mb-4" placeholder="Street Address / Plot No." />
+                     
+                     <div className="grid grid-cols-3 gap-4">
+                        <input required type="text" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all" placeholder="City" />
+                        <input required type="text" value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all" placeholder="State" />
+                        <input required type="text" value={formData.pincode} onChange={e => setFormData({...formData, pincode: e.target.value})} className="w-full bg-[#F5F5F0] border-transparent rounded-xl px-4 py-3 text-[#262A2B] outline-none focus:bg-white focus:ring-2 ring-[#4A6741]/20 transition-all" placeholder="PIN Code" />
+                     </div>
                   </div>
                </div>
+            </section>
 
-               <div className="pt-4">
-                  <label className="block text-sm font-bold text-[#262A2B] mb-1">Documents (NPOP/FSSAI Cert)</label>
-                  <div className="relative">
-                    <input 
-                        required 
-                        type="file" 
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={e => setFile(e.target.files?.[0] || null)} 
-                        className="w-full bg-white border border-[#262A2B]/10 rounded-xl pl-4 pr-10 py-3 text-[#262A2B] outline-none focus:border-[#4A6741] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#4A6741]/10 file:text-[#4A6741] hover:file:bg-[#4A6741]/20 transition-all cursor-pointer" 
-                    />
-                    <UploadCloud className="absolute right-4 top-1/2 -translate-y-1/2 text-[#262A2B]/40 pointer-events-none" size={18} />
-                  </div>
-                  <p className="text-xs text-[#262A2B]/40 mt-1">Upload your certification document (PDF/Image) for verification.</p>
+            {/* 2. Vendor Type */}
+            <section className="bg-white p-8 rounded-3xl shadow-sm border border-[#262A2B]/5">
+               <div className="flex items-center gap-3 mb-8">
+                  <div className="w-8 h-8 rounded-full bg-[#4A6741] text-white flex items-center justify-center font-bold">2</div>
+                  <h2 className="text-2xl font-bold text-[#262A2B]">Vendor Type <span className="text-red-500">*</span></h2>
                </div>
                
-               <button 
+               <div className="grid md:grid-cols-3 gap-4">
+                  {VENDOR_TYPES.map(type => (
+                     <div 
+                        key={type.id}
+                        onClick={() => toggleVendorType(type.id)}
+                        className={`cursor-pointer p-6 rounded-2xl border-2 transition-all ${formData.vendorTypes.includes(type.id) ? 'border-[#4A6741] bg-[#4A6741]/5 shadow-lg' : 'border-[#262A2B]/10 hover:border-[#4A6741]/50'}`}
+                     >
+                        <div className="flex justify-between items-start mb-2">
+                           <h3 className="font-bold text-[#262A2B]">{type.label}</h3>
+                           {formData.vendorTypes.includes(type.id) && <CheckCircle size={20} className="text-[#4A6741]" />}
+                        </div>
+                        <p className="text-sm text-[#262A2B]/60">{type.desc}</p>
+                     </div>
+                  ))}
+               </div>
+            </section>
+
+            {/* 3. Food Certifications */}
+            <section className="bg-white p-8 rounded-3xl shadow-sm border border-[#262A2B]/5">
+               <div className="flex items-center gap-3 mb-8">
+                  <div className="w-8 h-8 rounded-full bg-[#4A6741] text-white flex items-center justify-center font-bold">3</div>
+                  <h2 className="text-2xl font-bold text-[#262A2B]">Certifications</h2>
+               </div>
+               
+               <div className="space-y-6">
+                  <VendorDocumentRow label="NPOP Organic Certificate" docKey="npop" data={formData.documents.npop} onChange={updateDoc} required />
+                  <VendorDocumentRow label="FSSAI License" docKey="fssai" data={formData.documents.fssai} onChange={updateDoc} required />
+               </div>
+            </section>
+
+            {/* 4. Licensing and Registration */}
+            <section className="bg-white p-8 rounded-3xl shadow-sm border border-[#262A2B]/5">
+               <div className="flex items-center gap-3 mb-8">
+                  <div className="w-8 h-8 rounded-full bg-[#4A6741] text-white flex items-center justify-center font-bold">4</div>
+                  <h2 className="text-2xl font-bold text-[#262A2B]">Business Registration</h2>
+               </div>
+               
+               <div className="space-y-6">
+                  <VendorDocumentRow label="GST Registration" docKey="gst" data={formData.documents.gst} onChange={updateDoc} showValidity={false} />
+                  <VendorDocumentRow label="UDYAM Registration" docKey="udyam" data={formData.documents.udyam} onChange={updateDoc} showValidity={false} />
+                  <VendorDocumentRow label="PAN Card" docKey="pan" data={formData.documents.pan} onChange={updateDoc} showValidity={false} />
+                  <VendorDocumentRow label="Manufacturing License" docKey="manufacturing_license" data={formData.documents.manufacturing_license} onChange={updateDoc} />
+               </div>
+            </section>
+
+            {/* 5. Declaration */}
+            <section className="bg-white p-8 rounded-3xl shadow-sm border border-[#262A2B]/5">
+               <div className="flex items-center gap-4 p-4 bg-[#F5F5F0] rounded-xl border border-[#262A2B]/10">
+                  <ShieldCheck size={32} className="text-[#4A6741] shrink-0" />
+                  <div className="text-sm text-[#262A2B]/80">
+                     <p>I hereby declare that all the information submitted is true and valid. I understand that any falsification will lead to immediate rejection and blacklisting from the NextGen Organic platform.</p>
+                  </div>
+               </div>
+               
+               <label className="flex items-center gap-3 mt-6 cursor-pointer select-none">
+                  <input type="checkbox" checked={formData.agreed} onChange={e => setFormData({...formData, agreed: e.target.checked})} className="w-5 h-5 accent-[#4A6741]" />
+                  <span className="font-bold text-[#262A2B]">I confirm that the above details are true and valid.</span>
+               </label>
+            </section>
+
+            <div className="flex flex-col gap-4">
+              {error && (
+                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 font-medium text-center">
+                    {error}
+                  </div>
+              )}
+              
+              <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full bg-[#4A6741] text-white font-bold py-4 rounded-xl text-center hover:bg-[#3A5233] transition-all transform active:scale-95 disabled:opacity-70 flex items-center justify-center gap-2 mt-6"
-               >
-                  {loading && <Loader2 className="animate-spin" size={20} />}
-                  {loading ? "Registering..." : "Submit Application"}
-               </button>
-            </form>
-         </div>
-      </div>
+                  className="w-full bg-[#4A6741] text-white font-bold py-5 rounded-full text-xl shadow-xl hover:bg-[#3A5233] transition-all transform active:scale-95 disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-3"
+              >
+                  {loading && <Loader2 className="animate-spin" size={24} />}
+                  {loading ? "Submitting Application..." : "Submit Vendor Application"}
+              </button>
+            </div>
 
-      {/* Right Side - Image */}
-      <div className="hidden lg:block w-1/2 relative bg-[#262A2B]">
-         {/* eslint-disable-next-line @next/next/no-img-element */}
-         <img 
-            src="https://images.unsplash.com/photo-1595855709940-5776ee4a4a1f?q=80&w=1200&auto=format&fit=crop" 
-            alt="Organic Farming" 
-            className="w-full h-full object-cover opacity-60"
-         />
-         <div className="absolute bottom-16 left-16 max-w-md text-white">
-            <h2 className="text-3xl font-bold mb-4">Join the Movement</h2>
-            <p className="text-white/80">Connect directly with customers who value quality. No middlemen, better margins.</p>
-         </div>
-      </div>
+          </form>
+       </main>
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function Navbar() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "fixed top-6 left-0 right-0 z-50 transition-all duration-300 flex justify-center px-4",
+          "fixed top-4 left-0 right-0 z-50 transition-all duration-300 flex justify-center px-4",
           isScrolled ? "pointer-events-none" : ""
         )}
       >
@@ -54,13 +54,13 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className={cn(
                "relative transition-all duration-500 flex items-center justify-center rounded-full overflow-hidden shadow-md",
-               isScrolled ? "h-16 w-16" : "h-24 w-24"
+               isScrolled ? "h-12 w-12" : "h-16 w-16"
             )}>
                <Image 
                  src="/final-logo.png" 
                  alt="Next360 Logo" 
                  fill
-                 className="object-cover scale-[1.75]" 
+                 className="object-cover scale-[1.2]" 
                  priority
                  unoptimized
                />
