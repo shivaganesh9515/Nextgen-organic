@@ -7,6 +7,7 @@ from app.models.email_draft import EmailDraft, EmailStatus
 import secrets
 import string
 import re
+from sqlalchemy.sql import func
 # Assuming you have a Supabase Admin Client wrapper. 
 # If not, we'll need to use the supabase-py client with SERVICE_ROLE_KEY.
 from supabase import create_client, Client
@@ -90,17 +91,11 @@ async def approve_and_onboard_vendor(
         raise HTTPException(status_code=500, detail=f"Failed to create Auth User: {str(e)}")
 
     # 4. Update Vendor
+    original_personal_email = vendor.contact_email # Save original email for notification
+    
     vendor.status = VendorStatus.APPROVED
     vendor.auth_user_id = auth_user_id
-    vendor.contact_email = email # Update to the system email? Or keep personal contact? 
-    # Requirement: "Vendor logs in using generated email". So likely this becomes their primary identity.
-    # But let's keep `contact_email` as their personal one if we want to reach them? 
-    # The requirement says "Generate system email ID... Vendor logs in using generated email".
-    # We might want to store the system email in a separate field or overwrite.
-    # Let's overwrite contact_email for login consistency, or add `system_email`. 
-    # For now, let's assuming `contact_email` is used for login lookup in other places (if any).
-    # Changing it here ensures consistency.
-    vendor.contact_email = email 
+    vendor.contact_email = email # Update to the system email (primary login)
     
     db.add(vendor)
     
@@ -117,18 +112,11 @@ async def approve_and_onboard_vendor(
     
     draft = EmailDraft(
         vendor_id=vendor.id,
-        recipient_email=email, # Or send to their ORIGINAL email? 
-        # Usually you send credentials to their personal email so they can log in to the system email.
-        # But here we overwrote it. We should probably persisted the original personal email somewhere.
-        # For this MVP, let's assume we send to the NEW email (which they can't access yet? Catch-22).
-        # Ah, we must send this Welcome Email to their PERSONAL email (the one they registered with).
-        # We need to capture that before overwriting.
+        recipient_email=original_personal_email, # Send to PERSONAL email
         subject="Welcome to NextGen Organics - Your Account Credentials",
         body_html=email_body,
         generated_password=password
     )
-    # Actually, we should send to the *original* email. 
-    # Let's just create the draft. The Admin can edit the recipient in the UI if needed.
     
     db.add(draft)
     await db.commit()

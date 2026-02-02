@@ -32,7 +32,7 @@ async def list_my_products(db: AsyncSession = Depends(get_db), vendor: Vendor = 
     result = await db.execute(select(Product).where(Product.vendor_id == vendor.id))
     return result.scalars().all()
 
-from app.models.product import Product, ProductType, ApprovalStatus
+from app.models.product import Product, ProductType, ProductApprovalStatus as ApprovalStatus
 from pydantic import BaseModel
 from typing import Optional
 
