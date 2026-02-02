@@ -30,7 +30,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      
       <Tabs.Screen
         name="favorites"
         options={{
@@ -60,7 +59,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <Ionicons name={focused ? "pricetag" : "pricetag-outline"} size={24} color={focused ? "#4A6741" : "#9CA3AF"} />
           ),
-        }}
+        }}  
       />
 
       <Tabs.Screen

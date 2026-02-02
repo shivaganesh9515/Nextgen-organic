@@ -29,8 +29,8 @@ class VendorRegistrationSchema(BaseModel):
     documents: dict # URLs { "reg_cert": "url", ... }
     npop_number: Optional[str] = None
     npop_scope: Optional[str] = None
-    fssai_number: str
-    fssai_type: str
+    fssai_number: Optional[str] = None
+    fssai_type: Optional[str] = None
 
 @router.post("/vendors/register", response_model=VendorResponse)
 async def register_vendor(

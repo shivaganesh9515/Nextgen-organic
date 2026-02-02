@@ -3,13 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const categories = [
-  { name: "Vegetables", items: "Carrots, Spinach, Okra", color: "from-[#FFE0B2] to-[#FFCC80]", shadow: "shadow-orange-500/20", image: "/icons/3d/carrot.png", scale: 1.25, y: -15, rotate: 10 },
-  { name: "Fruits", items: "Mangoes, Bananas", color: "from-[#E1BEE7] to-[#CE93D8]", shadow: "shadow-purple-500/20", image: "/icons/3d/eggplant.png", scale: 1.15, y: -8, rotate: -5 },
-  { name: "Bakery", items: "Millet Bread, Cookies", color: "from-[#FFF9C4] to-[#FFF59D]", shadow: "shadow-yellow-500/20", image: "/icons/3d/bakery.png", scale: 1.25, y: -10, rotate: 15 },
-  { name: "Essentials", items: "Coffee, Honey, Spices", color: "from-[#D7CCC8] to-[#BCAAA4]", shadow: "shadow-stone-500/20", image: "/icons/3d/essentials.png", scale: 1.15, y: 0, rotate: -10 },
-  { name: "Snacks", items: "Healthy Munchies", color: "from-[#FFCCBC] to-[#FFAB91]", shadow: "shadow-red-500/20", image: "/icons/3d/snacks.png", scale: 1.2, y: -8, rotate: 5 },
-];
+const categories: any[] = [];
 
 export function Categories() {
   return (

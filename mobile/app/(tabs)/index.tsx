@@ -4,27 +4,20 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect, useCallback } from 'react';
-import { CATEGORIES, PRODUCTS as MOCK_PRODUCTS, VENDORS as MOCK_VENDORS, Product, Vendor } from '@/constants/mocks';
+import { CATEGORIES, Product, Vendor } from '@/constants/mocks';
 import { ProductCard } from '@/components/ProductCard';
 import { api } from '@/services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 /* Quick Categories - Circular with Images */
-const QUICK_CATEGORIES = [
-  { id: '1', name: 'Veggies', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=200' },
-  { id: '2', name: 'Fruits', image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=200' },
-  { id: '3', name: 'Dairy', image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=200' },
-  { id: '4', name: 'Bakery', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200' },
-  { id: '5', name: 'Snacks', image: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=200' },
-  { id: '6', name: 'Juices', image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=200' },
-];
+const QUICK_CATEGORIES: any[] = [];
 
 export default function HomeScreen() {
   const router = useRouter(); 
   const [activeMode, setActiveMode] = useState<'Hub' | 'Farms'>('Hub');
-  const [products, setProducts] = useState(MOCK_PRODUCTS);
-  const [vendors, setVendors] = useState(MOCK_VENDORS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
   const [banners, setBanners] = useState<any[]>([]); 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -49,7 +42,7 @@ export default function HomeScreen() {
           setBanners([]); 
       }
     } catch (e) {
-      console.log("Using Mock Data due to error:", e);
+      console.log("Error fetching data:", e);
     }
   }, []);
 

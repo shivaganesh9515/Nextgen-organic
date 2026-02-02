@@ -5,48 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-const bentoItems = [
-  {
-    id: "veg",
-    title: "Farm Fresh Vegetables",
-    subtitle: "Harvested Daily",
-    className: "md:col-span-2 md:row-span-2 bg-[#F0FDF4]",
-    image: "/icons/3d/carrot.png",
-    textColor: "text-green-800",
-    accentColor: "text-green-600",
-    link: "/collections/vegetables"
-  },
-  {
-    id: "fruits",
-    title: "Seasonal Fruits",
-    subtitle: "Naturally Ripened",
-    className: "md:col-span-1 md:row-span-1 bg-[#FFF7ED]",
-    image: "/icons/3d/eggplant.png", // Using existing placeholder
-    textColor: "text-orange-800",
-    accentColor: "text-orange-600",
-    link: "/collections/fruits"
-  },
-  {
-    id: "bakery",
-    title: "Millet Bakery",
-    subtitle: "Gluten Free",
-    className: "md:col-span-1 md:row-span-1 bg-[#FEFCE8]",
-    image: "/icons/3d/bakery.png",
-    textColor: "text-yellow-800",
-    accentColor: "text-yellow-600",
-    link: "/collections/bakery"
-  },
-  {
-    id: "essentials",
-    title: "Daily Essentials",
-    subtitle: "Spices, Honey, & More",
-    className: "md:col-span-2 md:row-span-1 bg-[#FAFAF9]",
-    image: "/icons/3d/essentials.png",
-    textColor: "text-stone-800",
-    accentColor: "text-stone-600",
-    link: "/collections/essentials"
-  },
-];
+const bentoItems: any[] = [];
 
 export function BentoCategories() {
   return (

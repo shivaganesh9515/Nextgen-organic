@@ -11,7 +11,7 @@ async function handleSupabaseError(error: any) {
 export const api = {
   vendors: {
     register: async (vendorData: any) => {
-       const res = await fetch("http://localhost:8000/api/v1/vendors/register", {
+       const res = await fetch("http://localhost:8001/api/v1/public/vendors/register", {
            method: "POST",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify(vendorData)
