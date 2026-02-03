@@ -42,7 +42,8 @@ async def seed_admin():
             return
         
         # Create admin user
-        hashed_pwd = pwd_context.hash(ADMIN_PASSWORD)
+        from app.core.security import get_password_hash
+        hashed_pwd = get_password_hash(ADMIN_PASSWORD)
         admin = User(
             email=ADMIN_EMAIL,
             hashed_password=hashed_pwd,
