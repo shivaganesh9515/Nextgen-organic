@@ -13,15 +13,7 @@ from app.core.database import AsyncSessionLocal, engine
 # Simple Model Definition for Seeding (avoiding complex imports if not needed)
 from app.models.base import Base
 
-class Testimonial(Base):
-    __tablename__ = "testimonials"
-    id = Column(Integer, primary_key=True, index=True)
-    role = Column(String)
-    name = Column(String)
-    location = Column(String)
-    quote = Column(Text)
-    rating = Column(Integer)
-    is_featured = Column(Boolean, default=True)
+from app.models.testimonial import Testimonial
 
 TESTIMONIALS = [
   {

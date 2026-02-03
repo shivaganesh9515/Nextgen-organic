@@ -83,7 +83,7 @@ export function FoodTypes() {
                 </ul>
 
                 <div className="mt-8 pt-6 border-t border-black/5 text-center">
-                   <button className="text-sm font-bold underline opacity-60 hover:opacity-100 transition-opacity">
+                   <button suppressHydrationWarning className="text-sm font-bold underline opacity-60 hover:opacity-100 transition-opacity">
                       Learn more
                    </button>
                 </div>

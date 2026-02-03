@@ -109,24 +109,17 @@ export const api = {
   
   categories: {
     list: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*');
-        
-      if (error) await handleSupabaseError(error);
-      return data;
+      const res = await fetch("http://localhost:8000/api/v1/public/categories");
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      return await res.json();
     }
   },
 
   testimonials: {
     list: async () => {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('is_featured', true);
-        
-      if (error) await handleSupabaseError(error);
-      return data;
+      const res = await fetch("http://localhost:8000/api/v1/public/testimonials");
+      if (!res.ok) throw new Error("Failed to fetch testimonials");
+      return await res.json();
     }
   }
 };

@@ -260,3 +260,41 @@ async def create_public_order(order_data: OrderCreateSchema, db: AsyncSession = 
     except Exception as e:
         await db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+from app.models.category import Category
+from app.models.testimonial import Testimonial
+
+@router.get("/categories", response_model=List[dict])
+async def list_categories(db: AsyncSession = Depends(get_db)):
+    """Public endpoint to list categories."""
+    result = await db.execute(select(Category))
+    categories = result.scalars().all()
+    # Simple serialization for now, can perform recursive tree here if needed
+    return [
+        {
+            "id": c.id,
+            "name": c.name,
+            "slug": c.slug,
+            "image": c.image_url,
+            "parent_id": c.parent_id
+        }
+        for c in categories
+    ]
+
+@router.get("/testimonials", response_model=List[dict])
+async def list_testimonials(db: AsyncSession = Depends(get_db)):
+    """Public endpoint to list featured testimonials."""
+    result = await db.execute(select(Testimonial).where(Testimonial.is_featured == True))
+    testimonials = result.scalars().all()
+    return [
+        {
+            "id": t.id,
+            "role": t.role,
+            "name": t.name,
+            "location": t.location,
+            "quote": t.quote,
+            "rating": t.rating,
+            "avatar": "" # Placeholder or add to model
+        }
+        for t in testimonials
+    ]
