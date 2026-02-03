@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Loader2, ShieldCheck, Leaf, Sprout, Recycle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ArrowLeft, Loader2, ShieldCheck, Leaf, Sprout, Recycle, CheckCircle } from "lucide-react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { VendorDocumentRow } from "@/components/forms/VendorDocumentRow";
@@ -57,6 +57,31 @@ export default function Register() {
     documents: INITIAL_DOCS as Record<string, any>,
     agreed: false
   });
+
+  // Calculate Validity
+  const isFormValid = (() => {
+      // 1. Basic Fields
+      if (!formData.businessName || !formData.email || !formData.phone || !formData.address || !formData.city || !formData.state || !formData.pincode) return false;
+      
+      // 2. Declaration
+      if (!formData.agreed) return false;
+
+      // 3. Category Specific Logic
+      // If Organic, NPOP is mandatory unless explicitly marked unavailable (which might require admin approval)
+      // But for "Redesign", we enforce: If Organic -> MUST have NPOP.
+      if (formData.sellerCategory === "NPOP_ORGANIC") {
+          const npop = formData.documents.npop;
+          // If available is true (default), must have URL and Number
+          if (npop.available !== false) {
+             if (!npop.url || !npop.number) return false;
+          }
+      }
+
+      // 4. General Docs Validation logic could go here if we want to enforce other docs
+      // For now, we only STRICTLY enforce NPOP for Organic as per requirements.
+      
+      return true;
+  })();
 
   const updateDoc = (key: string, data: any) => {
     setFormData(prev => ({
@@ -138,7 +163,18 @@ export default function Register() {
              <Link href="/login/vendor" className="text-[#4A6741] font-medium flex items-center gap-2 hover:text-[#262A2B] transition-colors">
                 <ArrowLeft size={18} /> Back to Login
              </Link>
-             <span className="text-[#262A2B]/40 font-mono text-xs uppercase tracking-widest hidden md:block">Vendor Registration</span>
+             <div className="flex items-center gap-4">
+               {isFormValid ? (
+                  <span className="flex items-center gap-2 text-xs font-bold text-[#4A6741] bg-[#4A6741]/10 px-3 py-1.5 rounded-full animate-pulse">
+                     <CheckCircle size={14} /> Ready to Submit
+                  </span>
+               ) : (
+                  <span className="text-xs font-bold text-[#262A2B]/30 bg-[#262A2B]/5 px-3 py-1.5 rounded-full">
+                     Incomplete Application
+                  </span>
+               )}
+               <span className="text-[#262A2B]/40 font-mono text-xs uppercase tracking-widest hidden md:block">Vendor Registration</span>
+             </div>
           </div>
        </header>
 
@@ -315,11 +351,11 @@ export default function Register() {
               
               <button 
                   type="submit" 
-                  disabled={loading}
-                  className="w-full bg-[#4A6741] text-white font-bold py-5 rounded-full text-xl shadow-xl hover:bg-[#3A5233] transition-all transform active:scale-[0.99] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-3"
+                  disabled={loading || !isFormValid}
+                  className="w-full bg-[#4A6741] text-white font-bold py-5 rounded-full text-xl shadow-xl hover:bg-[#3A5233] transition-all transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-3"
               >
                   {loading && <Loader2 className="animate-spin" size={24} />}
-                  {loading ? "Submitting Application..." : "Submit Vendor Application"}
+                  {loading ? "Submitting Application..." : isFormValid ? "Submit Vendor Application" : "Complete All Required Fields"}
               </button>
               <div className="text-center">
                   <p className="text-[#262A2B]/40 text-sm">Your application will be reviewed within 24-48 hours.</p>

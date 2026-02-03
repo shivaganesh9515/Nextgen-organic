@@ -21,9 +21,10 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-    # Supabase
+    # Supabase Settings
     SUPABASE_URL: str = ""
     SUPABASE_KEY: str = ""
+    SUPABASE_JWT_SECRET: str = "your-supabase-jwt-secret" # User must set this in env
     SUPABASE_SERVICE_KEY: str = ""
 
     class Config:

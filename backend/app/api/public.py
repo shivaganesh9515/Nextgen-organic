@@ -164,8 +164,7 @@ async def create_public_order(order_data: OrderCreateSchema, db: AsyncSession = 
         try:
             valid_user_uuid =  uuid.UUID(order_data.user_id)
         except ValueError:
-             # If invalid, generate a temporary one for the Guest/Demo user
-             valid_user_uuid = uuid.uuid4()
+             raise HTTPException(status_code=400, detail="Invalid User ID format")
         
         # Calculate total and Validate Products
         total_amount = 0.0
@@ -202,10 +201,10 @@ async def create_public_order(order_data: OrderCreateSchema, db: AsyncSession = 
                 continue
 
         if not valid_items and order_data.items:
-             # Attempted to order items but none exist in DB.
-             # This happens when Mobile = Mock Data, Backend = Empty DB.
-             # We Return Success MOCK to keep the App happy, but don't save to DB.
-             return {"id": "demo-order-123", "message": "Demo Order placed! (Database was empty)"}
+             raise HTTPException(
+                 status_code=400, 
+                 detail="No valid items found in order (Products may be unavailable or deleted)"
+             )
 
         new_order = Order(
             user_id=valid_user_uuid, 

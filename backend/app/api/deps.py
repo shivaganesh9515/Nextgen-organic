@@ -23,22 +23,27 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
         return User(id=uuid.uuid4(), email="admin@nextgen.com", role="admin", is_active=True)
 
     try:
-        # MVP Hack: Decode without signature verification to accept Supabase tokens 
-        # (Assuming backend doesn't have the Supabase JWT secret configured yet)
-        # In production, this MUST use the Supabase JWT Secret to verify signature.
-        payload = jwt.get_unverified_claims(token)
-        print(f"DEBUG: Token Payload Keys: {payload.keys()}")
+        # Secure Verification using Supabase JWT Secret
+        payload = jwt.decode(
+            token, 
+            settings.SUPABASE_JWT_SECRET, 
+            algorithms=[settings.ALGORITHM], 
+            options={"verify_aud": False} # Supabase often uses 'authenticated' as aud, but allow flexibility
+        )
         
         email: str = payload.get("email") # Supabase puts email in 'email' field
         if not email:
             email = payload.get("sub") # Fallback
             
-        print(f"DEBUG: Extracted Email: {email}")
+        # print(f"DEBUG: Verified Email: {email}")
 
         if email is None:
             raise credentials_exception
+    except JWTError as e:
+        print(f"Auth Error: {e}")
+        raise credentials_exception
     except Exception as e:
-        print(f"DEBUG: Token decoding error: {e}")
+        print(f"Unexpected Auth Error: {e}")
         raise credentials_exception
         
     # Sync User: Ensure this email exists in our local DB or just bypass User check and go to Vendor
