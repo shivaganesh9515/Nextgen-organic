@@ -6,8 +6,10 @@ from app.core.database import get_db
 from app.models.vendor import Vendor, VendorStatus
 from app.models.notification import Notification, NotificationType
 from app.models.order import Order, OrderItem
+from app.models.user import User
 from app.api.deps import get_current_admin
 from app.core.config import settings
+from app.core.security import get_password_hash
 import uuid
 import string
 import secrets
@@ -76,7 +78,34 @@ async def approve_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks
             print(f"Supabase Auth Error (non-fatal for local dev): {e}")
             # For local dev, we proceed even if Supabase fails
             auth_user_id = uuid.uuid4()
-        
+            
+        # 1.5 Sync Local User for Hybrid Auth
+        try:
+            # Check if user exists
+            result = await db.execute(select(User).where(User.email == vendor.contact_email))
+            local_user = result.scalars().first()
+            
+            if not local_user:
+                print(f"Debug: Creating local user for vendor {vendor.contact_email}")
+                new_user = User(
+                    email=vendor.contact_email,
+                    hashed_password=get_password_hash(temp_password),
+                    full_name=vendor.business_name,
+                    role="vendor",
+                    phone_number=vendor.phone_number,
+                    is_active=True
+                )
+                db.add(new_user)
+                # Flush to get ID if needed, though we don't link User.id to Vendor currently (using email match)
+                await db.flush() 
+            else:
+                print(f"Debug: Local user already exists for {vendor.contact_email}")
+        except Exception as e:
+             print(f"Local User Sync Error: {e}")
+             # Non-fatal? Maybe fatal if we want to guarantee login.
+             # raising error here
+             raise HTTPException(status_code=500, detail=f"Failed to create local user record: {str(e)}")
+
         # 2. Update Vendor
         print(f"Debug: Updating vendor {vendor.id} with auth_id {auth_user_id}")
         vendor.status = VendorStatus.APPROVED
