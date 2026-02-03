@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Search, Filter, MoreHorizontal, Download, MapPin, Check, X, ShieldCheck, User, Eye, Ban, Mail, Trash2, Package, RefreshCw, PlayCircle } from "lucide-react";
+import { adminApi } from "@/lib/api";
 
 interface Vendor {
   id: string;
@@ -25,16 +26,8 @@ export default function VendorsPage() {
   const fetchVendors = async () => {
     setLoading(true);
     try {
-        const token = localStorage.getItem("admin_token");
-        const res = await fetch("http://localhost:8000/api/v1/admin/vendors", {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (res.ok) {
-            const data = await res.json();
-            setVendors(data);
-        } else {
-            console.error("Failed to fetch vendors");
-        }
+        const data = await adminApi.getAllVendors();
+        setVendors(data as unknown as Vendor[]);
     } catch (e) {
         console.error(e);
     } finally {
@@ -62,19 +55,25 @@ export default function VendorsPage() {
       if (!confirm(`Generate credentials and approve ${businessName}?`)) return;
       
       try {
+           // Direct calling fetch for custom endpoint not in api.ts yet, but using same token logic
+           // Better to move to api.ts properly, but fixing immediate issue first
            const token = localStorage.getItem("admin_token");
-           // Call the new Onboarding API
            const res = await fetch(`http://localhost:8000/api/v1/admin/vendors/${id}/approve`, {
               method: "POST",
                headers: { "Authorization": `Bearer ${token}` }
           });
+          
+          if (res.status === 401) {
+              window.location.href = "/admin/login";
+              return;
+          }
+
           const data = await res.json();
           
           if (res.ok) {
               fetchVendors();
               
               const { email, password } = data.temp_credentials || {};
-              // Fallback if structure is different, but backend plan showed temp_credentials
               
               if (email && password) {
                   alert(`

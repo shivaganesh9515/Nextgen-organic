@@ -1,0 +1,5 @@
+CHECK RESULTS:
+✅ vendors: EXISTS
+⚠️ products: ERROR ({'message': "Could not find the table 'public.products' in the schema cache", 'code': 'PGRST205', 'hint': None, 'details': None})
+⚠️ categories: ERROR ({'message': "Could not find the table 'public.categories' in the schema cache", 'code': 'PGRST205', 'hint': None, 'details': None})
+⚠️ testimonials: ERROR ({'message': "Could not find the table 'public.testimonials' in the schema cache", 'code': 'PGRST205', 'hint': None, 'details': None})

@@ -146,7 +146,7 @@ export default function Register() {
         }
       });
 
-      router.push("/login/vendor?registered=true");
+      router.push(`/register/success?businessName=${encodeURIComponent(formData.businessName)}`);
     } catch (err: unknown) {
       console.error(err);
       setError((err as Error).message || "Registration failed. Please title-case your inputs and try again.");

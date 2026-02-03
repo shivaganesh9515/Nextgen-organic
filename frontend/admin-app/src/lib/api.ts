@@ -23,15 +23,40 @@ export async function apiRequest<T>(endpoint: string, method: string = "GET", bo
       headers,
       body: body ? JSON.stringify(body) : undefined,
     });
+    
+    // DEBUG: Log specific bad requests
+    if (!res.ok) {
+        console.log(`API Error: ${endpoint} returned ${res.status}`);
+    }
+
+    if (res.status === 401) {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem("admin_token");
+            window.location.href = "/admin/login";
+        }
+        throw new Error("Session expired. Please login again.");
+    }
 
     if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.detail || "API Request Failed");
+      const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+      const errorMessage = errorData.detail || "API Request Failed";
+
+      // Fallback: If 403 or other status but message is about credentials
+      if (errorMessage === "Could not validate credentials") {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem("admin_token");
+            window.location.href = "/admin/login";
+          }
+          throw new Error("Session expired. Please login again.");
+      }
+
+      throw new Error(errorMessage);
     }
 
     return await res.json();
-  } catch (error: unknown) {
-    throw new Error((error as Error).message || "Network Error");
+  } catch (error: any) {
+    console.error(`API Error [${endpoint}]:`, error);
+    throw error;
   }
 }
 

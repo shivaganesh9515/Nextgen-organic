@@ -8,44 +8,66 @@ async function handleSupabaseError(error: any) {
   }
 }
 
+const API_BASE_URL = "http://localhost:8000/api/v1";
+
+async function apiRequest(endpoint: string, options: RequestInit = {}, tokenKey: string | null = null) {
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(options.headers as Record<string, string>),
+    };
+
+    if (tokenKey) {
+        const token = localStorage.getItem(tokenKey);
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers,
+        });
+
+        if (res.status === 401) {
+             // Handle Unauthorized
+             if (typeof window !== 'undefined') {
+                 // Clear token
+                 if (tokenKey) localStorage.removeItem(tokenKey);
+                 // Redirect to appropriate login
+                 if (tokenKey === "admin_token") window.location.href = "/login/admin";
+                 if (tokenKey === "vendor_token") window.location.href = "/login/vendor";
+             }
+             throw new Error("Session expired. Please login again.");
+        }
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ detail: res.statusText }));
+            throw new Error(err.detail || `Request failed with status ${res.status}`);
+        }
+
+        return await res.json();
+    } catch (error: any) {
+        console.error(`API Error [${endpoint}]:`, error);
+        throw error; // Re-throw for component handling
+    }
+}
+
 export const api = {
+
   vendors: {
     register: async (vendorData: any) => {
-       const res = await fetch("http://localhost:8000/api/v1/public/vendors/register", {
+       return await apiRequest("/public/vendors/register", {
            method: "POST",
-           headers: { "Content-Type": "application/json" },
            body: JSON.stringify(vendorData)
        });
-       
-       if (!res.ok) {
-           const err = await res.json();
-           throw new Error(err.detail || "Registration failed");
-       }
-       return await res.json();
     },
 
     addProduct: async (productData: any) => {
-        // Retrieve token
-        const token = localStorage.getItem("vendor_token"); 
-        // NOTE: Vendor Onboarding Flow generates credentials but frontend login logic 
-        // needs to store this token. Assuming /login/vendor page stores 'vendor_token'.
-        // If not, I'll need to check login implementation. 
-        // For now, I'll use 'vendor_token'.
-        
-        const res = await fetch("http://localhost:8000/api/v1/vendor/products", {
+        return await apiRequest("/vendor/products", {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` 
-            },
             body: JSON.stringify(productData)
-        });
-        
-        if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.detail || "Failed to add product");
-        }
-        return await res.json();
+        }, "vendor_token");
     },
 
     create: async (vendorData: any) => {
@@ -109,17 +131,13 @@ export const api = {
   
   categories: {
     list: async () => {
-      const res = await fetch("http://localhost:8000/api/v1/public/categories");
-      if (!res.ok) throw new Error("Failed to fetch categories");
-      return await res.json();
+      return await apiRequest("/public/categories");
     }
   },
 
   testimonials: {
     list: async () => {
-      const res = await fetch("http://localhost:8000/api/v1/public/testimonials");
-      if (!res.ok) throw new Error("Failed to fetch testimonials");
-      return await res.json();
+      return await apiRequest("/public/testimonials");
     }
   }
 };
