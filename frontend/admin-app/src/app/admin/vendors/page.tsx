@@ -12,8 +12,51 @@ interface Vendor {
   status: string;
   city?: string;
   is_verified?: boolean;
-  documents?: Record<string, string>; // Added documents field
+  documents?: Record<string, string>;
 }
+
+export default function VendorsPage() {
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("all");
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const fetchVendors = async () => {
+    setLoading(true);
+    try {
+        const token = localStorage.getItem("admin_token");
+        const res = await fetch("http://localhost:8000/api/v1/admin/vendors", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            setVendors(data);
+        } else {
+            console.error("Failed to fetch vendors");
+        }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVendors();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
 
   const handleApprove = async (id: string, businessName: string) => {
       if (!confirm(`Generate credentials and approve ${businessName}?`)) return;
@@ -21,7 +64,7 @@ interface Vendor {
       try {
            const token = localStorage.getItem("admin_token");
            // Call the new Onboarding API
-           const res = await fetch(`http://localhost:8000/api/v1/admin/vendors/${id}/approve-onboard`, {
+           const res = await fetch(`http://localhost:8000/api/v1/admin/vendors/${id}/approve`, {
               method: "POST",
                headers: { "Authorization": `Bearer ${token}` }
           });
@@ -30,20 +73,21 @@ interface Vendor {
           if (res.ok) {
               fetchVendors();
               
-              const { email, password } = data.credentials;
-              const draftId = data.email_draft_id;
+              const { email, password } = data.temp_credentials || {};
+              // Fallback if structure is different, but backend plan showed temp_credentials
               
-              // Show Credentials Modal (For MVP using alert/prompt sequence or custom UI)
-              // Ideally this should be a nice modal. 
-              // We will show an alert with the info for now.
-              alert(`
+              if (email && password) {
+                  alert(`
 VENDOR APPROVED SUCCESSFULLY!
 -----------------------------
 System Email: ${email}
 Temp Password: ${password}
 -----------------------------
-(Email Draft Created: ID ${draftId})
-              `);
+PLEASE COPY THESE CREDENTIALS!
+                  `);
+              } else {
+                   alert("Vendor approved, but no credentials returned (Check logs).");
+              }
               
           } else {
               alert("Error: " + (data.detail || data.message));
@@ -102,7 +146,7 @@ Temp Password: ${password}
 
   const handleViewProducts = (vendor: Vendor) => {
     setActiveDropdown(null);
-    // Navigate to products filtered by vendor
+    // Navigate to products filtered by vendor (Assuming this page exists)
     window.location.href = `/admin/products?vendor=${vendor.id}`;
   };
 
@@ -127,15 +171,10 @@ Temp Password: ${password}
     }
   };
 
-  const getStatusDisplay = (status: string) => {
-    const map: Record<string, string> = {
-      "APPROVED": "Active",
-      "PENDING": "Pending",
-      "REJECTED": "Rejected",
-      "SUSPENDED": "Suspended"
-    };
-    return map[status] || status;
-  };
+  const filteredVendors = vendors.filter(v => {
+      if (activeTab === "pending") return v.status === "PENDING";
+      return true;
+  });
 
   return (
     <div className="space-y-8 font-sans text-[#E4E4E7]">
@@ -335,4 +374,3 @@ function StatusBadge({ status }: { status: string }) {
       </div>
    );
 }
-

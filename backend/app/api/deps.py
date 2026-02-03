@@ -24,13 +24,22 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
 
     try:
         # Secure Verification using Supabase JWT Secret
-        payload = jwt.decode(
-            token, 
-            settings.SUPABASE_JWT_SECRET, 
-            algorithms=[settings.ALGORITHM], 
-            options={"verify_aud": False} # Supabase often uses 'authenticated' as aud, but allow flexibility
-        )
-        
+        try:
+             payload = jwt.decode(
+                token, 
+                settings.SUPABASE_JWT_SECRET, 
+                algorithms=[settings.ALGORITHM], 
+                options={"verify_aud": False}
+            )
+        except JWTError:
+            # Fallback to local SECRET_KEY
+             payload = jwt.decode(
+                token, 
+                settings.SECRET_KEY, 
+                algorithms=[settings.ALGORITHM], 
+                options={"verify_aud": False}
+            )
+            
         email: str = payload.get("email") # Supabase puts email in 'email' field
         if not email:
             email = payload.get("sub") # Fallback

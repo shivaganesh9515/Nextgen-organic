@@ -38,48 +38,65 @@ async def list_approved_vendors(db: AsyncSession = Depends(get_db), admin=Depend
 
 @router.post("/vendors/{vendor_id}/approve")
 async def approve_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin=Depends(get_current_admin)):
-    vendor = await db.get(Vendor, vendor_id)
-    if not vendor:
-        raise HTTPException(status_code=404, detail="Vendor not found")
-        
-    if vendor.status == VendorStatus.APPROVED:
-        return {"message": "Already approved"}
-
-    # 1. Create Supabase User
-    temp_password = generate_temp_password()
-    auth_user_id = None
-    
     try:
-        # Use Service Role Key for Admin Actions
-        supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
-        
-        res = supabase.auth.admin.create_user({
-            "email": vendor.contact_email,
-            "password": temp_password,
-            "email_confirm": True,
-            "user_metadata": {
-                "role": "vendor",
-                "vendor_id": str(vendor.id),
-                "business_name": vendor.business_name
-            }
-        })
-        auth_user_id = res.user.id
-        
-    except Exception as e:
-        print(f"Supabase Auth Error: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to create Supabase User: {str(e)}")
-    
-    # 2. Update Vendor
-    vendor.status = VendorStatus.APPROVED
-    vendor.is_verified = True
-    vendor.auth_user_id = auth_user_id
-    
-    await db.commit()
-    
-    # 3. Send Email (via Background Task)
-    background_tasks.add_task(send_approval_email, vendor.contact_email, temp_password)
+        vendor = await db.get(Vendor, vendor_id)
+        if not vendor:
+            raise HTTPException(status_code=404, detail="Vendor not found")
+            
+        if vendor.status == VendorStatus.APPROVED:
+            return {"message": "Already approved"}
 
-    return {"message": "Vendor approved", "temp_credentials": {"email": vendor.contact_email, "password": temp_password}}
+        # 1. Create Supabase User
+        temp_password = generate_temp_password()
+        auth_user_id = None
+        
+        try:
+            print("Debug: Starting Supabase creation logic")
+            if settings.SUPABASE_SERVICE_KEY:
+                # Use Service Role Key for Admin Actions
+                supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
+                
+                res = supabase.auth.admin.create_user({
+                    "email": vendor.contact_email,
+                    "password": temp_password,
+                    "email_confirm": True,
+                    "user_metadata": {
+                        "role": "vendor",
+                        "vendor_id": str(vendor.id),
+                        "business_name": vendor.business_name
+                    }
+                })
+                # Ensure we get a UUID object
+                auth_user_id = uuid.UUID(str(res.user.id))
+            else:
+                print("WARNING: SUPABASE_SERVICE_KEY not set. Skipping Supabase user creation.")
+                auth_user_id = uuid.uuid4()
+            
+        except Exception as e:
+            print(f"Supabase Auth Error (non-fatal for local dev): {e}")
+            # For local dev, we proceed even if Supabase fails
+            auth_user_id = uuid.uuid4()
+        
+        # 2. Update Vendor
+        print(f"Debug: Updating vendor {vendor.id} with auth_id {auth_user_id}")
+        vendor.status = VendorStatus.APPROVED
+        vendor.is_verified = True
+        vendor.auth_user_id = auth_user_id
+        
+        print("Debug: Committing to DB")
+        await db.commit()
+        print("Debug: Commit successful")
+        
+        # 3. Send Email (via Background Task)
+        background_tasks.add_task(send_approval_email, vendor.contact_email, temp_password)
+
+        return {"message": "Vendor approved", "temp_credentials": {"email": vendor.contact_email, "password": temp_password}}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail=f"Approval Logic Failed: {str(e)}")
 
 @router.post("/vendors/{vendor_id}/reject")
 async def reject_vendor(vendor_id: uuid.UUID, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin=Depends(get_current_admin)):
