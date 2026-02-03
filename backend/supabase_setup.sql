@@ -125,3 +125,29 @@ grant all on all tables in schema public to anon, authenticated;
 grant all on all sequences in schema public to anon, authenticated;
 
 -- End of Script
+
+-- ==========================================
+-- 7. Storage Setup
+-- ==========================================
+
+-- Create Bucket 'vendor-docs'
+insert into storage.buckets (id, name, public) 
+values ('vendor-docs', 'vendor-docs', true)
+on conflict (id) do nothing;
+
+-- Enable RLS on Storage
+alter table storage.objects enable row level security;
+
+-- Policy: Allow Public Uploads (For Registration)
+create policy "Give public access to upload docs" 
+on storage.objects for insert 
+with check ( bucket_id = 'vendor-docs' );
+
+-- Policy: Allow Public Read (or Authenticated)
+create policy "Give public access to read docs" 
+on storage.objects for select 
+using ( bucket_id = 'vendor-docs' );
+
+-- Policy: Allow Vendor to Update/Delete own docs (Optional/Future)
+-- create policy "Vendor update own docs" ...
+
