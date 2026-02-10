@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 # Import API routers
 from app.api import auth, public, admin, products, categories, banners, offers, orders, customers, analytics, notifications, admin_onboarding
@@ -17,17 +18,23 @@ from app.models import notification as notification_model
 from app.models import admin_notification as admin_notification_model
 from app.models import offer as offer_model
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Handle startup and shutdown events."""
+    # Startup: Create all tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # Shutdown: cleanup if needed
+
+
 app = FastAPI(
     title="Next360 Organics API",
     description="Backend for Next360 Organics Platform",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
-
-@app.on_event("startup")
-async def startup():
-    async with engine.begin() as conn:
-        # Create all tables (safe to run multiple times, it skips existing)
-        await conn.run_sync(Base.metadata.create_all)
 
 # Configure CORS
 app.add_middleware(

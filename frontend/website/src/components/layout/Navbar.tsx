@@ -50,7 +50,6 @@ export function Navbar() {
            )}
         >
           {/* Logo Area */}
-          {/* Logo Area */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className={cn(
                "relative transition-all duration-500 flex items-center justify-center rounded-full overflow-hidden shadow-md",

@@ -20,7 +20,7 @@ export function Footer() {
                     className="object-cover scale-[1.75]"
                   />
                 </div>
-                <span className="text-2xl font-heading font-bold text-[#262A2B]">
+                <span className="text-2xl font-heading font-bold text-[#F5F5F0]">
                   Next360
                 </span>
               </Link>

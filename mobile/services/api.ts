@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Base URL for API
-// Uses EXPO_PUBLIC_API_URL if set (Production), otherwise falls back to User's LAN IP (Dev)
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.16.148.26:8000/api/v1'; 
+// API Base URL configuration
+// Set EXPO_PUBLIC_API_URL in your .env for production, falls back to localhost for development
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000/api/v1'; 
 
 // Helper: Fetch with Timeout
 const fetchWithTimeout = async (resource: RequestInfo, options: RequestInit = {}) => {

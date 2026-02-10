@@ -15,8 +15,9 @@ if not url or not service_key:
     print("❌ Error: Supabase credentials not found in .env")
     exit(1)
 
-ADMIN_EMAIL = "admin@next360.com"
-ADMIN_PASSWORD = "admin123"
+# Admin credentials - use environment variables in production
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@next360.com")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
 
 print("="*50)
 print(" Creating Admin User in Supabase Auth")
